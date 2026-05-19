@@ -1,7 +1,7 @@
-/* ===========================================================
+/* ============================================================
    Nolan Ream — Portfolio
-   Luxury editorial dark theme
-   =========================================================== */
+   Elevated dark editorial / architectural blueprint aesthetic
+   ============================================================ */
 
 /* ---------- Reset ---------- */
 *,
@@ -22,9 +22,14 @@ html {
     --text: #f5f5f7;
     --muted: #8a8a92;
     --accent: #7c3aed;
+    --accent-soft: rgba(124, 58, 237, 0.07);
+    --accent-line: rgba(124, 58, 237, 0.18);
     --hairline: rgba(245, 245, 247, 0.08);
+    --hairline-strong: rgba(245, 245, 247, 0.16);
     --serif: 'Cormorant Garamond', 'Times New Roman', serif;
     --sans: 'Inter', system-ui, -apple-system, sans-serif;
+    --gutter: clamp(1.25rem, 4vw, 3rem);
+    --col-gap: 1.5rem;
 }
 
 body {
@@ -36,6 +41,7 @@ body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
+    position: relative;
 }
 
 a {
@@ -48,78 +54,216 @@ a {
     color: var(--text);
 }
 
-/* ---------- Utilities ---------- */
+/* ============================================================
+   1. Architectural blueprint background — vertical lines
+   ============================================================ */
+.grid-bg {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 1;
+    /* Two layered repeating gradients — a fine 80px scaffold plus
+       a sparser 240px accent line, so the texture reads like
+       an architectural drawing rather than a flat grid. */
+    background-image:
+        repeating-linear-gradient(
+            to right,
+            rgba(124, 58, 237, 0.07) 0,
+            rgba(124, 58, 237, 0.07) 1px,
+            transparent 1px,
+            transparent 80px
+        ),
+        repeating-linear-gradient(
+            to right,
+            rgba(124, 58, 237, 0.04) 0,
+            rgba(124, 58, 237, 0.04) 1px,
+            transparent 1px,
+            transparent 240px
+        );
+    background-size: 80px 100%, 240px 100%;
+    animation: gridDrift 28s linear infinite;
+    /* Faint vignette so the lines feel deeper at the edges */
+    mask-image: linear-gradient(
+        to bottom,
+        transparent 0,
+        #000 8%,
+        #000 92%,
+        transparent 100%
+    );
+    -webkit-mask-image: linear-gradient(
+        to bottom,
+        transparent 0,
+        #000 8%,
+        #000 92%,
+        transparent 100%
+    );
+}
+
+@keyframes gridDrift {
+    from {
+        background-position: 0 0, 0 0;
+    }
+    to {
+        background-position: 80px 0, 240px 0;
+    }
+}
+
+/* Push every page element above the grid layer */
+.navbar,
+.hero,
+.section,
+.footer {
+    position: relative;
+    z-index: 2;
+}
+
+/* ============================================================
+   2. Typography helpers
+   ============================================================ */
 .label {
     font-family: var(--sans);
-    font-size: 0.7rem;
+    font-size: 0.75rem;
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.3em;
     color: var(--muted);
 }
 
-.container {
+.section__title {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(3rem, 7.5vw, 6rem);
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+}
+
+.section__title em {
+    font-style: italic;
+    color: var(--accent);
+}
+
+/* ============================================================
+   3. Twelve-column magazine grid
+   ============================================================ */
+.grid-12 {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: var(--col-gap);
+    padding-left: var(--gutter);
+    padding-right: var(--gutter);
     width: 100%;
-    max-width: 1400px;
+    max-width: 1600px;
     margin: 0 auto;
-    padding: 0 3rem;
 }
 
-section {
-    padding: 10rem 0;
-    position: relative;
+/* ============================================================
+   4. Section base — immense whitespace + watermark numerals
+   ============================================================ */
+.section {
+    padding: 14rem 0;
+    border-top: 1px solid var(--hairline);
+    overflow: hidden;
 }
 
-/* ---------- Navbar ---------- */
+.section__inner {
+    row-gap: 4rem;
+}
+
+.section__label {
+    grid-column: 2 / span 3;
+    align-self: start;
+}
+
+.section__watermark {
+    position: absolute;
+    top: 6rem;
+    right: var(--gutter);
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 300;
+    font-size: clamp(8rem, 18vw, 18rem);
+    line-height: 1;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(245, 245, 247, 0.06);
+    pointer-events: none;
+    user-select: none;
+    letter-spacing: -0.04em;
+}
+
+/* ============================================================
+   5. Reveal animation (driven by script.js)
+   ============================================================ */
+.reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 1.1s cubic-bezier(0.2, 0.8, 0.2, 1),
+                transform 1.1s cubic-bezier(0.2, 0.8, 0.2, 1);
+    will-change: opacity, transform;
+}
+
+.reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ============================================================
+   6. Navbar
+   ============================================================ */
 .navbar {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
-    z-index: 100;
-    padding: 1.75rem 3rem;
+    z-index: 50;
+    padding: 1.5rem var(--gutter);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: rgba(10, 10, 10, 0.65);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
+    background: rgba(10, 10, 10, 0.7);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     border-bottom: 1px solid var(--hairline);
 }
 
 .navbar__brand {
     font-family: var(--serif);
-    font-size: 1.4rem;
     font-style: italic;
     font-weight: 400;
-    letter-spacing: 0.02em;
+    font-size: 1.35rem;
+    letter-spacing: 0.01em;
 }
 
 .navbar__links {
     display: flex;
-    gap: 3rem;
+    gap: 2.5rem;
     list-style: none;
 }
 
 .navbar__links a {
-    font-size: 0.7rem;
+    position: relative;
+    font-family: var(--sans);
+    font-size: 0.75rem;
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.3em;
     color: var(--muted);
+    padding-bottom: 6px;
     transition: color 0.4s ease;
-    position: relative;
 }
 
+/* Center-out expanding underline */
 .navbar__links a::after {
     content: '';
     position: absolute;
-    left: 0;
-    bottom: -6px;
+    left: 50%;
+    bottom: 0;
     width: 0;
     height: 1px;
     background: var(--accent);
-    transition: width 0.5s ease;
+    transform: translateX(-50%);
+    transition: width 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .navbar__links a:hover {
@@ -130,68 +274,85 @@ section {
     width: 100%;
 }
 
-/* ---------- Hero ---------- */
+/* ============================================================
+   7. Hero
+   ============================================================ */
 .hero {
     min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 12rem 3rem 8rem;
-    position: relative;
+    padding: 12rem 0 8rem;
+    align-content: center;
+    row-gap: 3rem;
 }
 
 .hero__meta {
+    grid-column: 2 / span 10;
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
-    margin-bottom: 4rem;
     opacity: 0;
     animation: fadeUp 1.2s ease 0.2s forwards;
 }
 
-.hero__name {
-    font-family: var(--serif);
-    font-weight: 300;
-    font-size: clamp(4rem, 14vw, 13rem);
-    line-height: 0.92;
-    letter-spacing: -0.02em;
+.hero__meta--right {
+    text-align: right;
 }
 
-.hero__name span {
+.hero__name {
+    grid-column: 1 / -1;
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(4.5rem, 16vw, 16rem);
+    line-height: 0.88;
+    letter-spacing: -0.03em;
+}
+
+.hero__name-line {
     display: block;
     opacity: 0;
-    transform: translateY(40px);
+    transform: translateY(60px);
     animation: fadeUp 1.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
 }
 
-.hero__name span:nth-child(1) {
+.hero__name-line--first {
+    padding-left: 4vw;
     animation-delay: 0.4s;
 }
 
-.hero__name span:nth-child(2) {
-    margin-left: 18vw;
+.hero__name-line--second {
+    padding-left: 22vw;
     font-style: italic;
-    color: var(--text);
     animation-delay: 0.7s;
 }
 
-.hero__name span:nth-child(2) em {
-    font-style: italic;
+/* Brutalist outlined surname */
+.hero__name-stroke {
+    color: transparent;
+    -webkit-text-stroke: 1.2px var(--text);
+    text-stroke: 1.2px var(--text);
+    transition: color 0.6s ease, -webkit-text-stroke 0.6s ease;
+}
+
+.hero__name:hover .hero__name-stroke {
     color: var(--accent);
-    font-weight: 400;
+    -webkit-text-stroke: 1.2px var(--accent);
+}
+
+.hero__name-dot {
+    color: var(--accent);
 }
 
 .hero__footer {
+    grid-column: 2 / span 10;
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
-    margin-top: 6rem;
+    margin-top: 4rem;
     opacity: 0;
     animation: fadeUp 1.2s ease 1.1s forwards;
 }
 
 .hero__tag {
-    max-width: 22rem;
+    max-width: 24rem;
     font-size: 0.95rem;
     color: var(--muted);
     line-height: 1.7;
@@ -200,14 +361,14 @@ section {
 .hero__index {
     font-family: var(--serif);
     font-style: italic;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     color: var(--muted);
 }
 
 @keyframes fadeUp {
     from {
         opacity: 0;
-        transform: translateY(40px);
+        transform: translateY(60px);
     }
     to {
         opacity: 1;
@@ -215,121 +376,90 @@ section {
     }
 }
 
-/* ---------- Scroll-reveal helper (driven by script.js) ---------- */
-.reveal {
-    opacity: 0;
-    transform: translateY(30px);
-    transition: opacity 1s cubic-bezier(0.2, 0.8, 0.2, 1),
-                transform 1s cubic-bezier(0.2, 0.8, 0.2, 1);
-    will-change: opacity, transform;
-}
-
-.reveal.is-visible {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-/* ---------- About ---------- */
-.about {
-    border-top: 1px solid var(--hairline);
-}
-
-.about__grid {
-    display: grid;
-    grid-template-columns: 1fr 2fr;
-    gap: 6rem;
-    align-items: start;
-}
-
+/* ============================================================
+   8. About
+   ============================================================ */
 .about__heading {
-    font-family: var(--serif);
-    font-style: italic;
-    font-weight: 300;
-    font-size: clamp(2.5rem, 5vw, 4rem);
-    line-height: 1.05;
-    letter-spacing: -0.01em;
+    grid-column: 2 / span 9;
+    margin-top: 1rem;
 }
 
-.about__heading::before {
-    content: '— 01';
-    display: block;
-    font-family: var(--sans);
-    font-style: normal;
-    font-size: 0.7rem;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.3em;
-    color: var(--accent);
-    margin-bottom: 2rem;
+.about__body {
+    grid-column: 6 / span 6;
+    margin-top: 2rem;
 }
 
 .about__body p {
     font-size: 1.15rem;
-    line-height: 1.8;
-    margin-bottom: 1.5rem;
+    line-height: 1.85;
     color: var(--text);
-    opacity: 0.85;
+    opacity: 0.88;
+    margin-bottom: 1.5rem;
+    max-width: 38rem;
 }
 
 .about__body p:last-child {
     margin-bottom: 0;
 }
 
-/* ---------- Skills ---------- */
-.skills {
-    border-top: 1px solid var(--hairline);
-}
-
-.skills__head {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    margin-bottom: 5rem;
-}
-
-.skills__title {
+.about__body p::first-letter {
     font-family: var(--serif);
-    font-weight: 300;
-    font-size: clamp(2.5rem, 5vw, 4rem);
-    letter-spacing: -0.01em;
-}
-
-.skills__title em {
+    font-size: 2.4em;
     font-style: italic;
+    float: left;
+    line-height: 0.9;
+    padding: 0.15em 0.18em 0 0;
     color: var(--accent);
 }
 
+/* ============================================================
+   9. Skills
+   ============================================================ */
+.skills__title {
+    grid-column: 2 / span 9;
+}
+
 .skills__list {
+    grid-column: 2 / span 11;
     list-style: none;
     border-top: 1px solid var(--hairline);
+    margin-top: 3rem;
 }
 
 .skills__item {
     display: grid;
-    grid-template-columns: 4rem 1fr auto;
+    grid-template-columns: 5rem 1fr auto;
     align-items: baseline;
-    padding: 2.5rem 0;
+    gap: 2rem;
+    padding: 2.75rem 0.5rem;
     border-bottom: 1px solid var(--hairline);
-    transition: padding 0.5s ease, color 0.5s ease;
+    transition: padding 0.5s cubic-bezier(0.2, 0.8, 0.2, 1),
+                background 0.5s ease;
 }
 
 .skills__item:hover {
-    padding-left: 1.5rem;
+    padding-left: 2rem;
+    background: linear-gradient(
+        to right,
+        rgba(124, 58, 237, 0.05),
+        transparent 40%
+    );
 }
 
 .skills__num {
-    font-family: var(--sans);
-    font-size: 0.7rem;
+    font-size: 0.75rem;
     font-weight: 500;
+    text-transform: uppercase;
     letter-spacing: 0.3em;
     color: var(--muted);
 }
 
 .skills__name {
     font-family: var(--serif);
-    font-size: clamp(1.8rem, 3vw, 2.6rem);
+    font-size: clamp(2rem, 4vw, 3.25rem);
     font-weight: 300;
-    letter-spacing: -0.005em;
+    letter-spacing: -0.01em;
+    transition: color 0.5s ease, font-style 0.5s ease;
 }
 
 .skills__item:hover .skills__name {
@@ -340,68 +470,67 @@ section {
 .skills__meta {
     font-size: 0.75rem;
     text-transform: uppercase;
-    letter-spacing: 0.25em;
+    letter-spacing: 0.3em;
     color: var(--muted);
 }
 
-/* ---------- Projects (asymmetrical editorial grid) ---------- */
-.projects {
-    border-top: 1px solid var(--hairline);
-}
-
-.projects__head {
-    margin-bottom: 6rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-}
-
+/* ============================================================
+   10. Projects — asymmetrical magazine layout
+   ============================================================ */
 .projects__title {
-    font-family: var(--serif);
-    font-weight: 300;
-    font-size: clamp(2.5rem, 5vw, 4rem);
-    letter-spacing: -0.01em;
+    grid-column: 2 / span 9;
 }
 
-.projects__title em {
-    font-style: italic;
-    color: var(--accent);
-}
-
-.projects__grid {
-    display: grid;
-    grid-template-columns: repeat(12, 1fr);
-    gap: 2rem;
-}
-
+/* Cards intentionally start/end on odd column lines so they
+   collide with the vertical background grid. */
 .card {
+    position: relative;
     background: var(--surface);
     border: 1px solid var(--hairline);
     padding: 2.5rem;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1),
-                border-color 0.4s ease,
-                box-shadow 0.6s ease;
-    position: relative;
+    transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1),
+                border-color 0.5s ease,
+                box-shadow 0.5s ease;
     overflow: hidden;
+    margin-top: 4rem;
+}
+
+.card--01 {
+    grid-column: 2 / 8;   /* spans col lines 2 → 8 (odd-ish offset) */
+    margin-top: 5rem;
+}
+
+.card--02 {
+    grid-column: 8 / 12;  /* offset to the right, smaller */
+    margin-top: 12rem;    /* deliberate stagger */
+}
+
+.card--03 {
+    grid-column: 4 / 11;  /* lower, wider, recessed center-right */
+    margin-top: 6rem;
 }
 
 .card::before {
     content: '';
     position: absolute;
     inset: 0;
-    background: radial-gradient(circle at top right, rgba(124, 58, 237, 0.12), transparent 60%);
+    background: radial-gradient(
+        circle at top right,
+        rgba(124, 58, 237, 0.14),
+        transparent 60%
+    );
     opacity: 0;
     transition: opacity 0.6s ease;
     pointer-events: none;
 }
 
 .card:hover {
-    transform: translateY(-12px) scale(1.012);
-    border-color: rgba(124, 58, 237, 0.4);
-    box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.6);
+    transform: translateY(-10px);
+    border-color: var(--accent);
+    box-shadow: 4px 4px 0 0 var(--accent);
 }
 
 .card:hover::before {
@@ -428,19 +557,36 @@ section {
         radial-gradient(circle at 70% 70%, rgba(245, 245, 247, 0.04), transparent 60%);
 }
 
+/* Vertical line texture inside the card visual to echo the grid */
+.card__visual::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: repeating-linear-gradient(
+        to right,
+        rgba(245, 245, 247, 0.05) 0,
+        rgba(245, 245, 247, 0.05) 1px,
+        transparent 1px,
+        transparent 12px
+    );
+    z-index: 1;
+    pointer-events: none;
+}
+
 .card__index {
     position: absolute;
     top: 1.25rem;
     right: 1.5rem;
     font-family: var(--serif);
     font-style: italic;
-    font-size: 1.1rem;
+    font-size: 1.05rem;
     color: var(--muted);
-    z-index: 2;
+    z-index: 3;
 }
 
 .card__category {
-    font-size: 0.7rem;
+    display: block;
+    font-size: 0.75rem;
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.3em;
@@ -451,8 +597,8 @@ section {
 .card__title {
     font-family: var(--serif);
     font-weight: 300;
-    font-size: clamp(1.75rem, 2.6vw, 2.4rem);
-    line-height: 1.1;
+    font-size: clamp(1.85rem, 3vw, 2.6rem);
+    line-height: 1.05;
     margin-bottom: 1rem;
     letter-spacing: -0.005em;
 }
@@ -466,10 +612,11 @@ section {
     line-height: 1.7;
     color: var(--muted);
     margin-bottom: 2rem;
+    max-width: 36ch;
 }
 
 .card__cta {
-    font-size: 0.7rem;
+    font-size: 0.75rem;
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.3em;
@@ -490,123 +637,124 @@ section {
     gap: 1.25rem;
 }
 
-/* asymmetric placement */
-.card--01 {
-    grid-column: 1 / span 7;
-    margin-top: 0;
-}
-
-.card--02 {
-    grid-column: 9 / span 4;
-    margin-top: 6rem;
-}
-
-.card--03 {
-    grid-column: 3 / span 7;
-    margin-top: 4rem;
-}
-
-/* ---------- Footer ---------- */
+/* ============================================================
+   11. Footer / Contact
+   ============================================================ */
 .footer {
+    position: relative;
     border-top: 1px solid var(--hairline);
-    padding: 8rem 3rem 4rem;
+    padding: 12rem 0 4rem;
+    overflow: hidden;
+}
+
+.footer__inner {
+    row-gap: 3rem;
     text-align: center;
+    justify-items: center;
 }
 
 .footer__label {
-    font-size: 0.7rem;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.3em;
+    grid-column: 1 / -1;
     color: var(--muted);
-    margin-bottom: 2.5rem;
-    display: block;
 }
 
 .footer__email {
+    grid-column: 2 / span 10;
     font-family: var(--serif);
     font-weight: 300;
-    font-size: clamp(2.5rem, 7vw, 6rem);
     font-style: italic;
-    letter-spacing: -0.01em;
-    display: inline-block;
+    font-size: clamp(2.5rem, 8vw, 7rem);
+    letter-spacing: -0.02em;
+    line-height: 1;
     position: relative;
-    transition: color 0.4s ease;
-}
-
-.footer__email::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    bottom: 0.1em;
-    width: 100%;
-    height: 1px;
-    background: currentColor;
-    opacity: 0.25;
-    transition: opacity 0.4s ease, background 0.4s ease;
+    color: transparent;
+    -webkit-text-stroke: 1px var(--text);
+    transition: color 0.5s ease, -webkit-text-stroke 0.5s ease;
 }
 
 .footer__email:hover {
     color: var(--accent);
-}
-
-.footer__email:hover::after {
-    background: var(--accent);
-    opacity: 1;
+    -webkit-text-stroke: 1px var(--accent);
 }
 
 .footer__bottom {
+    grid-column: 2 / span 10;
     margin-top: 6rem;
     padding-top: 2.5rem;
     border-top: 1px solid var(--hairline);
+    width: 100%;
     display: flex;
     justify-content: space-between;
-    font-size: 0.7rem;
+    font-size: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 0.3em;
     color: var(--muted);
 }
 
-/* ---------- Responsive ---------- */
+.footer__watermark {
+    top: 4rem;
+}
+
+/* ============================================================
+   12. Responsive
+   ============================================================ */
 @media (max-width: 900px) {
-    .container,
-    .hero,
-    .navbar,
-    .footer {
-        padding-left: 1.5rem;
-        padding-right: 1.5rem;
+    :root {
+        --gutter: 1.25rem;
+        --col-gap: 0.75rem;
     }
 
-    section {
-        padding: 6rem 0;
+    .navbar {
+        padding: 1.25rem var(--gutter);
     }
 
     .navbar__links {
-        gap: 1.5rem;
+        gap: 1.25rem;
     }
 
-    .hero__name span:nth-child(2) {
-        margin-left: 8vw;
+    .section {
+        padding: 8rem 0;
     }
 
-    .about__grid {
-        grid-template-columns: 1fr;
-        gap: 2.5rem;
+    .hero {
+        padding: 9rem 0 5rem;
     }
 
-    .skills__head,
-    .projects__head,
-    .hero__footer,
-    .hero__meta {
+    .hero__meta,
+    .hero__footer {
+        grid-column: 1 / -1;
         flex-direction: column;
         align-items: flex-start;
-        gap: 1.5rem;
+        gap: 1rem;
+    }
+
+    .hero__meta--right {
+        text-align: left;
+    }
+
+    .hero__name-line--first {
+        padding-left: 0;
+    }
+
+    .hero__name-line--second {
+        padding-left: 6vw;
+    }
+
+    .section__label,
+    .section__title,
+    .about__heading,
+    .about__body,
+    .skills__title,
+    .skills__list,
+    .projects__title {
+        grid-column: 1 / -1;
     }
 
     .skills__item {
-        grid-template-columns: 2.5rem 1fr;
+        grid-template-columns: 3rem 1fr;
         grid-template-rows: auto auto;
         row-gap: 0.5rem;
+        padding: 2rem 0;
     }
 
     .skills__meta {
@@ -617,16 +765,34 @@ section {
     .card--02,
     .card--03 {
         grid-column: 1 / -1;
-        margin-top: 0;
+        margin-top: 3rem;
+    }
+
+    .footer {
+        padding: 8rem 0 3rem;
+    }
+
+    .footer__email,
+    .footer__bottom {
+        grid-column: 1 / -1;
     }
 
     .footer__bottom {
         flex-direction: column;
-        gap: 1rem;
+        gap: 0.75rem;
         align-items: center;
+        text-align: center;
+    }
+
+    .section__watermark {
+        font-size: clamp(6rem, 28vw, 12rem);
+        top: 3rem;
     }
 }
 
+/* ============================================================
+   13. Reduced motion
+   ============================================================ */
 @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
@@ -640,5 +806,9 @@ section {
     .reveal {
         opacity: 1;
         transform: none;
+    }
+
+    .grid-bg {
+        animation: none;
     }
 }
