@@ -7,10 +7,13 @@
     <title>Nolan Ream — Portfolio</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <!-- ===== Architectural background grid ===== -->
+    <div class="grid-bg" aria-hidden="true"></div>
+
     <!-- ===== Navbar ===== -->
     <header class="navbar">
         <a href="#" class="navbar__brand">Nolan Ream</a>
@@ -25,15 +28,17 @@
     </header>
 
     <!-- ===== Hero ===== -->
-    <section class="hero">
+    <section class="hero grid-12">
         <div class="hero__meta">
             <span class="label">Portfolio &mdash; MMXXVI</span>
-            <span class="label">Available for select commissions</span>
+            <span class="label hero__meta--right">Available for select commissions</span>
         </div>
 
         <h1 class="hero__name">
-            <span>Nolan</span>
-            <span><em>Ream.</em></span>
+            <span class="hero__name-line hero__name-line--first">Nolan</span>
+            <span class="hero__name-line hero__name-line--second">
+                <span class="hero__name-stroke">Ream</span><span class="hero__name-dot">.</span>
+            </span>
         </h1>
 
         <div class="hero__footer">
@@ -47,41 +52,36 @@
     </section>
 
     <!-- ===== About ===== -->
-    <section class="about reveal" id="about">
-        <div class="container">
-            <div class="about__grid">
-                <h2 class="about__heading">A quiet pursuit of <em>form</em> &amp; meaning.</h2>
-                <div class="about__body">
-                    <p>
-                        I am a designer and developer working at the intersection of craft, code, and
-                        considered detail. My practice is grounded in restraint — building digital
-                        experiences that feel inevitable rather than imposed.
-                    </p>
-                    <p>
-                        Each project begins with attention: to material, to typography, to the rhythm
-                        of a page. Whether for an emerging studio or a heritage brand, the work aims
-                        for the same outcome — clarity, presence, a small moment of pause.
-                    </p>
-                    <p>
-                        Trained in both visual design and front-end engineering, I move comfortably
-                        between Figma and the browser, treating each as a different language for the
-                        same idea. The result is work that translates without losing its intent.
-                    </p>
-                    <p>
-                        Based in your city, working with collaborators worldwide.
-                    </p>
-                </div>
+    <section class="section about reveal" id="about">
+        <span class="section__watermark" aria-hidden="true">02</span>
+        <div class="grid-12 section__inner">
+            <span class="label section__label">— 02 / About</span>
+            <h2 class="section__title about__heading">
+                A quiet pursuit of <em>form</em> &amp; meaning.
+            </h2>
+            <div class="about__body">
+                <p>
+                    I am an aspiring software engineer and high school student dedicated to creating impactful 
+                    digital experiences through code. Over the course of my academic journey, I have developed 
+                    a strong technical foundation in Java programming along with frontend web development using 
+                    HTML and CSS. My passion for interactive problem-solving also led me into game development, 
+                    where I design and build logic-driven virtual environments. Looking ahead, I plan to pursue 
+                    a bachelor's degree in Computer Science to further elevate my skills and prepare for a 
+                    meaningful career in technology.
+                </p>
             </div>
         </div>
     </section>
 
     <!-- ===== Skills ===== -->
-    <section class="skills reveal" id="skills">
-        <div class="container">
-            <div class="skills__head">
-                <h2 class="skills__title">The <em>practice</em>.</h2>
-                <span class="label">— 02 / Disciplines</span>
-            </div>
+    <section class="section skills reveal" id="skills">
+        <span class="section__watermark" aria-hidden="true">03</span>
+        <div class="grid-12 section__inner">
+            <span class="label section__label">— 03 / Practice</span>
+            <h2 class="section__title skills__title">
+                The disciplines of the <em>studio</em>.
+            </h2>
+
             <ul class="skills__list">
                 <li class="skills__item">
                     <span class="skills__num">01</span>
@@ -113,65 +113,67 @@
     </section>
 
     <!-- ===== Projects ===== -->
-    <section class="projects reveal" id="projects">
-        <div class="container">
-            <div class="projects__head">
-                <h2 class="projects__title">Selected <em>work</em>.</h2>
-                <span class="label">— 03 / Archive</span>
-            </div>
+    <section class="section projects reveal" id="projects">
+        <span class="section__watermark" aria-hidden="true">04</span>
+        <div class="grid-12 section__inner">
+            <span class="label section__label">— 04 / Archive</span>
+            <h2 class="section__title projects__title">
+                Selected <em>work</em>.
+            </h2>
 
-            <div class="projects__grid">
-                <article class="card card--01">
-                    <span class="card__index">N&deg; 01</span>
-                    <div class="card__visual"></div>
-                    <div>
-                        <span class="card__category">Identity &mdash; 2026</span>
-                        <h3 class="card__title">Maison <em>Lumière</em></h3>
-                        <p class="card__description">
-                            A heritage rebrand for a boutique atelier. Restrained typography, custom
-                            wordmark, and a digital system designed for permanence.
-                        </p>
-                        <a href="#" class="card__cta">View case study</a>
-                    </div>
-                </article>
+            <article class="card card--01">
+                <span class="card__index">N&deg; 01</span>
+                <div class="card__visual"></div>
+                <div>
+                    <span class="card__category">Identity &mdash; 2026</span>
+                    <h3 class="card__title">Maison <em>Lumière</em></h3>
+                    <p class="card__description">
+                        A heritage rebrand for a boutique atelier. Restrained typography, custom
+                        wordmark, and a digital system designed for permanence.
+                    </p>
+                    <a href="#" class="card__cta">View case study</a>
+                </div>
+            </article>
 
-                <article class="card card--02">
-                    <span class="card__index">N&deg; 02</span>
-                    <div class="card__visual"></div>
-                    <div>
-                        <span class="card__category">Editorial &mdash; 2025</span>
-                        <h3 class="card__title">Quiet <em>Volumes</em></h3>
-                        <p class="card__description">
-                            A serial publication exploring restraint in contemporary design.
-                        </p>
-                        <a href="#" class="card__cta">View case study</a>
-                    </div>
-                </article>
+            <article class="card card--02">
+                <span class="card__index">N&deg; 02</span>
+                <div class="card__visual"></div>
+                <div>
+                    <span class="card__category">Editorial &mdash; 2025</span>
+                    <h3 class="card__title">Quiet <em>Volumes</em></h3>
+                    <p class="card__description">
+                        A serial publication exploring restraint in contemporary design.
+                    </p>
+                    <a href="#" class="card__cta">View case study</a>
+                </div>
+            </article>
 
-                <article class="card card--03">
-                    <span class="card__index">N&deg; 03</span>
-                    <div class="card__visual"></div>
-                    <div>
-                        <span class="card__category">Digital &mdash; 2025</span>
-                        <h3 class="card__title">Atelier <em>Index</em></h3>
-                        <p class="card__description">
-                            A bespoke portfolio platform for an architectural studio, built around an
-                            editorial grid and a slow, deliberate sense of pacing.
-                        </p>
-                        <a href="#" class="card__cta">View case study</a>
-                    </div>
-                </article>
-            </div>
+            <article class="card card--03">
+                <span class="card__index">N&deg; 03</span>
+                <div class="card__visual"></div>
+                <div>
+                    <span class="card__category">Digital &mdash; 2025</span>
+                    <h3 class="card__title">Atelier <em>Index</em></h3>
+                    <p class="card__description">
+                        A bespoke portfolio platform for an architectural studio, built around an
+                        editorial grid and a slow, deliberate sense of pacing.
+                    </p>
+                    <a href="#" class="card__cta">View case study</a>
+                </div>
+            </article>
         </div>
     </section>
 
     <!-- ===== Footer / Contact ===== -->
     <footer class="footer reveal" id="contact">
-        <span class="footer__label">— 04 / In conversation</span>
-        <a href="mailto:hello@nolanream.com" class="footer__email">hello@nolanream.com</a>
-        <div class="footer__bottom">
-            <span>&copy; <span id="year">2026</span> &mdash; Nolan Ream</span>
-            <span>Crafted with intention</span>
+        <span class="section__watermark footer__watermark" aria-hidden="true">05</span>
+        <div class="grid-12 footer__inner">
+            <span class="label footer__label">— 05 / In conversation</span>
+            <a href="mailto:hello@nolanream.com" class="footer__email">hello@nolanream.com</a>
+            <div class="footer__bottom">
+                <span>&copy; <span id="year">2026</span> &mdash; Nolan Ream</span>
+                <span>Crafted with intention</span>
+            </div>
         </div>
     </footer>
 
