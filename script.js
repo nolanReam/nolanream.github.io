@@ -115,6 +115,7 @@
             cl.setAttribute('stroke', def.color);
             cl.setAttribute('stroke-width', def.sw);
             cl.setAttribute('stroke-linecap', 'butt');
+            cl.setAttribute('shape-rendering', 'crispEdges');
             g.appendChild(cl);
         }
 

@@ -61,6 +61,7 @@ a { color: inherit; text-decoration: none; }
     z-index: 1;
     pointer-events: none;
     overflow: visible;
+    shape-rendering: crispEdges;
 }
 
 .cloud--a {
@@ -89,21 +90,6 @@ a { color: inherit; text-decoration: none; }
     height: 140px;
     opacity: 0.45;
     animation: driftC 90s linear infinite;
-}
-
-@keyframes driftA {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(50vw); }
-}
-
-@keyframes driftB {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-45vw); }
-}
-
-@keyframes driftC {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(35vw); }
 }
 
 @keyframes driftA {
@@ -379,7 +365,7 @@ a { color: inherit; text-decoration: none; }
 .card {
     width: 100%;
     max-width: 800px;
-    margin: 50vh auto;
+    margin: 20vh auto;
     background: var(--surface);
     border: 1px solid var(--hairline);
     padding: 2.5rem;
@@ -528,7 +514,7 @@ a { color: inherit; text-decoration: none; }
 @media (max-width: 768px) {
     .navbar__links { gap: 1.25rem; }
     .section { padding: 10vh var(--pad); }
-    .card { margin: 40vh auto; }
+    .card { margin: 15vh auto; }
 
     .skills__item {
         grid-template-columns: 3rem 1fr;
