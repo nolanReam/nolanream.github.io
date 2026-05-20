@@ -122,77 +122,97 @@
         cloudEls[ci].appendChild(g);
     }
     // ========================================================
-    // 2. SCROLL EVENT LISTENER
-    //    - Moon opacity fade (deep background parallax)
-    //    - Cloud drift via left property (no transform = no blur)
-    //    - Cloud fade on scroll past hero
-    //    - Card viewport-center focus timeline (foreground)
+    // 2. UNIFIED CLOUD SYSTEM
+    //    Drift + scroll parallax combined in one rAF loop.
+    //    Uses transform: translateX() per-frame (not CSS
+    //    animation) so the browser repaints each frame fresh
+    //    without pre-rasterizing the SVG into a blurry bitmap.
+    //
+    //    Seamless wrapping: when a cloud exits one side of the
+    //    viewport, it wraps to the opposite side smoothly.
+    //
+    //    No layout reads inside the animation loop.
     // ========================================================
     var clouds = document.querySelectorAll('.cloud');
     var cards = document.querySelectorAll('.projects__track .card');
     var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    // Cloud drift state — moves via left/right property
-    var cloudPositions = [0, 0, 0];
-    var cloudSpeeds = [0.3, -0.25, 0.2]; // px per frame
-    var lastTime = performance.now();
+    // Cached cloud state — no DOM reads in the loop
+    var cloudState = [
+        { x: 0, speed: 0.4, baseOpacity: 0.5 },
+        { x: 0, speed: -0.3, baseOpacity: 0.4 },
+        { x: 0, speed: 0.25, baseOpacity: 0.45 }
+    ];
 
-    function driftClouds(now) {
-        var dt = (now - lastTime) / 16; // normalize to ~60fps
-        lastTime = now;
-        for (var c = 0; c < clouds.length && c < cloudSpeeds.length; c++) {
-            cloudPositions[c] += cloudSpeeds[c] * dt;
-            // Reset drift when it goes too far
-            if (Math.abs(cloudPositions[c]) > 400) {
-                cloudPositions[c] = 0;
-            }
-            if (c === 1) {
-                // cloud--b uses 'right', so we don't set left
-                clouds[c].style.right = (10 - cloudPositions[c] * 0.1) + 'vw';
-            } else {
-                clouds[c].style.left = 'calc(' + (c === 0 ? '8vw' : '20vw') + ' + ' + cloudPositions[c] + 'px)';
-            }
-        }
-    }
+    // Cache scroll position (updated on scroll event, read in rAF)
+    var cachedScrollY = 0;
+    var cachedVH = window.innerHeight;
+    var cachedVW = window.innerWidth;
+
+    window.addEventListener('resize', function () {
+        cachedVH = window.innerHeight;
+        cachedVW = window.innerWidth;
+    }, { passive: true });
 
     function onScroll() {
-        var scrollY = window.scrollY;
-        var vh = window.innerHeight;
+        cachedScrollY = window.scrollY;
+    }
 
-        // --------------------------------------------------
-        // MOON: fade from opacity 1 to 0 over first viewport
-        // --------------------------------------------------
-        var heroRatio = Math.min(scrollY / vh, 1);
+    // ========================================================
+    // 3. ANIMATION LOOP — combines drift + scroll effects
+    //    No DOM reads (getBoundingClientRect) for clouds.
+    //    Cards still use getBoundingClientRect (acceptable
+    //    since it's only 3 elements and doesn't cause thrash).
+    // ========================================================
+    var prevTime = performance.now();
 
+    function tick(now) {
+        var dt = Math.min((now - prevTime) / 16, 3); // cap at 3x to avoid jumps
+        prevTime = now;
+
+        var heroRatio = Math.min(cachedScrollY / cachedVH, 1);
+
+        // --- Moon fade ---
         if (moonSvg) {
             moonSvg.style.opacity = (1 - heroRatio).toFixed(4);
         }
 
-        // --------------------------------------------------
-        // CLOUDS: fade out as user scrolls past hero
-        // --------------------------------------------------
-        if (clouds.length) {
-            for (var c = 0; c < clouds.length; c++) {
-                if (heroRatio >= 0.95) {
-                    clouds[c].style.visibility = 'hidden';
-                } else {
-                    clouds[c].style.visibility = 'visible';
-                    clouds[c].style.opacity = ((c === 0 ? 0.5 : c === 1 ? 0.4 : 0.45) * (1 - heroRatio)).toFixed(4);
-                }
+        // --- Cloud drift + scroll fade ---
+        for (var c = 0; c < clouds.length && c < cloudState.length; c++) {
+            var state = cloudState[c];
+
+            // Advance horizontal drift
+            state.x += state.speed * dt;
+
+            // Seamless boundary wrapping
+            // Cloud width approximation for wrap calculation
+            var cloudWidth = c === 0 ? 260 : c === 1 ? 180 : 340;
+            var wrapBound = cachedVW + cloudWidth;
+
+            if (state.speed > 0 && state.x > wrapBound * 0.5) {
+                state.x = -(wrapBound * 0.5);
+            } else if (state.speed < 0 && state.x < -(wrapBound * 0.5)) {
+                state.x = wrapBound * 0.5;
+            }
+
+            // Apply transform (drift only — no CSS animation involved)
+            clouds[c].style.transform = 'translateX(' + state.x.toFixed(1) + 'px)';
+
+            // Scroll-linked opacity fade
+            if (heroRatio >= 0.95) {
+                clouds[c].style.opacity = '0';
+            } else {
+                clouds[c].style.opacity = (state.baseOpacity * (1 - heroRatio)).toFixed(4);
             }
         }
 
-        // --------------------------------------------------
-        // CARDS: viewport-center focus timeline
-        // Tighter focus zone (vh * 0.4) so cards pop faster
-        // --------------------------------------------------
-        var viewCenter = vh / 2;
-
+        // --- Card viewport-center focus ---
+        var viewCenter = cachedVH / 2;
         for (var i = 0; i < cards.length; i++) {
             var rect = cards[i].getBoundingClientRect();
             var cardCenter = rect.top + (rect.height / 2);
             var distance = Math.abs(cardCenter - viewCenter);
-            var maxDistance = vh * 0.55;
+            var maxDistance = cachedVH * 0.55;
             var ratio = Math.min(distance / maxDistance, 1);
 
             var scale = 1.05 - (ratio * 0.17);
@@ -201,21 +221,17 @@
             cards[i].style.transform = 'scale(' + scale.toFixed(4) + ')';
             cards[i].style.opacity = opacity.toFixed(4);
         }
-    }
 
-    // Animation loop for cloud drift (no transform, uses left/right)
-    function animationLoop(now) {
-        driftClouds(now);
-        requestAnimationFrame(animationLoop);
+        requestAnimationFrame(tick);
     }
 
     // ========================================================
-    // 3. INITIALIZE
+    // 4. INITIALIZE
     // ========================================================
     if (!reducedMotion) {
         window.addEventListener('scroll', onScroll, { passive: true });
         onScroll();
-        requestAnimationFrame(animationLoop);
+        requestAnimationFrame(tick);
     } else {
         for (var i = 0; i < cards.length; i++) {
             cards[i].style.transform = 'scale(1)';
