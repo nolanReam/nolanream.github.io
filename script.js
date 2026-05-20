@@ -1,6 +1,6 @@
 /* ============================================================
    Nolan Ream — Portfolio
-   Moon SVG · Cinematic Scroll · Staggered Card Sequencing
+   Moon SVG · Dynamic Scroll Interlocking · Staggered Cards
    · Editorial Reveal Masks
    ============================================================ */
 
@@ -68,11 +68,18 @@
     }
 
     // ========================================================
-    // 2. SCROLL-LINKED: Moon fade + Cloud exit
+    // 2. DYNAMIC SCROLL INTERLOCKING
     //
-    //    heroRatio = scrollY / windowHeight, clamped [0, 1]
-    //    Moon: opacity 1 → 0 as user exits hero
-    //    Clouds: translateY pushes them below viewport + fade
+    //    heroRatio = window.scrollY / window.innerHeight [0..1]
+    //
+    //    MOON: opacity drops from 1 → 0 as heroRatio goes 0 → 1
+    //    Completely invisible once user exits the hero frame.
+    //
+    //    CLOUDS: translate diagonally off-screen.
+    //    Cloud A: translate(-50vw, 50vh)
+    //    Cloud B: translate(40vw, 60vh)
+    //    Cloud C: translate(-30vw, 70vh)
+    //    All fade to opacity 0. Completely cleared before About.
     // ========================================================
     var clouds = document.querySelectorAll('.cloud');
     var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -82,17 +89,24 @@
         var vh = window.innerHeight;
         var heroRatio = Math.min(y / vh, 1);
 
-        // Moon fade: 1 → 0 across hero scroll
+        // Moon: linear fade to invisible
         if (moonSvg) {
             moonSvg.style.opacity = (1 - heroRatio).toFixed(4);
         }
 
-        // Clouds: push down out of viewport and fade
-        for (var i = 0; i < clouds.length; i++) {
-            var pushDown = heroRatio * 100;
-            var baseOpacity = i === 0 ? 0.35 : i === 1 ? 0.25 : 0.3;
-            clouds[i].style.transform = 'translateY(' + pushDown + 'vh)';
-            clouds[i].style.opacity = (baseOpacity * (1 - heroRatio)).toFixed(4);
+        // Clouds: translate diagonally off-screen + fade
+        if (clouds.length >= 3) {
+            // Cloud A: exits bottom-left
+            clouds[0].style.transform = 'translate(' + (-50 * heroRatio) + 'vw, ' + (50 * heroRatio) + 'vh)';
+            clouds[0].style.opacity = (0.35 * (1 - heroRatio)).toFixed(4);
+
+            // Cloud B: exits bottom-right
+            clouds[1].style.transform = 'translate(' + (40 * heroRatio) + 'vw, ' + (60 * heroRatio) + 'vh)';
+            clouds[1].style.opacity = (0.4 * (1 - heroRatio)).toFixed(4);
+
+            // Cloud C: exits bottom-left (deeper)
+            clouds[2].style.transform = 'translate(' + (-30 * heroRatio) + 'vw, ' + (70 * heroRatio) + 'vh)';
+            clouds[2].style.opacity = (0.3 * (1 - heroRatio)).toFixed(4);
         }
     }
 
@@ -102,9 +116,10 @@
     }
 
     // ========================================================
-    // 3. EDITORIAL REVEAL MASK — clip-path text entrance
-    //    Elements with .reveal-mask rise from behind a mask
-    //    as they enter the viewport.
+    // 3. EDITORIAL REVEAL MASKS
+    //    Elements with .reveal-mask slide up from inside
+    //    their .reveal-wrap overflow:hidden container.
+    //    Creates luxury curtain-reveal editorial pacing.
     // ========================================================
     var revealMaskEls = document.querySelectorAll('.reveal-mask');
 
@@ -117,8 +132,8 @@
                 }
             }
         }, {
-            threshold: 0.15,
-            rootMargin: '0px 0px -8% 0px'
+            threshold: 0.2,
+            rootMargin: '0px 0px -10% 0px'
         });
 
         for (var i = 0; i < revealMaskEls.length; i++) {
@@ -132,28 +147,25 @@
 
     // ========================================================
     // 4. STAGGERED PROJECT CARD SEQUENCING
-    //    Cards snap into view one-by-one with rhythmic delay.
-    //    Uses IntersectionObserver on .card-seq elements.
-    //    Each card gets a staggered timeout based on data-seq
-    //    attribute (0, 1, 2) creating a cinematic frame-lock
-    //    entrance with steps(8) timing in CSS.
+    //    .card-seq elements get staggered transition delays
+    //    injected via JavaScript based on data-seq index.
+    //    IntersectionObserver triggers .is-visible class.
+    //    CSS handles the steps(8) frame-lock animation.
     // ========================================================
     var cardSeqEls = document.querySelectorAll('.card-seq');
-    var STAGGER_DELAY = 200; // ms between each card reveal
+
+    // Inject staggered transition delays
+    for (var i = 0; i < cardSeqEls.length; i++) {
+        var seqIndex = parseInt(cardSeqEls[i].getAttribute('data-seq'), 10) || 0;
+        cardSeqEls[i].style.transitionDelay = (seqIndex * 150) + 'ms';
+    }
 
     if ('IntersectionObserver' in window && cardSeqEls.length) {
         var cardObserver = new IntersectionObserver(function (entries) {
             for (var i = 0; i < entries.length; i++) {
                 if (entries[i].isIntersecting) {
-                    var card = entries[i].target;
-                    var seq = parseInt(card.getAttribute('data-seq'), 10) || 0;
-                    cardObserver.unobserve(card);
-
-                    (function (el, delay) {
-                        setTimeout(function () {
-                            el.classList.add('is-visible');
-                        }, delay);
-                    })(card, seq * STAGGER_DELAY);
+                    entries[i].target.classList.add('is-visible');
+                    cardObserver.unobserve(entries[i].target);
                 }
             }
         }, {
