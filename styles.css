@@ -1,7 +1,7 @@
 /* ============================================================
    Nolan Ream — Portfolio
-   Pitch Black · Purple Accent · Separated Drifting Clouds
-   Scroll-Driven Viewport-Center Card Scaling
+   Cinematic Parallax · Pitch Black · Purple Accent
+   Multi-Layer Depth · Viewport-Center Focus Timeline
    ============================================================ */
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -26,7 +26,6 @@ body {
     font-weight: 300;
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
-    overflow-x: hidden;
     margin: 0;
     padding: 0;
 }
@@ -35,12 +34,13 @@ a { color: inherit; text-decoration: none; }
 ::selection { background: var(--accent); color: var(--text); }
 
 /* ============================================================
-   MOON — 160x160, fixed, isolated
+   DEEP BACKGROUND: MOON
+   Fixed cosmic anchor. 160x160 explicit. Isolated.
    ============================================================ */
 .moon {
     position: fixed;
-    right: 4vw;
-    top: 12vh;
+    top: 4rem;
+    right: 4rem;
     width: 160px;
     height: 160px;
     z-index: 1;
@@ -50,24 +50,23 @@ a { color: inherit; text-decoration: none; }
 }
 
 /* ============================================================
-   CLOUDS — separated drifting sky layers
-   Three bands at different vertical positions.
-   Fast infinite horizontal drift at different speeds.
-   Soft line-art scanline textures. No bottom stacking.
+   MIDGROUND SKY: CLOUD LAYERS
+   Three fixed bands spaced widely apart vertically.
+   Each drifts horizontally at its own speed for depth.
+   No stacking, no clumping, no bottom overlaps.
    ============================================================ */
 .cloud {
     position: fixed;
-    width: 200vw;
-    left: -50vw;
-    z-index: 0;
+    left: -30vw;
+    width: 160vw;
+    z-index: 1;
     pointer-events: none;
-    will-change: transform, opacity;
 }
 
-/* Cloud A: top band, white scanlines, slow tempo */
 .cloud--a {
     top: 10%;
-    height: 12vh;
+    height: 10vh;
+    opacity: 0.2;
     border-radius: 80% 60% 70% 90% / 50% 80% 40% 60%;
     background: repeating-linear-gradient(
         90deg,
@@ -76,14 +75,13 @@ a { color: inherit; text-decoration: none; }
         transparent 1px,
         transparent 5px
     );
-    opacity: 0.18;
-    animation: sweepRight 18s linear infinite;
+    animation: driftA 20s linear infinite;
 }
 
-/* Cloud B: middle band, purple scanlines, medium tempo */
 .cloud--b {
     top: 35%;
-    height: 10vh;
+    height: 8vh;
+    opacity: 0.15;
     border-radius: 60% 90% 50% 80% / 70% 40% 80% 50%;
     background: repeating-linear-gradient(
         90deg,
@@ -92,14 +90,13 @@ a { color: inherit; text-decoration: none; }
         transparent 1px,
         transparent 4px
     );
-    opacity: 0.24;
-    animation: sweepLeft 13s linear infinite;
+    animation: driftB 14s linear infinite;
 }
 
-/* Cloud C: lower band, denser white scanlines, fastest */
 .cloud--c {
     top: 60%;
-    height: 14vh;
+    height: 12vh;
+    opacity: 0.25;
     border-radius: 70% 50% 90% 60% / 60% 70% 50% 80%;
     background: repeating-linear-gradient(
         90deg,
@@ -108,18 +105,22 @@ a { color: inherit; text-decoration: none; }
         transparent 1px,
         transparent 3px
     );
-    opacity: 0.2;
-    animation: sweepRight 10s linear infinite;
+    animation: driftC 16s linear infinite;
 }
 
-@keyframes sweepRight {
-    0% { transform: translateX(-25vw); }
+@keyframes driftA {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(30vw); }
+}
+
+@keyframes driftB {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-30vw); }
+}
+
+@keyframes driftC {
+    0% { transform: translateX(0); }
     100% { transform: translateX(25vw); }
-}
-
-@keyframes sweepLeft {
-    0% { transform: translateX(25vw); }
-    100% { transform: translateX(-25vw); }
 }
 
 /* ============================================================
@@ -193,7 +194,6 @@ a { color: inherit; text-decoration: none; }
     align-items: center;
     justify-content: center;
     padding: 6rem var(--pad) 4rem;
-    margin: 0 auto;
     width: 100%;
 }
 
@@ -244,7 +244,6 @@ a { color: inherit; text-decoration: none; }
     line-height: 1.8;
     color: var(--muted);
     max-width: 32rem;
-    text-align: center;
 }
 
 .label {
@@ -259,7 +258,7 @@ a { color: inherit; text-decoration: none; }
 }
 
 /* ============================================================
-   SECTIONS — centered, all text fully visible
+   SECTIONS — clean document flow, centered, fully visible
    ============================================================ */
 .section {
     position: relative;
@@ -270,7 +269,6 @@ a { color: inherit; text-decoration: none; }
     flex-direction: column;
     align-items: center;
     width: 100%;
-    margin: 0 auto;
 }
 
 .section__inner {
@@ -290,7 +288,6 @@ a { color: inherit; text-decoration: none; }
     line-height: 0.95;
     letter-spacing: -0.03em;
     margin-bottom: 2.5rem;
-    text-align: center;
 }
 
 .section__title em {
@@ -369,32 +366,37 @@ a { color: inherit; text-decoration: none; }
 }
 
 /* ============================================================
-   PROJECTS — vertical single-column scroll track
-   Massive spacing between cards so only one is centered
-   at any given scroll position.
+   PROJECTS — vertical scroll track
+   Single column. 50vh margin between cards so only ONE
+   occupies the viewport center at any scroll position.
    ============================================================ */
 .projects__track {
-    max-width: 700px;
     width: 100%;
-    margin: 0 auto;
-    padding: 0 var(--pad);
     display: flex;
     flex-direction: column;
     align-items: center;
+    padding: 0 var(--pad);
 }
 
 .card {
     width: 100%;
+    max-width: 800px;
+    margin: 50vh auto;
     background: var(--surface);
     border: 1px solid var(--hairline);
     padding: 2.5rem;
-    margin-bottom: 35vh;
     cursor: pointer;
-    transform: scale(0.85);
-    opacity: 0.2;
-    transition: transform 0.2s ease-out, opacity 0.2s ease-out,
-                border-color 0.3s, box-shadow 0.3s;
+    opacity: 0.25;
+    transform: scale(0.88);
+    transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1),
+                opacity 0.5s ease-out,
+                border-color 0.3s,
+                box-shadow 0.3s;
     will-change: transform, opacity;
+}
+
+.card:first-child {
+    margin-top: 10vh;
 }
 
 .card:last-child {
@@ -482,7 +484,6 @@ a { color: inherit; text-decoration: none; }
     border-top: 1px solid var(--hairline);
     padding: 15vh var(--pad) 3rem;
     width: 100%;
-    margin: 0 auto;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -529,7 +530,7 @@ a { color: inherit; text-decoration: none; }
 @media (max-width: 768px) {
     .navbar__links { gap: 1.25rem; }
     .section { padding: 10vh var(--pad); }
-    .card { margin-bottom: 25vh; }
+    .card { margin: 40vh auto; }
 
     .skills__item {
         grid-template-columns: 3rem 1fr;
@@ -537,7 +538,7 @@ a { color: inherit; text-decoration: none; }
     }
     .skills__meta { grid-column: 2; }
 
-    .moon { width: 100px; height: 100px; top: 7vh; right: 3vw; }
+    .moon { width: 100px; height: 100px; top: 2rem; right: 2rem; }
 
     .footer__bottom {
         flex-direction: column;

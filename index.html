@@ -11,15 +11,15 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- ===== Clouds (fixed, spaced vertically) ===== -->
+    <!-- ===== Midground Sky: Cloud Layers (fixed, z-index: 1) ===== -->
     <div class="cloud cloud--a" aria-hidden="true"></div>
     <div class="cloud cloud--b" aria-hidden="true"></div>
     <div class="cloud cloud--c" aria-hidden="true"></div>
 
-    <!-- ===== Moon (fixed 160x160) ===== -->
+    <!-- ===== Deep Background: Moon (fixed, z-index: 1) ===== -->
     <svg class="moon" viewBox="0 0 200 200" aria-hidden="true"></svg>
 
-    <!-- ===== Navbar ===== -->
+    <!-- ===== Navbar (z-index: 50) ===== -->
     <header class="navbar">
         <a href="#" class="navbar__brand">Nolan Ream</a>
         <nav>
