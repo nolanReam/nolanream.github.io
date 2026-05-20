@@ -59,36 +59,39 @@
 
     // ========================================================
     // 2. CLOUDS — scanline shapes via circle-union calculus
-    //    Each cloud's silhouette is the union of overlapping
-    //    circles. For each x, we find the combined yTop/yBot
-    //    and draw a single vertical line. Same math as moon.
+    //    5 layers with varying sizes, speeds, and positions.
     //    viewBox on each SVG defines the internal coordinate
     //    space; CSS defines the rendered pixel size.
     // ========================================================
     var cloudEls = document.querySelectorAll('.cloud');
     var cloudData = [
-        { w: 240, h: 100, color: '#f4f4f5', speed: 0.5, baseTop: 8,
-          puffs: [{cx:70,cy:60,r:38},{cx:120,cy:45,r:45},{cx:175,cy:55,r:40},{cx:50,cy:70,r:30},{cx:200,cy:65,r:32}] },
-        { w: 160, h: 75, color: '#7c3aed', speed: -0.4, baseTop: 30,
-          puffs: [{cx:45,cy:42,r:30},{cx:80,cy:35,r:35},{cx:120,cy:40,r:32},{cx:140,cy:50,r:25}] },
-        { w: 300, h: 120, color: '#f4f4f5', speed: 0.35, baseTop: 54,
-          puffs: [{cx:60,cy:70,r:42},{cx:110,cy:55,r:50},{cx:165,cy:48,r:48},{cx:220,cy:58,r:44},{cx:270,cy:68,r:36},{cx:40,cy:80,r:30}] }
+        { w: 260, h: 120, color: '#f4f4f5', speed: 0.04, scrollFactor: -0.75, baseTop: 10,
+          puffs: [{cx:70,cy:60,r:38},{cx:130,cy:45,r:45},{cx:190,cy:55,r:40},{cx:50,cy:72,r:30},{cx:220,cy:65,r:32}] },
+        { w: 180, h: 90, color: '#7c3aed', speed: -0.02, scrollFactor: -0.45, baseTop: 25,
+          puffs: [{cx:45,cy:42,r:30},{cx:85,cy:35,r:35},{cx:125,cy:40,r:32},{cx:150,cy:52,r:25}] },
+        { w: 340, h: 140, color: '#f4f4f5', speed: 0.06, scrollFactor: -0.95, baseTop: 45,
+          puffs: [{cx:60,cy:70,r:42},{cx:120,cy:55,r:50},{cx:180,cy:48,r:48},{cx:240,cy:58,r:44},{cx:300,cy:70,r:36},{cx:40,cy:82,r:30}] },
+        { w: 200, h: 100, color: '#7c3aed', speed: 0.03, scrollFactor: -0.60, baseTop: 18,
+          puffs: [{cx:50,cy:55,r:32},{cx:100,cy:42,r:40},{cx:150,cy:50,r:35},{cx:175,cy:62,r:28}] },
+        { w: 280, h: 130, color: '#f4f4f5', speed: -0.04, scrollFactor: -0.80, baseTop: 38,
+          puffs: [{cx:55,cy:65,r:38},{cx:110,cy:50,r:45},{cx:170,cy:55,r:42},{cx:230,cy:62,r:38},{cx:260,cy:75,r:30}] }
     ];
 
-    // Stagger starting X: left, right, center
+    // Stagger starting X positions across different sides
     var vw = window.innerWidth;
-    cloudData[0].x = -260;
+    cloudData[0].x = -280;
     cloudData[1].x = vw + 40;
-    cloudData[2].x = Math.round(vw * 0.25);
+    cloudData[2].x = Math.round(vw * 0.2);
+    cloudData[3].x = Math.round(vw * 0.5);
+    cloudData[4].x = vw + 80;
 
     // Render scanlines into each cloud SVG
-    for (var ci = 0; ci < cloudEls.length; ci++) {
+    for (var ci = 0; ci < cloudEls.length && ci < cloudData.length; ci++) {
         var cd = cloudData[ci];
-        if (!cd) continue;
         cd.phase = Math.random() * Math.PI * 2;
         cd.bobAmp = 4 + Math.random() * 4;
         cd.bobFreq = 0.0003 + Math.random() * 0.0002;
-        cd.baseOpacity = 0.45;
+        cd.baseOpacity = ci === 0 ? 0.25 : ci === 1 ? 0.35 : ci === 2 ? 0.20 : ci === 3 ? 0.30 : 0.22;
 
         for (var lx = 0; lx < cd.w; lx += 3) {
             var yT = cd.h, yB = 0, hit = false;
@@ -143,18 +146,19 @@
             moonSvg.style.opacity = Math.max(0, 1 - heroRatio * 1.2).toFixed(3);
         }
 
-        // Clouds: drift + bob + fade
+        // Clouds: drift + bob + scroll-parallax fade
         for (var c = 0; c < clouds.length && c < cloudData.length; c++) {
             var cd = cloudData[c];
-            cd.x += cd.speed;
+            cd.x += cd.speed * vwCached * 0.01; // speed as % of viewport per frame
 
             // Seamless wrap (only after fully off-screen)
             if (cd.speed > 0 && cd.x > vwCached + cd.w) cd.x = -cd.w;
             else if (cd.speed < 0 && cd.x < -cd.w) cd.x = vwCached;
 
             var bob = Math.sin(ts * cd.bobFreq + cd.phase) * cd.bobAmp;
+            var scrollOffset = scrollY * cd.scrollFactor;
             var qX = Math.round(cd.x / STEP) * STEP;
-            var qY = Math.round(bob / STEP) * STEP;
+            var qY = Math.round((bob + scrollOffset) / STEP) * STEP;
 
             clouds[c].style.transform = 'translate3d(' + qX + 'px,' + qY + 'px,0)';
 
