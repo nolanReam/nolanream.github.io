@@ -11,12 +11,12 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- ===== Background clouds (billowing organic blobs, z-index: 0) ===== -->
+    <!-- ===== Cloud horizon layers (fixed, z-index: 0) ===== -->
     <div class="cloud cloud--a" aria-hidden="true"></div>
     <div class="cloud cloud--b" aria-hidden="true"></div>
     <div class="cloud cloud--c" aria-hidden="true"></div>
 
-    <!-- ===== Crescent moon (fixed, isolated, z-index: 1) ===== -->
+    <!-- ===== Moon (fixed, explicit 160x160, isolated) ===== -->
     <svg class="moon" viewBox="0 0 200 200" aria-hidden="true"></svg>
 
     <!-- ===== Navbar ===== -->
@@ -32,17 +32,19 @@
         </nav>
     </header>
 
-    <!-- ===== Hero (z-index: 5, above clouds and moon) ===== -->
+    <!-- ===== Hero ===== -->
     <section class="hero">
-        <span class="label">Portfolio &mdash; MMXXVI</span>
-        <h1 class="hero__name">
-            <span class="hero__line">Nolan</span>
-            <span class="hero__line hero__line--second"><span class="hero__stroke">Ream</span><span class="hero__dot">.</span></span>
-        </h1>
-        <p class="hero__tag">
-            A practice rooted in considered design, building deliberate
-            digital experiences at the intersection of craft and clarity.
-        </p>
+        <div class="hero__content">
+            <span class="label">Portfolio &mdash; MMXXVI</span>
+            <h1 class="hero__name">
+                <span class="hero__line">Nolan</span>
+                <span class="hero__line hero__line--second"><span class="hero__stroke">Ream</span><span class="hero__dot">.</span></span>
+            </h1>
+            <p class="hero__tag">
+                A practice rooted in considered design, building deliberate
+                digital experiences at the intersection of craft and clarity.
+            </p>
+        </div>
     </section>
 
     <!-- ===== About ===== -->
@@ -109,39 +111,41 @@
         <div class="section__inner">
             <span class="label">— 04 / Archive</span>
             <h2 class="section__title">Selected <em>work</em>.</h2>
-        </div>
-        <div class="projects__grid">
-            <article class="card card--01 reveal">
-                <div class="card__visual"></div>
-                <span class="card__category">Identity &mdash; 2026</span>
-                <h3 class="card__title">Maison <em>Lumière</em></h3>
-                <p class="card__desc">A heritage rebrand for a boutique atelier. Restrained typography, custom wordmark, and a digital system designed for permanence.</p>
-                <a href="#" class="card__cta">View case study &rarr;</a>
-            </article>
-            <article class="card card--02 reveal">
-                <div class="card__visual"></div>
-                <span class="card__category">Editorial &mdash; 2025</span>
-                <h3 class="card__title">Quiet <em>Volumes</em></h3>
-                <p class="card__desc">A serial publication exploring restraint in contemporary design.</p>
-                <a href="#" class="card__cta">View case study &rarr;</a>
-            </article>
-            <article class="card card--03 reveal">
-                <div class="card__visual"></div>
-                <span class="card__category">Digital &mdash; 2025</span>
-                <h3 class="card__title">Atelier <em>Index</em></h3>
-                <p class="card__desc">A bespoke portfolio platform for an architectural studio, built around an editorial grid and a slow, deliberate sense of pacing.</p>
-                <a href="#" class="card__cta">View case study &rarr;</a>
-            </article>
+            <div class="projects__grid">
+                <article class="card card--01 reveal">
+                    <div class="card__visual"></div>
+                    <span class="card__category">Identity &mdash; 2026</span>
+                    <h3 class="card__title">Maison <em>Lumière</em></h3>
+                    <p class="card__desc">A heritage rebrand for a boutique atelier. Restrained typography, custom wordmark, and a digital system designed for permanence.</p>
+                    <a href="#" class="card__cta">View case study &rarr;</a>
+                </article>
+                <article class="card card--02 reveal">
+                    <div class="card__visual"></div>
+                    <span class="card__category">Editorial &mdash; 2025</span>
+                    <h3 class="card__title">Quiet <em>Volumes</em></h3>
+                    <p class="card__desc">A serial publication exploring restraint in contemporary design.</p>
+                    <a href="#" class="card__cta">View case study &rarr;</a>
+                </article>
+                <article class="card card--03 reveal">
+                    <div class="card__visual"></div>
+                    <span class="card__category">Digital &mdash; 2025</span>
+                    <h3 class="card__title">Atelier <em>Index</em></h3>
+                    <p class="card__desc">A bespoke portfolio platform for an architectural studio, built around an editorial grid and a slow, deliberate sense of pacing.</p>
+                    <a href="#" class="card__cta">View case study &rarr;</a>
+                </article>
+            </div>
         </div>
     </section>
 
     <!-- ===== Footer ===== -->
     <footer class="footer" id="contact">
-        <span class="label">— 05 / In conversation</span>
-        <a href="mailto:hello@nolanream.com" class="footer__email">hello@nolanream.com</a>
-        <div class="footer__bottom">
-            <span>&copy; <span id="year">2026</span> &mdash; Nolan Ream</span>
-            <span>Crafted with intention</span>
+        <div class="section__inner">
+            <span class="label">— 05 / In conversation</span>
+            <a href="mailto:hello@nolanream.com" class="footer__email">hello@nolanream.com</a>
+            <div class="footer__bottom">
+                <span>&copy; <span id="year">2026</span> &mdash; Nolan Ream</span>
+                <span>Crafted with intention</span>
+            </div>
         </div>
     </footer>
 

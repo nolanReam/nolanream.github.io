@@ -1,6 +1,6 @@
 /* ============================================================
    Nolan Ream — Portfolio
-   Moon SVG · Cinematic Scroll (moon fade + cloud exit) · Reveal
+   Moon SVG · Scroll-linked moon fade + cloud exit · Reveal
    ============================================================ */
 
 (function () {
@@ -70,17 +70,18 @@
     }
 
     // ========================================================
-    // 2. CINEMATIC SCROLL LISTENER
+    // 2. SCROLL-LINKED ANIMATIONS
     //
-    //    heroRatio = scrollY / windowHeight, clamped 0–1
+    //    heroRatio = scrollY / windowHeight, clamped to [0, 1]
     //
-    //    MOON: opacity goes from 1 → 0 as heroRatio goes 0 → 1.
-    //    By the time user scrolls past the hero, moon is invisible.
+    //    MOON: opacity drops from 1 to 0 as user scrolls through
+    //    the hero section. At scrollY >= windowHeight, moon is
+    //    completely invisible.
     //
-    //    CLOUDS: translate dramatically off-screen as heroRatio
-    //    increases. Cloud A exits far left, Cloud B exits far right,
-    //    Cloud C exits far left. Opacity also fades to 0.
-    //    This leaves About/Skills/Projects completely clean.
+    //    CLOUDS: translate downward (translateY +100vh) as user
+    //    scrolls past hero, pushing them completely below the
+    //    viewport. Opacity also fades to 0. By the time the
+    //    About section is visible, clouds are entirely gone.
     // ========================================================
     var clouds = document.querySelectorAll('.cloud');
     var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -90,26 +91,16 @@
         var vh = window.innerHeight;
         var heroRatio = Math.min(y / vh, 1);
 
-        // Moon: fade completely by end of hero
+        // Moon: fade from 1 to 0 across hero scroll distance
         if (moonSvg) {
-            moonSvg.style.opacity = (1 - heroRatio).toFixed(3);
+            moonSvg.style.opacity = (1 - heroRatio).toFixed(4);
         }
 
-        // Clouds: push off-screen and fade out
-        if (clouds.length >= 3) {
-            var exit = heroRatio * 150;
-
-            // Cloud A — exits far left
-            clouds[0].style.transform = 'translateX(-' + exit + 'vw) translateY(-' + (heroRatio * 40) + 'px)';
-            clouds[0].style.opacity = (0.35 * (1 - heroRatio)).toFixed(3);
-
-            // Cloud B — exits far right
-            clouds[1].style.transform = 'translateX(' + exit + 'vw) translateY(-' + (heroRatio * 25) + 'px)';
-            clouds[1].style.opacity = (0.25 * (1 - heroRatio)).toFixed(3);
-
-            // Cloud C — exits far left (slightly slower)
-            clouds[2].style.transform = 'translateX(-' + (exit * 0.9) + 'vw) translateY(-' + (heroRatio * 35) + 'px)';
-            clouds[2].style.opacity = (0.28 * (1 - heroRatio)).toFixed(3);
+        // Clouds: push down and out of viewport, fade to invisible
+        for (var i = 0; i < clouds.length; i++) {
+            var pushDown = heroRatio * 100;
+            clouds[i].style.transform = 'translateY(' + pushDown + 'vh)';
+            clouds[i].style.opacity = ((i === 1 ? 0.2 : i === 2 ? 0.28 : 0.35) * (1 - heroRatio)).toFixed(4);
         }
     }
 

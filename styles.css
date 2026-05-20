@@ -1,6 +1,6 @@
 /* ============================================================
    Nolan Ream — Portfolio
-   Pitch Black · Billowing Clouds · Cinematic Scroll
+   Pitch Black · Halftone Cloud Horizons · Cinematic Scroll
    Archivo / Space Grotesk · Monochrome + Blue Accent
    ============================================================ */
 
@@ -27,20 +27,40 @@ body {
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
-    position: relative;
+    margin: 0;
+    padding: 0;
 }
 
 a { color: inherit; text-decoration: none; }
 ::selection { background: var(--accent); color: var(--text); }
 
 /* ============================================================
-   CLOUDS — billowing organic blobs with line texture
-   Large explicit dimensions, puffy irregular shapes,
-   gentle vertical drift animation.
-   z-index: 0 ensures text always renders above.
+   MOON — explicit 160x160 box, position fixed, fully isolated.
+   Cannot push or offset any other element in the document.
+   ============================================================ */
+.moon {
+    position: fixed;
+    right: 4vw;
+    top: 12vh;
+    width: 160px;
+    height: 160px;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 1;
+    overflow: visible;
+}
+
+/* ============================================================
+   CLOUDS — realistic horizontal cloud-bank horizons
+   Full viewport width, stacked near the bottom of the hero.
+   Clipped with ellipse to form rolling landscape ridges.
+   Repeating vertical line texture = retro halftone look.
+   z-index: 0 keeps them behind all text (z-index: 5).
    ============================================================ */
 .cloud {
     position: fixed;
+    left: 0;
+    width: 100vw;
     z-index: 0;
     pointer-events: none;
     will-change: transform, opacity;
@@ -55,21 +75,15 @@ a { color: inherit; text-decoration: none; }
 }
 
 .cloud--a {
-    width: 70vw;
-    height: 40vh;
-    top: 10%;
-    left: -8vw;
-    border-radius: 60% 40% 70% 30% / 50% 60% 40% 50%;
-    animation: cloudBob 7s ease-in-out infinite;
+    height: 35vh;
+    bottom: 5vh;
+    clip-path: ellipse(85% 55% at 50% 100%);
 }
 
 .cloud--b {
-    width: 60vw;
-    height: 35vh;
-    top: 35%;
-    right: -5vw;
-    left: auto;
-    border-radius: 45% 55% 35% 65% / 60% 35% 65% 40%;
+    height: 30vh;
+    bottom: 0vh;
+    clip-path: ellipse(75% 50% at 55% 100%);
     background: repeating-linear-gradient(
         90deg,
         var(--accent) 0px,
@@ -77,43 +91,18 @@ a { color: inherit; text-decoration: none; }
         transparent 1px,
         transparent 5px
     );
-    opacity: 0.25;
-    animation: cloudBob 9s ease-in-out infinite reverse;
+    opacity: 0.2;
 }
 
 .cloud--c {
-    width: 75vw;
-    height: 42vh;
-    top: 60%;
-    left: 10vw;
-    border-radius: 55% 45% 60% 40% / 40% 55% 45% 60%;
+    height: 25vh;
+    bottom: -5vh;
+    clip-path: ellipse(90% 60% at 45% 100%);
     opacity: 0.28;
-    animation: cloudBob 8s ease-in-out infinite 1.5s;
-}
-
-@keyframes cloudBob {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-14px); }
 }
 
 /* ============================================================
-   CRESCENT MOON — fixed position, fully isolated
-   Cannot push or offset any content whatsoever.
-   ============================================================ */
-.moon {
-    position: fixed;
-    right: 5vw;
-    top: 12vh;
-    width: clamp(5rem, 9vw, 9rem);
-    height: clamp(5rem, 9vw, 9rem);
-    z-index: 1;
-    pointer-events: none;
-    opacity: 0.85;
-    overflow: visible;
-}
-
-/* ============================================================
-   NAVBAR
+   NAVBAR — centered, no asymmetric offsets
    ============================================================ */
 .navbar {
     position: fixed;
@@ -172,8 +161,7 @@ a { color: inherit; text-decoration: none; }
 .navbar__links a:hover::after { width: 100%; }
 
 /* ============================================================
-   HERO — text layered above clouds with z-index: 5
-   Centered with max-width + auto margins
+   HERO — perfectly centered, text above all background
    ============================================================ */
 .hero {
     position: relative;
@@ -181,11 +169,21 @@ a { color: inherit; text-decoration: none; }
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    align-items: center;
     justify-content: center;
     padding: 6rem var(--pad) 4rem;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.hero__content {
     max-width: 900px;
     width: 100%;
     margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
 }
 
 .hero__name {
@@ -202,7 +200,6 @@ a { color: inherit; text-decoration: none; }
 }
 
 .hero__line--second {
-    padding-left: 10vw;
     font-weight: 300;
 }
 
@@ -225,7 +222,8 @@ a { color: inherit; text-decoration: none; }
     font-size: 1.05rem;
     line-height: 1.8;
     color: var(--muted);
-    max-width: 30rem;
+    max-width: 32rem;
+    text-align: center;
 }
 
 .label {
@@ -242,15 +240,19 @@ a { color: inherit; text-decoration: none; }
 }
 
 /* ============================================================
-   SECTIONS — perfectly centered horizontal axis
-   All wrappers use margin: 0 auto with consistent max-width.
-   z-index: 5 keeps text above background clouds.
+   SECTIONS — all perfectly centered on horizontal axis
    ============================================================ */
 .section {
     position: relative;
     z-index: 5;
     padding: 15vh var(--pad);
     border-top: 1px solid var(--hairline);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin: 0 auto;
 }
 
 .section__inner {
@@ -259,6 +261,10 @@ a { color: inherit; text-decoration: none; }
     margin: 0 auto;
     position: relative;
     z-index: 5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
 }
 
 .section__title {
@@ -268,6 +274,7 @@ a { color: inherit; text-decoration: none; }
     line-height: 0.95;
     letter-spacing: -0.03em;
     margin-bottom: 2.5rem;
+    text-align: center;
 }
 
 .section__title em {
@@ -277,13 +284,15 @@ a { color: inherit; text-decoration: none; }
 }
 
 /* ============================================================
-   ABOUT — centered within section__inner
+   ABOUT
    ============================================================ */
 .about__body {
     max-width: 640px;
-    margin-top: 1rem;
+    width: 100%;
+    margin: 1rem auto 0;
     position: relative;
     z-index: 5;
+    text-align: left;
 }
 
 .about__body p {
@@ -294,7 +303,7 @@ a { color: inherit; text-decoration: none; }
 }
 
 /* ============================================================
-   SKILLS — centered grid layout
+   SKILLS
    ============================================================ */
 .skills__list {
     list-style: none;
@@ -302,6 +311,8 @@ a { color: inherit; text-decoration: none; }
     margin-top: 1.5rem;
     position: relative;
     z-index: 5;
+    width: 100%;
+    text-align: left;
 }
 
 .skills__item {
@@ -346,18 +357,18 @@ a { color: inherit; text-decoration: none; }
 }
 
 /* ============================================================
-   PROJECTS — centered magazine grid
+   PROJECTS — centered grid
    ============================================================ */
 .projects__grid {
     display: grid;
-    grid-template-columns: repeat(12, 1fr);
+    grid-template-columns: 1fr 1fr;
     gap: 2rem;
     max-width: 900px;
     width: 100%;
     margin: 3rem auto 0;
-    padding: 0 var(--pad);
     position: relative;
     z-index: 5;
+    text-align: left;
 }
 
 .card {
@@ -370,9 +381,9 @@ a { color: inherit; text-decoration: none; }
     cursor: pointer;
 }
 
-.card--01 { grid-column: 1 / 7; }
-.card--02 { grid-column: 7 / 13; margin-top: 6rem; }
-.card--03 { grid-column: 2 / 12; margin-top: 3rem; }
+.card--01 { grid-column: 1 / 2; }
+.card--02 { grid-column: 2 / 3; margin-top: 4rem; }
+.card--03 { grid-column: 1 / -1; }
 
 .card:hover {
     transform: translateY(-8px);
@@ -455,10 +466,15 @@ a { color: inherit; text-decoration: none; }
     z-index: 5;
     border-top: 1px solid var(--hairline);
     padding: 15vh var(--pad) 3rem;
-    text-align: center;
-    max-width: 900px;
     width: 100%;
     margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.footer .section__inner {
+    text-align: center;
 }
 
 .footer__email {
@@ -485,6 +501,7 @@ a { color: inherit; text-decoration: none; }
     border-top: 1px solid var(--hairline);
     display: flex;
     justify-content: space-between;
+    width: 100%;
     font-size: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 0.3em;
@@ -510,9 +527,12 @@ a { color: inherit; text-decoration: none; }
    RESPONSIVE
    ============================================================ */
 @media (max-width: 768px) {
-    .hero__line--second { padding-left: 6vw; }
     .navbar__links { gap: 1.25rem; }
     .section { padding: 10vh var(--pad); }
+
+    .projects__grid {
+        grid-template-columns: 1fr;
+    }
 
     .card--01, .card--02, .card--03 {
         grid-column: 1 / -1;
@@ -525,11 +545,7 @@ a { color: inherit; text-decoration: none; }
     }
     .skills__meta { grid-column: 2; }
 
-    .cloud--a { width: 85vw; height: 30vh; top: 8%; left: -12vw; }
-    .cloud--b { width: 75vw; height: 28vh; top: 35%; right: -8vw; }
-    .cloud--c { width: 90vw; height: 35vh; top: 58%; left: 5vw; }
-
-    .moon { width: 4rem; height: 4rem; top: 7vh; right: 4vw; }
+    .moon { width: 100px; height: 100px; top: 7vh; right: 3vw; }
 
     .footer__bottom {
         flex-direction: column;
@@ -544,5 +560,4 @@ a { color: inherit; text-decoration: none; }
         transition-duration: 0.01ms !important;
     }
     .reveal { opacity: 1; transform: none; }
-    .cloud { animation: none; }
 }
