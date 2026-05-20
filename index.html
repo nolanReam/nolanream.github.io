@@ -11,8 +11,22 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- ===== Architectural background grid ===== -->
+    <!-- ===== Architectural blueprint background ===== -->
     <div class="grid-bg" aria-hidden="true"></div>
+
+    <!-- ===== 12-column full-page alignment lines ===== -->
+    <div class="column-lines" aria-hidden="true">
+        <span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span>
+    </div>
+
+    <!-- ===== Drifting line-clouds (parallax background) ===== -->
+    <div class="sky" aria-hidden="true">
+        <div class="cloud cloud--01"></div>
+        <div class="cloud cloud--02"></div>
+        <div class="cloud cloud--03"></div>
+    </div>
 
     <!-- ===== Navbar ===== -->
     <header class="navbar">
@@ -29,6 +43,12 @@
 
     <!-- ===== Hero ===== -->
     <section class="hero grid-12">
+        <!-- Crescent moon -->
+        <div class="moon" aria-hidden="true">
+            <div class="moon__halo"></div>
+            <div class="moon__body"></div>
+        </div>
+
         <div class="hero__meta">
             <span class="label">Portfolio &mdash; MMXXVI</span>
             <span class="label hero__meta--right">Available for select commissions</span>
@@ -126,7 +146,7 @@
                 Selected <em>work</em>.
             </h2>
 
-            <article class="card card--01">
+            <article class="card card--01 reveal-card" style="--card-delay: 0ms;">
                 <span class="card__index">N&deg; 01</span>
                 <div class="card__visual"></div>
                 <div>
@@ -140,7 +160,7 @@
                 </div>
             </article>
 
-            <article class="card card--02">
+            <article class="card card--02 reveal-card" style="--card-delay: 120ms;">
                 <span class="card__index">N&deg; 02</span>
                 <div class="card__visual"></div>
                 <div>
@@ -153,7 +173,7 @@
                 </div>
             </article>
 
-            <article class="card card--03">
+            <article class="card card--03 reveal-card" style="--card-delay: 240ms;">
                 <span class="card__index">N&deg; 03</span>
                 <div class="card__visual"></div>
                 <div>

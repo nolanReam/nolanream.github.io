@@ -1,6 +1,6 @@
 /* ============================================================
    Nolan Ream — Portfolio
-   Elevated dark editorial / architectural blueprint aesthetic
+   Night sky · architectural blueprint · luxury editorial
    ============================================================ */
 
 /* ---------- Reset ---------- */
@@ -18,22 +18,27 @@ html {
 
 :root {
     --bg: #0a0a0a;
+    --bg-deep: #050507;
     --surface: #141416;
     --text: #f5f5f7;
     --muted: #8a8a92;
     --accent: #7c3aed;
     --accent-soft: rgba(124, 58, 237, 0.07);
-    --accent-line: rgba(124, 58, 237, 0.18);
+    --accent-glow: rgba(124, 58, 237, 0.35);
     --hairline: rgba(245, 245, 247, 0.08);
     --hairline-strong: rgba(245, 245, 247, 0.16);
     --serif: 'Cormorant Garamond', 'Times New Roman', serif;
     --sans: 'Inter', system-ui, -apple-system, sans-serif;
     --gutter: clamp(1.25rem, 4vw, 3rem);
     --col-gap: 1.5rem;
+    --max-w: 1600px;
 }
 
 body {
-    background: var(--bg);
+    background:
+        radial-gradient(ellipse at 80% 0%, rgba(124, 58, 237, 0.06), transparent 55%),
+        radial-gradient(ellipse at 20% 100%, rgba(124, 58, 237, 0.04), transparent 50%),
+        var(--bg);
     color: var(--text);
     font-family: var(--sans);
     font-weight: 300;
@@ -55,8 +60,15 @@ a {
 }
 
 /* ============================================================
-   1. Architectural blueprint background — vertical lines
+   Background layer stack (z-index order):
+   0  body gradient
+   1  .grid-bg          (vertical hairline scaffold)
+   2  .sky / .cloud     (drifting line-clouds)
+   3  .column-lines     (full-page 12-col dividers)
+   4  .navbar / sections / footer (content)
    ============================================================ */
+
+/* ---------- 1. Architectural blueprint scaffold ------------- */
 .grid-bg {
     position: fixed;
     inset: 0;
@@ -64,9 +76,6 @@ a {
     height: 100vh;
     pointer-events: none;
     z-index: 1;
-    /* Two layered repeating gradients — a fine 80px scaffold plus
-       a sparser 240px accent line, so the texture reads like
-       an architectural drawing rather than a flat grid. */
     background-image:
         repeating-linear-gradient(
             to right,
@@ -83,44 +92,168 @@ a {
             transparent 240px
         );
     background-size: 80px 100%, 240px 100%;
-    animation: gridDrift 28s linear infinite;
-    /* Faint vignette so the lines feel deeper at the edges */
-    mask-image: linear-gradient(
-        to bottom,
-        transparent 0,
-        #000 8%,
-        #000 92%,
-        transparent 100%
-    );
-    -webkit-mask-image: linear-gradient(
-        to bottom,
-        transparent 0,
-        #000 8%,
-        #000 92%,
-        transparent 100%
-    );
+    animation: gridDrift 32s linear infinite;
+    mask-image: linear-gradient(to bottom, transparent 0, #000 6%, #000 94%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 6%, #000 94%, transparent 100%);
 }
 
 @keyframes gridDrift {
-    from {
-        background-position: 0 0, 0 0;
-    }
-    to {
-        background-position: 80px 0, 240px 0;
-    }
+    from { background-position: 0 0, 0 0; }
+    to   { background-position: 80px 0, 240px 0; }
 }
 
-/* Push every page element above the grid layer */
+/* ---------- 2. Drifting line-clouds -------------------------- */
+.sky {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 2;
+    overflow: hidden;
+}
+
+.cloud {
+    position: absolute;
+    pointer-events: none;
+    /* Vertical line texture matching the reference image */
+    background-image: repeating-linear-gradient(
+        to right,
+        rgba(124, 58, 237, 0.55) 0,
+        rgba(124, 58, 237, 0.55) 1px,
+        transparent 1px,
+        transparent 5px
+    );
+    /* Soft organic shape via blob border-radius + radial mask */
+    -webkit-mask-image: radial-gradient(
+        ellipse at center,
+        #000 0%,
+        rgba(0, 0, 0, 0.85) 35%,
+        rgba(0, 0, 0, 0.4) 65%,
+        transparent 80%
+    );
+    mask-image: radial-gradient(
+        ellipse at center,
+        #000 0%,
+        rgba(0, 0, 0, 0.85) 35%,
+        rgba(0, 0, 0, 0.4) 65%,
+        transparent 80%
+    );
+    opacity: 0.35;
+    filter: blur(0.4px);
+    will-change: transform;
+}
+
+.cloud--01 {
+    width: 60vw;
+    height: 22vh;
+    top: 14%;
+    left: -25vw;
+    border-radius: 60% 40% 55% 45% / 50% 60% 40% 50%;
+    animation: cloudDriftA 70s linear infinite;
+    opacity: 0.4;
+}
+
+.cloud--02 {
+    width: 45vw;
+    height: 18vh;
+    top: 48%;
+    left: -15vw;
+    border-radius: 50% 50% 60% 40% / 45% 55% 45% 55%;
+    animation: cloudDriftB 95s linear infinite;
+    opacity: 0.28;
+    filter: blur(0.6px);
+}
+
+.cloud--03 {
+    width: 70vw;
+    height: 26vh;
+    top: 78%;
+    left: -30vw;
+    border-radius: 55% 45% 45% 55% / 60% 40% 60% 40%;
+    animation: cloudDriftC 120s linear infinite;
+    opacity: 0.32;
+}
+
+@keyframes cloudDriftA {
+    0%   { transform: translate3d(0, 0, 0); }
+    100% { transform: translate3d(160vw, -2vh, 0); }
+}
+
+@keyframes cloudDriftB {
+    0%   { transform: translate3d(0, 0, 0); }
+    100% { transform: translate3d(150vw, 3vh, 0); }
+}
+
+@keyframes cloudDriftC {
+    0%   { transform: translate3d(0, 0, 0); }
+    100% { transform: translate3d(170vw, -1vh, 0); }
+}
+
+/* ---------- 3. Full-page 12-column alignment lines ---------- */
+.column-lines {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 3;
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: var(--col-gap);
+    padding: 0 var(--gutter);
+    max-width: var(--max-w);
+    margin: 0 auto;
+    left: 0;
+    right: 0;
+    /* Soft top/bottom fade so the lines don't feel hard-edged */
+    mask-image: linear-gradient(to bottom, transparent 0, #000 4%, #000 96%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 4%, #000 96%, transparent 100%);
+}
+
+.column-lines span {
+    position: relative;
+    height: 100%;
+}
+
+.column-lines span::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: calc(var(--col-gap) / -2);
+    width: 1px;
+    height: 100%;
+    background: linear-gradient(
+        to bottom,
+        transparent 0,
+        rgba(245, 245, 247, 0.05) 12%,
+        rgba(245, 245, 247, 0.05) 88%,
+        transparent 100%
+    );
+}
+
+/* Accent the central column line in subtle purple */
+.column-lines span:nth-child(6)::after {
+    background: linear-gradient(
+        to bottom,
+        transparent 0,
+        rgba(124, 58, 237, 0.18) 12%,
+        rgba(124, 58, 237, 0.18) 88%,
+        transparent 100%
+    );
+}
+
+/* ---------- Lift content above background layers ----------- */
 .navbar,
 .hero,
 .section,
 .footer {
     position: relative;
-    z-index: 2;
+    z-index: 4;
 }
 
 /* ============================================================
-   2. Typography helpers
+   Typography helpers
    ============================================================ */
 .label {
     font-family: var(--sans);
@@ -145,7 +278,7 @@ a {
 }
 
 /* ============================================================
-   3. Twelve-column magazine grid
+   12-column magazine grid
    ============================================================ */
 .grid-12 {
     display: grid;
@@ -154,12 +287,12 @@ a {
     padding-left: var(--gutter);
     padding-right: var(--gutter);
     width: 100%;
-    max-width: 1600px;
+    max-width: var(--max-w);
     margin: 0 auto;
 }
 
 /* ============================================================
-   4. Section base — immense whitespace + watermark numerals
+   Section base
    ============================================================ */
 .section {
     padding: 14rem 0;
@@ -193,13 +326,13 @@ a {
 }
 
 /* ============================================================
-   5. Reveal animation (driven by script.js)
+   Cinematic reveal animation (driven by script.js)
    ============================================================ */
 .reveal {
     opacity: 0;
-    transform: translateY(40px);
-    transition: opacity 1.1s cubic-bezier(0.2, 0.8, 0.2, 1),
-                transform 1.1s cubic-bezier(0.2, 0.8, 0.2, 1);
+    transform: translateY(48px);
+    transition: opacity 1.2s cubic-bezier(0.2, 0.8, 0.2, 1),
+                transform 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
     will-change: opacity, transform;
 }
 
@@ -208,8 +341,20 @@ a {
     transform: translateY(0);
 }
 
+.reveal-card {
+    opacity: 0;
+    transform: translateY(60px);
+    transition: opacity 1.1s cubic-bezier(0.2, 0.8, 0.2, 1) var(--card-delay, 0ms),
+                transform 1.1s cubic-bezier(0.2, 0.8, 0.2, 1) var(--card-delay, 0ms);
+}
+
+.reveal-card.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
 /* ============================================================
-   6. Navbar
+   Navbar
    ============================================================ */
 .navbar {
     position: fixed;
@@ -221,7 +366,7 @@ a {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: rgba(10, 10, 10, 0.7);
+    background: rgba(10, 10, 10, 0.72);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     border-bottom: 1px solid var(--hairline);
@@ -253,7 +398,6 @@ a {
     transition: color 0.4s ease;
 }
 
-/* Center-out expanding underline */
 .navbar__links a::after {
     content: '';
     position: absolute;
@@ -266,16 +410,11 @@ a {
     transition: width 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-.navbar__links a:hover {
-    color: var(--text);
-}
-
-.navbar__links a:hover::after {
-    width: 100%;
-}
+.navbar__links a:hover { color: var(--text); }
+.navbar__links a:hover::after { width: 100%; }
 
 /* ============================================================
-   7. Hero
+   Hero — with crescent moon
    ============================================================ */
 .hero {
     min-height: 100vh;
@@ -293,9 +432,7 @@ a {
     animation: fadeUp 1.2s ease 0.2s forwards;
 }
 
-.hero__meta--right {
-    text-align: right;
-}
+.hero__meta--right { text-align: right; }
 
 .hero__name {
     grid-column: 1 / -1;
@@ -304,6 +441,8 @@ a {
     font-size: clamp(4.5rem, 16vw, 16rem);
     line-height: 0.88;
     letter-spacing: -0.03em;
+    position: relative;
+    z-index: 5;
 }
 
 .hero__name-line {
@@ -324,11 +463,9 @@ a {
     animation-delay: 0.7s;
 }
 
-/* Brutalist outlined surname */
 .hero__name-stroke {
     color: transparent;
     -webkit-text-stroke: 1.2px var(--text);
-    text-stroke: 1.2px var(--text);
     transition: color 0.6s ease, -webkit-text-stroke 0.6s ease;
 }
 
@@ -337,9 +474,7 @@ a {
     -webkit-text-stroke: 1.2px var(--accent);
 }
 
-.hero__name-dot {
-    color: var(--accent);
-}
+.hero__name-dot { color: var(--accent); }
 
 .hero__footer {
     grid-column: 2 / span 10;
@@ -366,18 +501,68 @@ a {
 }
 
 @keyframes fadeUp {
-    from {
-        opacity: 0;
-        transform: translateY(60px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(60px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------- Crescent moon ----------------------------------- */
+.moon {
+    position: absolute;
+    top: 14vh;
+    right: clamp(2rem, 8vw, 7rem);
+    width: clamp(6rem, 11vw, 11rem);
+    height: clamp(6rem, 11vw, 11rem);
+    z-index: 3;
+    pointer-events: none;
+    opacity: 0;
+    animation: moonRise 2s cubic-bezier(0.2, 0.8, 0.2, 1) 0.6s forwards,
+               moonFloat 9s ease-in-out 2.6s infinite;
+}
+
+.moon__halo {
+    position: absolute;
+    inset: -40%;
+    border-radius: 50%;
+    background: radial-gradient(
+        circle at center,
+        rgba(124, 58, 237, 0.22) 0%,
+        rgba(124, 58, 237, 0.08) 35%,
+        transparent 70%
+    );
+    filter: blur(8px);
+}
+
+.moon__body {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    /* Crescent via offset inner box-shadow:
+       a smaller dark "shadow disc" eats the right side of the
+       glowing circle, leaving a sharp crescent. */
+    background: radial-gradient(
+        circle at 35% 35%,
+        #fafaff 0%,
+        #e9e6ff 45%,
+        #b8a9ff 100%
+    );
+    box-shadow:
+        inset -22px 6px 0 0 var(--bg),
+        0 0 28px 4px rgba(124, 58, 237, 0.25),
+        0 0 80px 12px rgba(124, 58, 237, 0.12);
+}
+
+@keyframes moonRise {
+    from { opacity: 0; transform: translateY(40px) scale(0.94); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes moonFloat {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50%      { transform: translateY(-14px) rotate(-1.5deg); }
 }
 
 /* ============================================================
-   8. About
+   About
    ============================================================ */
 .about__heading {
     grid-column: 2 / span 9;
@@ -398,11 +583,9 @@ a {
     max-width: 38rem;
 }
 
-.about__body p:last-child {
-    margin-bottom: 0;
-}
+.about__body p:last-child { margin-bottom: 0; }
 
-.about__body p::first-letter {
+.about__body p:first-child::first-letter {
     font-family: var(--serif);
     font-size: 2.4em;
     font-style: italic;
@@ -413,11 +596,9 @@ a {
 }
 
 /* ============================================================
-   9. Skills
+   Skills
    ============================================================ */
-.skills__title {
-    grid-column: 2 / span 9;
-}
+.skills__title { grid-column: 2 / span 9; }
 
 .skills__list {
     grid-column: 2 / span 11;
@@ -441,7 +622,7 @@ a {
     padding-left: 2rem;
     background: linear-gradient(
         to right,
-        rgba(124, 58, 237, 0.05),
+        rgba(124, 58, 237, 0.06),
         transparent 40%
     );
 }
@@ -475,14 +656,10 @@ a {
 }
 
 /* ============================================================
-   10. Projects — asymmetrical magazine layout
+   Projects — asymmetrical magazine layout, slate cards
    ============================================================ */
-.projects__title {
-    grid-column: 2 / span 9;
-}
+.projects__title { grid-column: 2 / span 9; }
 
-/* Cards intentionally start/end on odd column lines so they
-   collide with the vertical background grid. */
 .card {
     position: relative;
     background: var(--surface);
@@ -491,25 +668,30 @@ a {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1),
+    transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1),
                 border-color 0.5s ease,
-                box-shadow 0.5s ease;
+                box-shadow 0.6s ease;
     overflow: hidden;
-    margin-top: 4rem;
+    /* Slight slate sheen for depth */
+    background-image: linear-gradient(
+        145deg,
+        rgba(255, 255, 255, 0.018) 0%,
+        transparent 60%
+    );
 }
 
 .card--01 {
-    grid-column: 2 / 8;   /* spans col lines 2 → 8 (odd-ish offset) */
+    grid-column: 2 / 8;
     margin-top: 5rem;
 }
 
 .card--02 {
-    grid-column: 8 / 12;  /* offset to the right, smaller */
-    margin-top: 12rem;    /* deliberate stagger */
+    grid-column: 8 / 12;
+    margin-top: 12rem;
 }
 
 .card--03 {
-    grid-column: 4 / 11;  /* lower, wider, recessed center-right */
+    grid-column: 4 / 11;
     margin-top: 6rem;
 }
 
@@ -519,7 +701,7 @@ a {
     inset: 0;
     background: radial-gradient(
         circle at top right,
-        rgba(124, 58, 237, 0.14),
+        rgba(124, 58, 237, 0.16),
         transparent 60%
     );
     opacity: 0;
@@ -528,14 +710,15 @@ a {
 }
 
 .card:hover {
-    transform: translateY(-10px);
+    transform: translateY(-12px);
     border-color: var(--accent);
-    box-shadow: 4px 4px 0 0 var(--accent);
+    box-shadow:
+        4px 4px 0 0 var(--accent),
+        0 0 0 1px rgba(124, 58, 237, 0.25),
+        0 30px 80px -20px var(--accent-glow);
 }
 
-.card:hover::before {
-    opacity: 1;
-}
+.card:hover::before { opacity: 1; }
 
 .card__visual {
     aspect-ratio: 4 / 3;
@@ -557,7 +740,6 @@ a {
         radial-gradient(circle at 70% 70%, rgba(245, 245, 247, 0.04), transparent 60%);
 }
 
-/* Vertical line texture inside the card visual to echo the grid */
 .card__visual::before {
     content: '';
     position: absolute;
@@ -603,9 +785,7 @@ a {
     letter-spacing: -0.005em;
 }
 
-.card__title em {
-    font-style: italic;
-}
+.card__title em { font-style: italic; }
 
 .card__description {
     font-size: 0.95rem;
@@ -638,7 +818,7 @@ a {
 }
 
 /* ============================================================
-   11. Footer / Contact
+   Footer / Contact
    ============================================================ */
 .footer {
     position: relative;
@@ -653,10 +833,7 @@ a {
     justify-items: center;
 }
 
-.footer__label {
-    grid-column: 1 / -1;
-    color: var(--muted);
-}
+.footer__label { grid-column: 1 / -1; color: var(--muted); }
 
 .footer__email {
     grid-column: 2 / span 10;
@@ -691,12 +868,10 @@ a {
     color: var(--muted);
 }
 
-.footer__watermark {
-    top: 4rem;
-}
+.footer__watermark { top: 4rem; }
 
 /* ============================================================
-   12. Responsive
+   Responsive
    ============================================================ */
 @media (max-width: 900px) {
     :root {
@@ -704,21 +879,11 @@ a {
         --col-gap: 0.75rem;
     }
 
-    .navbar {
-        padding: 1.25rem var(--gutter);
-    }
+    .navbar { padding: 1.25rem var(--gutter); }
+    .navbar__links { gap: 1.25rem; }
 
-    .navbar__links {
-        gap: 1.25rem;
-    }
-
-    .section {
-        padding: 8rem 0;
-    }
-
-    .hero {
-        padding: 9rem 0 5rem;
-    }
+    .section { padding: 8rem 0; }
+    .hero { padding: 9rem 0 5rem; }
 
     .hero__meta,
     .hero__footer {
@@ -728,16 +893,16 @@ a {
         gap: 1rem;
     }
 
-    .hero__meta--right {
-        text-align: left;
-    }
+    .hero__meta--right { text-align: left; }
 
-    .hero__name-line--first {
-        padding-left: 0;
-    }
+    .hero__name-line--first { padding-left: 0; }
+    .hero__name-line--second { padding-left: 6vw; }
 
-    .hero__name-line--second {
-        padding-left: 6vw;
+    .moon {
+        top: 9vh;
+        right: 1.5rem;
+        width: 5rem;
+        height: 5rem;
     }
 
     .section__label,
@@ -757,9 +922,7 @@ a {
         padding: 2rem 0;
     }
 
-    .skills__meta {
-        grid-column: 2;
-    }
+    .skills__meta { grid-column: 2; }
 
     .card--01,
     .card--02,
@@ -768,14 +931,10 @@ a {
         margin-top: 3rem;
     }
 
-    .footer {
-        padding: 8rem 0 3rem;
-    }
+    .footer { padding: 8rem 0 3rem; }
 
     .footer__email,
-    .footer__bottom {
-        grid-column: 1 / -1;
-    }
+    .footer__bottom { grid-column: 1 / -1; }
 
     .footer__bottom {
         flex-direction: column;
@@ -788,10 +947,14 @@ a {
         font-size: clamp(6rem, 28vw, 12rem);
         top: 3rem;
     }
+
+    /* Lighten background layer count on small screens */
+    .cloud--02 { display: none; }
+    .column-lines { display: none; }
 }
 
 /* ============================================================
-   13. Reduced motion
+   Reduced motion
    ============================================================ */
 @media (prefers-reduced-motion: reduce) {
     *,
@@ -803,12 +966,9 @@ a {
         scroll-behavior: auto !important;
     }
 
-    .reveal {
-        opacity: 1;
-        transform: none;
-    }
+    .reveal,
+    .reveal-card { opacity: 1; transform: none; }
 
-    .grid-bg {
-        animation: none;
-    }
+    .grid-bg,
+    .cloud { animation: none; }
 }

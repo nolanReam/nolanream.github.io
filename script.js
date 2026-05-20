@@ -1,7 +1,7 @@
-/* ===========================================================
+/* ============================================================
    Nolan Ream — Portfolio
    Light interaction layer
-   =========================================================== */
+   ============================================================ */
 
 (function () {
     'use strict';
@@ -12,8 +12,8 @@
         yearEl.textContent = new Date().getFullYear();
     }
 
-    // --- Scroll-reveal for sections marked .reveal ----------
-    const revealEls = document.querySelectorAll('.reveal');
+    // --- Cinematic scroll reveal ---------------------------
+    const revealEls = document.querySelectorAll('.reveal, .reveal-card');
 
     if ('IntersectionObserver' in window && revealEls.length > 0) {
         const observer = new IntersectionObserver(
@@ -30,7 +30,6 @@
 
         revealEls.forEach((el) => observer.observe(el));
     } else {
-        // Fallback: just show everything
         revealEls.forEach((el) => el.classList.add('is-visible'));
     }
 
@@ -43,8 +42,32 @@
                 window.requestAnimationFrame(() => {
                     navbar.style.borderBottomColor =
                         window.scrollY > 8
-                            ? 'rgba(245, 245, 247, 0.14)'
+                            ? 'rgba(245, 245, 247, 0.16)'
                             : 'rgba(245, 245, 247, 0.08)';
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        };
+        window.addEventListener('scroll', onScroll, { passive: true });
+    }
+
+    // --- Subtle scroll-driven cloud parallax ----------------
+    // Layers the CSS keyframe drift with a small Y offset based
+    // on scroll position, so the night sky breathes as you move.
+    const clouds = document.querySelectorAll('.cloud');
+    if (clouds.length && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        let ticking = false;
+        const speeds = [0.05, 0.08, 0.03];
+        const onScroll = () => {
+            if (!ticking) {
+                window.requestAnimationFrame(() => {
+                    const y = window.scrollY;
+                    clouds.forEach((cloud, i) => {
+                        const offset = -(y * (speeds[i] || 0.05));
+                        cloud.style.setProperty('--scroll-y', `${offset}px`);
+                        cloud.style.translate = `0 ${offset}px`;
+                    });
                     ticking = false;
                 });
                 ticking = true;
