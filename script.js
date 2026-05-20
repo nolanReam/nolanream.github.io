@@ -68,33 +68,57 @@
     }
 
     // ========================================================
-    // 1b. SVG CLOUDS — same vertical scanline style as moon
-    //     Fill each cloud SVG with vertical lines spanning
-    //     its full viewBox height. The CSS border-radius +
-    //     overflow:hidden clips them into cloud shapes that
-    //     morph over time via animation.
+    // 1b. SVG CLOUDS — identical technique to moon
+    //     Each cloud SVG gets a <clipPath> with a cloud-shaped
+    //     path, then vertical scanlines are drawn and clipped.
+    //     No CSS blur, no border-radius, no overflow:hidden.
+    //     Pure SVG geometry, same as the crescent moon.
     // ========================================================
     var cloudEls = document.querySelectorAll('.cloud');
-    var cloudConfigs = [
-        { w: 260, h: 120, spacing: 4, color: '#f4f4f5', strokeWidth: 1.5 },
-        { w: 180, h: 90, spacing: 5, color: '#7c3aed', strokeWidth: 1.5 },
-        { w: 340, h: 140, spacing: 4, color: '#f4f4f5', strokeWidth: 1.5 }
+    var cloudDefs = [
+        {
+            w: 260, h: 120, spacing: 3, color: '#f4f4f5', sw: 2,
+            path: 'M20,100 C30,85 50,60 80,55 C100,40 120,30 140,35 C160,25 180,40 195,50 C210,35 230,50 245,65 C255,75 260,90 250,100 Z'
+        },
+        {
+            w: 180, h: 90, spacing: 3, color: '#7c3aed', sw: 2,
+            path: 'M15,75 C25,60 40,45 60,42 C75,30 95,25 110,35 C125,25 140,35 155,48 C165,40 175,55 172,70 C178,80 170,85 160,75 Z'
+        },
+        {
+            w: 340, h: 140, spacing: 3, color: '#f4f4f5', sw: 2,
+            path: 'M25,120 C35,100 60,75 90,70 C110,55 140,40 170,45 C200,30 225,40 250,55 C270,40 295,50 310,65 C325,55 335,70 330,90 C338,105 330,120 320,120 Z'
+        }
     ];
 
     for (var ci = 0; ci < cloudEls.length; ci++) {
-        var cfg = cloudConfigs[ci];
-        if (!cfg) continue;
-        for (var lx = 0; lx < cfg.w; lx += cfg.spacing) {
+        var def = cloudDefs[ci];
+        if (!def) continue;
+
+        var defs = document.createElementNS(SVG_NS, 'defs');
+        var clipPath = document.createElementNS(SVG_NS, 'clipPath');
+        clipPath.setAttribute('id', 'cloud-clip-' + ci);
+        var pathEl = document.createElementNS(SVG_NS, 'path');
+        pathEl.setAttribute('d', def.path);
+        clipPath.appendChild(pathEl);
+        defs.appendChild(clipPath);
+        cloudEls[ci].appendChild(defs);
+
+        var g = document.createElementNS(SVG_NS, 'g');
+        g.setAttribute('clip-path', 'url(#cloud-clip-' + ci + ')');
+
+        for (var lx = 0; lx < def.w; lx += def.spacing) {
             var cl = document.createElementNS(SVG_NS, 'line');
             cl.setAttribute('x1', lx);
             cl.setAttribute('y1', 0);
             cl.setAttribute('x2', lx);
-            cl.setAttribute('y2', cfg.h);
-            cl.setAttribute('stroke', cfg.color);
-            cl.setAttribute('stroke-width', cfg.strokeWidth);
+            cl.setAttribute('y2', def.h);
+            cl.setAttribute('stroke', def.color);
+            cl.setAttribute('stroke-width', def.sw);
             cl.setAttribute('stroke-linecap', 'butt');
-            cloudEls[ci].appendChild(cl);
+            g.appendChild(cl);
         }
+
+        cloudEls[ci].appendChild(g);
     }
     //    - Moon opacity fade (deep background parallax)
     //    - Cloud exit translation (midground parallax)

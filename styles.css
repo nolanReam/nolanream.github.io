@@ -51,17 +51,16 @@ a { color: inherit; text-decoration: none; }
 
 /* ============================================================
    MIDGROUND SKY: SCANLINE CLOUDS
-   Same vertical-line aesthetic as the moon.
-   Generated via JS (SVG lines clipped by morphing shapes).
-   Each cloud is a different size. CSS animates both drift
-   and border-radius morph so shapes constantly change.
+   Identical rendering to the moon: SVG elements with
+   overflow: visible, no border-radius, no blur, no clipping.
+   Cloud shapes defined purely by JS-generated SVG lines
+   within a clipPath. Crisp vertical scanlines.
    ============================================================ */
 .cloud {
     position: fixed;
     z-index: 1;
     pointer-events: none;
-    overflow: hidden;
-    border-radius: 60% 40% 70% 30% / 50% 60% 40% 50%;
+    overflow: visible;
 }
 
 .cloud--a {
@@ -69,8 +68,8 @@ a { color: inherit; text-decoration: none; }
     left: 8vw;
     width: 260px;
     height: 120px;
-    opacity: 0.4;
-    animation: driftA 60s linear infinite, morphA 12s ease-in-out infinite alternate;
+    opacity: 0.5;
+    animation: driftA 60s linear infinite;
 }
 
 .cloud--b {
@@ -79,8 +78,8 @@ a { color: inherit; text-decoration: none; }
     left: auto;
     width: 180px;
     height: 90px;
-    opacity: 0.3;
-    animation: driftB 75s linear infinite, morphB 10s ease-in-out infinite alternate;
+    opacity: 0.4;
+    animation: driftB 75s linear infinite;
 }
 
 .cloud--c {
@@ -88,8 +87,8 @@ a { color: inherit; text-decoration: none; }
     left: 20vw;
     width: 340px;
     height: 140px;
-    opacity: 0.35;
-    animation: driftC 90s linear infinite, morphC 14s ease-in-out infinite alternate;
+    opacity: 0.45;
+    animation: driftC 90s linear infinite;
 }
 
 @keyframes driftA {
@@ -105,21 +104,6 @@ a { color: inherit; text-decoration: none; }
 @keyframes driftC {
     0% { transform: translateX(0); }
     100% { transform: translateX(35vw); }
-}
-
-@keyframes morphA {
-    0% { border-radius: 60% 40% 70% 30% / 50% 60% 40% 50%; }
-    100% { border-radius: 40% 60% 50% 70% / 60% 40% 55% 45%; }
-}
-
-@keyframes morphB {
-    0% { border-radius: 50% 50% 60% 40% / 45% 55% 50% 50%; }
-    100% { border-radius: 65% 35% 45% 55% / 55% 45% 60% 40%; }
-}
-
-@keyframes morphC {
-    0% { border-radius: 55% 45% 65% 35% / 50% 55% 45% 55%; }
-    100% { border-radius: 45% 55% 40% 60% / 60% 40% 50% 50%; }
 }
 
 @keyframes driftA {
