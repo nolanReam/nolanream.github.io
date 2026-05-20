@@ -11,12 +11,10 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- ===== Billowing line-clouds (parallax layers) ===== -->
-    <div class="clouds" aria-hidden="true">
-        <div class="cloud cloud--back"></div>
-        <div class="cloud cloud--mid"></div>
-        <div class="cloud cloud--front"></div>
-    </div>
+    <!-- ===== Background clouds (explicit dimensions, always visible) ===== -->
+    <div class="cloud cloud--a" aria-hidden="true"></div>
+    <div class="cloud cloud--b" aria-hidden="true"></div>
+    <div class="cloud cloud--c" aria-hidden="true"></div>
 
     <!-- ===== Crescent moon (fixed top-right) ===== -->
     <svg class="moon" viewBox="0 0 200 200" aria-hidden="true"></svg>
@@ -34,44 +32,36 @@
         </nav>
     </header>
 
-    <!-- ===== Hero ===== -->
+    <!-- ===== Hero (fully visible on load, no hidden state) ===== -->
     <section class="hero">
-        <div class="hero__content">
-            <span class="label">Portfolio &mdash; MMXXVI</span>
-            <h1 class="hero__name">
-                <span class="hero__name-line">Nolan</span>
-                <span class="hero__name-line hero__name-line--second">
-                    <span class="hero__name-stroke">Ream</span><span class="hero__name-dot">.</span>
-                </span>
-            </h1>
-            <p class="hero__tag">
-                A practice rooted in considered design,<br>
-                building deliberate digital experiences<br>
-                at the intersection of craft and clarity.
-            </p>
-        </div>
+        <span class="label">Portfolio &mdash; MMXXVI</span>
+        <h1 class="hero__name">
+            <span class="hero__line">Nolan</span>
+            <span class="hero__line hero__line--second"><span class="hero__stroke">Ream</span><span class="hero__dot">.</span></span>
+        </h1>
+        <p class="hero__tag">
+            A practice rooted in considered design, building deliberate
+            digital experiences at the intersection of craft and clarity.
+        </p>
     </section>
 
     <!-- ===== About ===== -->
-    <section class="section about" id="about">
-        <div class="section__layout">
-            <div class="about__line-draw" aria-hidden="true"></div>
-            <div class="about__text reveal-group">
-                <span class="label">— 02 / About</span>
-                <h2 class="section__title">
-                    A quiet pursuit of <em>form</em> &amp; meaning.
-                </h2>
-                <p class="reveal-text">
+    <section class="section" id="about">
+        <div class="section__inner">
+            <span class="label">— 02 / About</span>
+            <h2 class="section__title">A quiet pursuit of <em>form</em> &amp; meaning.</h2>
+            <div class="about__body">
+                <p class="reveal">
                     I am an aspiring software engineer and high school student dedicated to
                     creating impactful digital experiences through code.
                 </p>
-                <p class="reveal-text">
+                <p class="reveal">
                     Over the course of my academic journey I've built a strong technical
                     foundation in Java, alongside front-end web development with HTML and CSS.
                     My curiosity for interactive problem-solving also led me into game
                     development, where I design and build logic-driven virtual environments.
                 </p>
-                <p class="reveal-text">
+                <p class="reveal">
                     Looking ahead, I plan to pursue a bachelor's degree in Computer Science to
                     further elevate my skills and prepare for a meaningful career in technology.
                 </p>
@@ -80,34 +70,32 @@
     </section>
 
     <!-- ===== Skills ===== -->
-    <section class="section skills" id="skills">
-        <div class="section__centered reveal-group">
+    <section class="section" id="skills">
+        <div class="section__inner">
             <span class="label">— 03 / Practice</span>
-            <h2 class="section__title">
-                The disciplines of the <em>studio</em>.
-            </h2>
+            <h2 class="section__title">The disciplines of the <em>studio</em>.</h2>
             <ul class="skills__list">
-                <li class="skills__item reveal-text">
+                <li class="skills__item reveal">
                     <span class="skills__num">01</span>
                     <span class="skills__name">Brand &amp; Art Direction</span>
                     <span class="skills__meta">Identity / Editorial</span>
                 </li>
-                <li class="skills__item reveal-text">
+                <li class="skills__item reveal">
                     <span class="skills__num">02</span>
                     <span class="skills__name">Interface Design</span>
                     <span class="skills__meta">Figma / Systems</span>
                 </li>
-                <li class="skills__item reveal-text">
+                <li class="skills__item reveal">
                     <span class="skills__num">03</span>
                     <span class="skills__name">Front-end Engineering</span>
                     <span class="skills__meta">HTML / CSS / TS</span>
                 </li>
-                <li class="skills__item reveal-text">
+                <li class="skills__item reveal">
                     <span class="skills__num">04</span>
                     <span class="skills__name">Motion &amp; Interaction</span>
                     <span class="skills__meta">GSAP / WebGL</span>
                 </li>
-                <li class="skills__item reveal-text">
+                <li class="skills__item reveal">
                     <span class="skills__num">05</span>
                     <span class="skills__name">Typography</span>
                     <span class="skills__meta">Editorial / Custom</span>
@@ -117,62 +105,43 @@
     </section>
 
     <!-- ===== Projects ===== -->
-    <section class="section projects" id="projects">
-        <div class="section__centered">
+    <section class="section" id="projects">
+        <div class="section__inner">
             <span class="label">— 04 / Archive</span>
             <h2 class="section__title">Selected <em>work</em>.</h2>
         </div>
-
         <div class="projects__grid">
-            <article class="card card--01 reveal-card">
+            <article class="card card--01 reveal">
                 <div class="card__visual"></div>
-                <div class="card__body">
-                    <span class="card__category">Identity &mdash; 2026</span>
-                    <h3 class="card__title">Maison <em>Lumière</em></h3>
-                    <p class="card__description">
-                        A heritage rebrand for a boutique atelier. Restrained typography, custom
-                        wordmark, and a digital system designed for permanence.
-                    </p>
-                    <a href="#" class="card__cta">View case study &rarr;</a>
-                </div>
+                <span class="card__category">Identity &mdash; 2026</span>
+                <h3 class="card__title">Maison <em>Lumière</em></h3>
+                <p class="card__desc">A heritage rebrand for a boutique atelier. Restrained typography, custom wordmark, and a digital system designed for permanence.</p>
+                <a href="#" class="card__cta">View case study &rarr;</a>
             </article>
-
-            <article class="card card--02 reveal-card">
+            <article class="card card--02 reveal">
                 <div class="card__visual"></div>
-                <div class="card__body">
-                    <span class="card__category">Editorial &mdash; 2025</span>
-                    <h3 class="card__title">Quiet <em>Volumes</em></h3>
-                    <p class="card__description">
-                        A serial publication exploring restraint in contemporary design.
-                    </p>
-                    <a href="#" class="card__cta">View case study &rarr;</a>
-                </div>
+                <span class="card__category">Editorial &mdash; 2025</span>
+                <h3 class="card__title">Quiet <em>Volumes</em></h3>
+                <p class="card__desc">A serial publication exploring restraint in contemporary design.</p>
+                <a href="#" class="card__cta">View case study &rarr;</a>
             </article>
-
-            <article class="card card--03 reveal-card">
+            <article class="card card--03 reveal">
                 <div class="card__visual"></div>
-                <div class="card__body">
-                    <span class="card__category">Digital &mdash; 2025</span>
-                    <h3 class="card__title">Atelier <em>Index</em></h3>
-                    <p class="card__description">
-                        A bespoke portfolio platform for an architectural studio, built around an
-                        editorial grid and a slow, deliberate sense of pacing.
-                    </p>
-                    <a href="#" class="card__cta">View case study &rarr;</a>
-                </div>
+                <span class="card__category">Digital &mdash; 2025</span>
+                <h3 class="card__title">Atelier <em>Index</em></h3>
+                <p class="card__desc">A bespoke portfolio platform for an architectural studio, built around an editorial grid and a slow, deliberate sense of pacing.</p>
+                <a href="#" class="card__cta">View case study &rarr;</a>
             </article>
         </div>
     </section>
 
-    <!-- ===== Footer / Contact ===== -->
+    <!-- ===== Footer ===== -->
     <footer class="footer" id="contact">
-        <div class="footer__inner reveal-group">
-            <span class="label">— 05 / In conversation</span>
-            <a href="mailto:hello@nolanream.com" class="footer__email">hello@nolanream.com</a>
-            <div class="footer__bottom">
-                <span>&copy; <span id="year">2026</span> &mdash; Nolan Ream</span>
-                <span>Crafted with intention</span>
-            </div>
+        <span class="label">— 05 / In conversation</span>
+        <a href="mailto:hello@nolanream.com" class="footer__email">hello@nolanream.com</a>
+        <div class="footer__bottom">
+            <span>&copy; <span id="year">2026</span> &mdash; Nolan Ream</span>
+            <span>Crafted with intention</span>
         </div>
     </footer>
 
