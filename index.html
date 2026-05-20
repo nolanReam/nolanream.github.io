@@ -11,6 +11,16 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <!-- ===== Billowing line-clouds (parallax layers) ===== -->
+    <div class="clouds" aria-hidden="true">
+        <div class="cloud cloud--back"></div>
+        <div class="cloud cloud--mid"></div>
+        <div class="cloud cloud--front"></div>
+    </div>
+
+    <!-- ===== Crescent moon (fixed top-right) ===== -->
+    <svg class="moon" viewBox="0 0 200 200" aria-hidden="true"></svg>
+
     <!-- ===== Navbar ===== -->
     <header class="navbar">
         <a href="#" class="navbar__brand">Nolan Ream</a>
@@ -25,47 +35,32 @@
     </header>
 
     <!-- ===== Hero ===== -->
-    <section class="hero grid-12">
-        <!-- Halftone sky art layer -->
-        <div class="hero__sky" aria-hidden="true">
-            <svg class="hero__cloud hero__cloud--a" viewBox="0 0 900 220" preserveAspectRatio="none"></svg>
-            <svg class="hero__cloud hero__cloud--b" viewBox="0 0 1100 260" preserveAspectRatio="none"></svg>
-            <svg class="hero__cloud hero__cloud--c" viewBox="0 0 1000 280" preserveAspectRatio="none"></svg>
-            <svg class="hero__moon" viewBox="0 0 200 200" aria-label="Crescent moon"></svg>
-        </div>
-
-        <div class="hero__meta">
+    <section class="hero">
+        <div class="hero__content">
             <span class="label">Portfolio &mdash; MMXXVI</span>
-        </div>
-
-        <div class="hero__name-wrap">
             <h1 class="hero__name">
-                <span class="hero__name-line hero__name-line--first">Nolan</span>
+                <span class="hero__name-line">Nolan</span>
                 <span class="hero__name-line hero__name-line--second">
                     <span class="hero__name-stroke">Ream</span><span class="hero__name-dot">.</span>
                 </span>
             </h1>
-        </div>
-
-        <div class="hero__footer">
             <p class="hero__tag">
-                A practice rooted in considered design,
-                building deliberate digital experiences
+                A practice rooted in considered design,<br>
+                building deliberate digital experiences<br>
                 at the intersection of craft and clarity.
             </p>
-            <span class="hero__index">N&deg; 01 / Introduction</span>
         </div>
     </section>
 
     <!-- ===== About ===== -->
-    <section class="section about reveal" id="about">
-        <span class="section__watermark" aria-hidden="true">02</span>
-        <div class="grid-12 section__inner">
-            <span class="label section__label">— 02 / About</span>
-            <h2 class="section__title about__heading">
-                A quiet pursuit of <em>form</em> &amp; meaning.
-            </h2>
-            <div class="about__body">
+    <section class="section about" id="about">
+        <div class="section__layout">
+            <div class="about__line-draw" aria-hidden="true"></div>
+            <div class="about__text reveal-group">
+                <span class="label">— 02 / About</span>
+                <h2 class="section__title">
+                    A quiet pursuit of <em>form</em> &amp; meaning.
+                </h2>
                 <p class="reveal-text">
                     I am an aspiring software engineer and high school student dedicated to
                     creating impactful digital experiences through code.
@@ -85,36 +80,34 @@
     </section>
 
     <!-- ===== Skills ===== -->
-    <section class="section skills reveal" id="skills">
-        <span class="section__watermark" aria-hidden="true">03</span>
-        <div class="grid-12 section__inner">
-            <span class="label section__label">— 03 / Practice</span>
-            <h2 class="section__title skills__title">
+    <section class="section skills" id="skills">
+        <div class="section__centered reveal-group">
+            <span class="label">— 03 / Practice</span>
+            <h2 class="section__title">
                 The disciplines of the <em>studio</em>.
             </h2>
-
             <ul class="skills__list">
-                <li class="skills__item">
+                <li class="skills__item reveal-text">
                     <span class="skills__num">01</span>
                     <span class="skills__name">Brand &amp; Art Direction</span>
                     <span class="skills__meta">Identity / Editorial</span>
                 </li>
-                <li class="skills__item">
+                <li class="skills__item reveal-text">
                     <span class="skills__num">02</span>
                     <span class="skills__name">Interface Design</span>
                     <span class="skills__meta">Figma / Systems</span>
                 </li>
-                <li class="skills__item">
+                <li class="skills__item reveal-text">
                     <span class="skills__num">03</span>
                     <span class="skills__name">Front-end Engineering</span>
                     <span class="skills__meta">HTML / CSS / TS</span>
                 </li>
-                <li class="skills__item">
+                <li class="skills__item reveal-text">
                     <span class="skills__num">04</span>
                     <span class="skills__name">Motion &amp; Interaction</span>
                     <span class="skills__meta">GSAP / WebGL</span>
                 </li>
-                <li class="skills__item">
+                <li class="skills__item reveal-text">
                     <span class="skills__num">05</span>
                     <span class="skills__name">Typography</span>
                     <span class="skills__meta">Editorial / Custom</span>
@@ -124,62 +117,57 @@
     </section>
 
     <!-- ===== Projects ===== -->
-    <section class="section projects reveal" id="projects">
-        <span class="section__watermark" aria-hidden="true">04</span>
-        <div class="grid-12 section__inner">
-            <span class="label section__label">— 04 / Archive</span>
-            <h2 class="section__title projects__title">
-                Selected <em>work</em>.
-            </h2>
+    <section class="section projects" id="projects">
+        <div class="section__centered">
+            <span class="label">— 04 / Archive</span>
+            <h2 class="section__title">Selected <em>work</em>.</h2>
+        </div>
 
-            <article class="card card--01 reveal-card" style="--card-delay: 0ms;">
-                <span class="card__index">N&deg; 01</span>
+        <div class="projects__grid">
+            <article class="card card--01 reveal-card">
                 <div class="card__visual"></div>
-                <div>
+                <div class="card__body">
                     <span class="card__category">Identity &mdash; 2026</span>
                     <h3 class="card__title">Maison <em>Lumière</em></h3>
                     <p class="card__description">
                         A heritage rebrand for a boutique atelier. Restrained typography, custom
                         wordmark, and a digital system designed for permanence.
                     </p>
-                    <a href="#" class="card__cta">View case study</a>
+                    <a href="#" class="card__cta">View case study &rarr;</a>
                 </div>
             </article>
 
-            <article class="card card--02 reveal-card" style="--card-delay: 140ms;">
-                <span class="card__index">N&deg; 02</span>
+            <article class="card card--02 reveal-card">
                 <div class="card__visual"></div>
-                <div>
+                <div class="card__body">
                     <span class="card__category">Editorial &mdash; 2025</span>
                     <h3 class="card__title">Quiet <em>Volumes</em></h3>
                     <p class="card__description">
                         A serial publication exploring restraint in contemporary design.
                     </p>
-                    <a href="#" class="card__cta">View case study</a>
+                    <a href="#" class="card__cta">View case study &rarr;</a>
                 </div>
             </article>
 
-            <article class="card card--03 reveal-card" style="--card-delay: 280ms;">
-                <span class="card__index">N&deg; 03</span>
+            <article class="card card--03 reveal-card">
                 <div class="card__visual"></div>
-                <div>
+                <div class="card__body">
                     <span class="card__category">Digital &mdash; 2025</span>
                     <h3 class="card__title">Atelier <em>Index</em></h3>
                     <p class="card__description">
                         A bespoke portfolio platform for an architectural studio, built around an
                         editorial grid and a slow, deliberate sense of pacing.
                     </p>
-                    <a href="#" class="card__cta">View case study</a>
+                    <a href="#" class="card__cta">View case study &rarr;</a>
                 </div>
             </article>
         </div>
     </section>
 
     <!-- ===== Footer / Contact ===== -->
-    <footer class="footer reveal" id="contact">
-        <span class="section__watermark footer__watermark" aria-hidden="true">05</span>
-        <div class="grid-12 footer__inner">
-            <span class="label footer__label">— 05 / In conversation</span>
+    <footer class="footer" id="contact">
+        <div class="footer__inner reveal-group">
+            <span class="label">— 05 / In conversation</span>
             <a href="mailto:hello@nolanream.com" class="footer__email">hello@nolanream.com</a>
             <div class="footer__bottom">
                 <span>&copy; <span id="year">2026</span> &mdash; Nolan Ream</span>
