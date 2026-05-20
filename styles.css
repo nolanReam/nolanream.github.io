@@ -39,23 +39,18 @@ a { color: inherit; text-decoration: none; }
     z-index: 1;
     pointer-events: none;
     overflow: visible;
-    will-change: transform, opacity;
 }
-.cloud--a { width: 260px; height: 140px; }
-.cloud--b { width: 180px; height: 100px; }
-.cloud--c { width: 340px; height: 160px; }
 
 /* ===== Background Moon ===== */
 .moon {
     position: fixed;
-    top: 40vh;
-    right: var(--pad);
+    top: 4rem;
+    right: 4rem;
     width: 160px;
     height: 160px;
     z-index: 1;
     pointer-events: none;
     overflow: visible;
-    will-change: transform, opacity;
 }
 
 /* ===== Shared UI Elements ===== */
