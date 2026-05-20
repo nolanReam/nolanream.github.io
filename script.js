@@ -1,288 +1,196 @@
-/* ============================================================\
+/* ============================================================
    Nolan Ream — Portfolio
-   Procedural Cloud Vectors · 8px Grid Quantization Engine
-   · Focus Timeline Transformation
+   Procedural Scanline Vectors · Quantized Drift · Focus Cards
    ============================================================ */
-
 (function () {
     'use strict';
 
-    // Set layout time stamp variable
     var yearEl = document.getElementById('year');
     if (yearEl) yearEl.textContent = new Date().getFullYear();
 
     var SVG_NS = 'http://www.w3.org/2000/svg';
-    var QUANTIZE = 8; // Retro frame step value grid spacing multiplier
+    var STEP = 8;
 
-    // Cache dynamic window measurements
-    var cachedVW = window.innerWidth;
-    var cachedVH = window.innerHeight;
-
-    window.addEventListener('resize', function() {
-        cachedVW = window.innerWidth;
-        cachedVH = window.innerHeight;
-    }, { passive: true });
-
-    // Accessibility fallback check
-    var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    // ========================================================\
-    // 1. PROCEDURAL VECTOR RENDER ENGINE
-    // ========================================================\
-    
-    // Moon Generation (Isolated scanline crescent math)
+    // ========================================================
+    // 1. MOON — scanline crescent (circle minus bite)
+    // ========================================================
     var moonSvg = document.querySelector('.moon');
     if (moonSvg) {
         var cx = 100, cy = 100, R = 85;
         var bx = 145, by = 95, bR = 75;
-        var spacing = 3;
-
-        for (var x = cx - R; x <= cx + R; x += spacing) {
+        for (var x = cx - R; x <= cx + R; x += 3) {
             var dx = x - cx;
             var outerH = Math.sqrt(Math.max(0, R * R - dx * dx));
             if (outerH < 1) continue;
-
             var yTop = cy - outerH;
             var yBot = cy + outerH;
 
-            var dxBite = x - bx;
-            var biteDisc = bR * bR - dxBite * dxBite;
-
-            if (biteDisc > 0) {
-                var innerH = Math.sqrt(biteDisc);
-                var maskTop = by - innerH;
-                var maskBot = by + innerH;
-
-                if (yTop < maskBot && yBot > maskTop) {
-                    if (yTop < maskTop) {
-                        createSvgLine(moonSvg, x, yTop, x, maskTop, '#f4f4f5', 2);
-                    }
-                    if (yBot > maskBot) {
-                        createSvgLine(moonSvg, x, maskBot, x, yBot, '#f4f4f5', 2);
-                    }
+            var dxB = x - bx;
+            var bDisc = bR * bR - dxB * dxB;
+            if (bDisc > 0) {
+                var bH = Math.sqrt(bDisc);
+                var bTop = by - bH;
+                var bBot = by + bH;
+                if (bTop <= yTop && bBot >= yBot) continue;
+                if (bTop > yTop && bBot < yBot) {
+                    svgLine(moonSvg, x, yTop, bTop, '#f4f4f5', 2);
+                    svgLine(moonSvg, x, bBot, yBot, '#f4f4f5', 2);
                     continue;
                 }
-
                 if (bTop <= yTop) yTop = bBot;
                 else if (bBot >= yBot) yBot = bTop;
             }
-
             if (yBot - yTop < 1) continue;
-            addLine(moonSvg, x, yTop, yBot);
+            svgLine(moonSvg, x, yTop, yBot, '#f4f4f5', 2);
         }
     }
 
-    function addLine(svg, x, y1, y2) {
+    function svgLine(parent, x, y1, y2, color, sw) {
         var l = document.createElementNS(SVG_NS, 'line');
         l.setAttribute('x1', x);
-        l.setAttribute('y1', y1);
+        l.setAttribute('y1', y1.toFixed(1));
         l.setAttribute('x2', x);
-        l.setAttribute('y2', y2);
-        l.setAttribute('stroke', '#f4f4f5');
-        l.setAttribute('stroke-width', '2');
+        l.setAttribute('y2', y2.toFixed(1));
+        l.setAttribute('stroke', color);
+        l.setAttribute('stroke-width', sw);
         l.setAttribute('stroke-linecap', 'butt');
-        svg.appendChild(l);
+        parent.appendChild(l);
     }
 
     // ========================================================
-    // 1b. SCANLINE CLOUDS — procedural shape calculus
-    //     Like the moon, clouds are drawn from vertical lines.
-    //     Shape is defined by overlapping circle formulas
-    //     (union of puffs). No clipPath, no defs, no dead code.
-    //     Lines appended directly to clean empty SVG elements.
+    // 2. CLOUDS — scanline shapes via circle-union calculus
+    //    Each cloud's silhouette is the union of overlapping
+    //    circles. For each x, we find the combined yTop/yBot
+    //    and draw a single vertical line. Same math as moon.
+    //    viewBox on each SVG defines the internal coordinate
+    //    space; CSS defines the rendered pixel size.
     // ========================================================
     var cloudEls = document.querySelectorAll('.cloud');
-
-    var cloudConfigs = [
-        { w: 240, h: 100, speed: 0.5, startX: 0, baseTop: 10, color: '#f4f4f5',
-          puffs: [
-              { cx: 70, cy: 60, r: 38 },
-              { cx: 120, cy: 45, r: 45 },
-              { cx: 175, cy: 55, r: 40 },
-              { cx: 50, cy: 70, r: 30 },
-              { cx: 200, cy: 65, r: 32 }
-          ]
-        },
-        { w: 160, h: 75, speed: -0.4, startX: 0, baseTop: 32, color: '#7c3aed',
-          puffs: [
-              { cx: 45, cy: 42, r: 30 },
-              { cx: 80, cy: 35, r: 35 },
-              { cx: 120, cy: 40, r: 32 },
-              { cx: 140, cy: 50, r: 25 }
-          ]
-        },
-        { w: 300, h: 120, speed: 0.35, startX: 0, baseTop: 55, color: '#f4f4f5',
-          puffs: [
-              { cx: 60, cy: 70, r: 42 },
-              { cx: 110, cy: 55, r: 50 },
-              { cx: 165, cy: 48, r: 48 },
-              { cx: 220, cy: 58, r: 44 },
-              { cx: 270, cy: 68, r: 36 },
-              { cx: 40, cy: 80, r: 30 }
-          ]
-        }
+    var cloudData = [
+        { w: 240, h: 100, color: '#f4f4f5', speed: 0.5, baseTop: 8,
+          puffs: [{cx:70,cy:60,r:38},{cx:120,cy:45,r:45},{cx:175,cy:55,r:40},{cx:50,cy:70,r:30},{cx:200,cy:65,r:32}] },
+        { w: 160, h: 75, color: '#7c3aed', speed: -0.4, baseTop: 30,
+          puffs: [{cx:45,cy:42,r:30},{cx:80,cy:35,r:35},{cx:120,cy:40,r:32},{cx:140,cy:50,r:25}] },
+        { w: 300, h: 120, color: '#f4f4f5', speed: 0.35, baseTop: 54,
+          puffs: [{cx:60,cy:70,r:42},{cx:110,cy:55,r:50},{cx:165,cy:48,r:48},{cx:220,cy:58,r:44},{cx:270,cy:68,r:36},{cx:40,cy:80,r:30}] }
     ];
 
-    // Stagger starting positions across different sides
-    var initVW = window.innerWidth;
-    cloudConfigs[0].startX = -cloudConfigs[0].w;        // off-screen LEFT
-    cloudConfigs[1].startX = initVW + 50;               // off-screen RIGHT
-    cloudConfigs[2].startX = Math.round(initVW * 0.3);  // center-LEFT
+    // Stagger starting X: left, right, center
+    var vw = window.innerWidth;
+    cloudData[0].x = -260;
+    cloudData[1].x = vw + 40;
+    cloudData[2].x = Math.round(vw * 0.25);
 
+    // Render scanlines into each cloud SVG
     for (var ci = 0; ci < cloudEls.length; ci++) {
-        var cfg = cloudConfigs[ci];
-        if (!cfg) continue;
+        var cd = cloudData[ci];
+        if (!cd) continue;
+        cd.phase = Math.random() * Math.PI * 2;
+        cd.bobAmp = 4 + Math.random() * 4;
+        cd.bobFreq = 0.0003 + Math.random() * 0.0002;
+        cd.baseOpacity = 0.45;
 
-        cfg.x = cfg.startX;
-        cfg.phase = Math.random() * Math.PI * 2;
-        cfg.bobAmp = 4 + Math.random() * 5;
-        cfg.bobFreq = 0.0003 + Math.random() * 0.0002;
-        cfg.baseOpacity = 0.4 + Math.random() * 0.15;
-
-        // Clear any existing content from the SVG
-        cloudEls[ci].innerHTML = '';
-        // Use a standard internal coordinate system
-        // CSS handles actual display size (100vw x 100vh)
-        cloudEls[ci].setAttribute('viewBox', '0 0 ' + cfg.w + ' ' + cfg.h);
-        // Do NOT set inline width/height/top/left — CSS handles positioning
-
-        // Draw vertical scanlines using circle-union shape calculus
-        var lineSpacing = 3;
-        for (var lx = 0; lx < cfg.w; lx += lineSpacing) {
-            var yTop = cfg.h;
-            var yBot = 0;
-            var hit = false;
-
-            for (var p = 0; p < cfg.puffs.length; p++) {
-                var puff = cfg.puffs[p];
-                var dx = lx - puff.cx;
-                var disc = puff.r * puff.r - dx * dx;
+        for (var lx = 0; lx < cd.w; lx += 3) {
+            var yT = cd.h, yB = 0, hit = false;
+            for (var p = 0; p < cd.puffs.length; p++) {
+                var pf = cd.puffs[p];
+                var dx = lx - pf.cx;
+                var disc = pf.r * pf.r - dx * dx;
                 if (disc <= 0) continue;
                 var half = Math.sqrt(disc);
-                var top = puff.cy - half;
-                var bot = puff.cy + half;
-                if (top < yTop) yTop = top;
-                if (bot > yBot) yBot = bot;
+                var t = pf.cy - half;
+                var b = pf.cy + half;
+                if (t < yT) yT = t;
+                if (b > yB) yB = b;
                 hit = true;
             }
-
-            if (!hit || yBot - yTop < 1) continue;
-            if (yTop < 0) yTop = 0;
-            if (yBot > cfg.h) yBot = cfg.h;
-
-            var line = document.createElementNS(SVG_NS, 'line');
-            line.setAttribute('x1', lx);
-            line.setAttribute('y1', yTop.toFixed(1));
-            line.setAttribute('x2', lx);
-            line.setAttribute('y2', yBot.toFixed(1));
-            line.setAttribute('stroke', cfg.color);
-            line.setAttribute('stroke-width', '2');
-            line.setAttribute('stroke-linecap', 'butt');
-            cloudEls[ci].appendChild(line);
+            if (!hit || yB - yT < 1) continue;
+            if (yT < 0) yT = 0;
+            if (yB > cd.h) yB = cd.h;
+            svgLine(cloudEls[ci], lx, yT, yB, cd.color, 2);
         }
     }
 
     // ========================================================
-    // 2. UNIFIED ANIMATION LOOP
-    //    - Clouds: quantized drift (8px snap = ASCII-GIF stutter)
-    //    - Seamless viewport wrapping (exits fully before wrap)
-    //    - Vertical bob (sinusoidal, also quantized)
-    //    - Scroll-linked fade + parallax
-    //    - Moon fade
-    //    - Card focus timeline
+    // 3. ANIMATION LOOP
+    //    - Moon: opacity fade on scroll
+    //    - Clouds: quantized translate3d drift + scroll fade
+    //    - Cards: viewport-center scale focus
+    //    All positions use translate3d for GPU compositing.
+    //    No layout reads for clouds. Cards use getBoundingClientRect.
     // ========================================================
     var clouds = document.querySelectorAll('.cloud');
     var cards = document.querySelectorAll('.projects__track .card');
     var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    var cachedScrollY = 0;
-    var cachedVH = window.innerHeight;
-    var cachedVW = window.innerWidth;
-    var QUANTIZE = 8;
+    var scrollY = 0;
+    var vh = window.innerHeight;
+    var vwCached = window.innerWidth;
 
     window.addEventListener('resize', function () {
-        cachedVH = window.innerHeight;
-        cachedVW = window.innerWidth;
+        vh = window.innerHeight;
+        vwCached = window.innerWidth;
     }, { passive: true });
 
-    function onScroll() {
-        cachedScrollY = window.scrollY;
-    }
+    window.addEventListener('scroll', function () {
+        scrollY = window.pageYOffset;
+    }, { passive: true });
 
-    function tick(timestamp) {
-        var heroRatio = Math.min(cachedScrollY / cachedVH, 1);
+    function tick(ts) {
+        var heroRatio = Math.min(scrollY / vh, 1);
 
-        // --- Moon fade + parallax ---
+        // Moon fade
         if (moonSvg) {
-            var moonOpacity = Math.max(0, 1 - heroRatio * 1.2);
-            moonSvg.style.opacity = moonOpacity.toFixed(4);
+            moonSvg.style.opacity = Math.max(0, 1 - heroRatio * 1.2).toFixed(3);
         }
 
-        // --- Cloud drift + bob + scroll fade ---
-        for (var c = 0; c < clouds.length && c < cloudConfigs.length; c++) {
-            var cfg = cloudConfigs[c];
+        // Clouds: drift + bob + fade
+        for (var c = 0; c < clouds.length && c < cloudData.length; c++) {
+            var cd = cloudData[c];
+            cd.x += cd.speed;
 
-            // Advance drift
-            cfg.x += cfg.speed;
+            // Seamless wrap (only after fully off-screen)
+            if (cd.speed > 0 && cd.x > vwCached + cd.w) cd.x = -cd.w;
+            else if (cd.speed < 0 && cd.x < -cd.w) cd.x = vwCached;
 
-            // Seamless wrap after fully exiting viewport
-            if (cfg.speed > 0 && cfg.x > cachedVW + cfg.w) {
-                cfg.x = -cfg.w - 40;
-            } else if (cfg.speed < 0 && cfg.x < -cfg.w - 40) {
-                cfg.x = cachedVW + 40;
-            }
+            var bob = Math.sin(ts * cd.bobFreq + cd.phase) * cd.bobAmp;
+            var qX = Math.round(cd.x / STEP) * STEP;
+            var qY = Math.round(bob / STEP) * STEP;
 
-            // Sinusoidal vertical bob
-            var bob = Math.sin((timestamp * cfg.bobFreq) + cfg.phase) * cfg.bobAmp;
+            clouds[c].style.transform = 'translate3d(' + qX + 'px,' + qY + 'px,0)';
 
-            // Scroll parallax
-            var parallax = cachedScrollY * (0.1 + c * 0.05);
-
-            // Quantize all positions to 8px grid (ASCII-GIF stutter)
-            var qX = Math.round(cfg.x / QUANTIZE) * QUANTIZE;
-            var qY = Math.round((cfg.baseTop * cachedVH / 100 + bob - parallax) / QUANTIZE) * QUANTIZE;
-
-            clouds[c].style.transform = 'translate(' + qX + 'px,' + qY + 'px)';
-
-            // Scroll-linked opacity fade
             if (heroRatio >= 0.95) {
                 clouds[c].style.opacity = '0';
             } else {
-                clouds[c].style.opacity = (cfg.baseOpacity * (1 - heroRatio)).toFixed(3);
+                clouds[c].style.opacity = (cd.baseOpacity * (1 - heroRatio)).toFixed(3);
             }
         }
 
-        // --- Card viewport-center focus ---
-        var viewCenter = cachedVH / 2;
+        // Cards: viewport-center focus
+        var mid = vh / 2;
         for (var i = 0; i < cards.length; i++) {
-            var rect = cards[i].getBoundingClientRect();
-            var cardCenter = rect.top + (rect.height / 2);
-            var distance = Math.abs(cardCenter - viewCenter);
-            var maxDistance = cachedVH * 0.55;
-            var ratio = Math.min(distance / maxDistance, 1);
-
-            var scale = 1.05 - (ratio * 0.17);
-            var opacity = 1.0 - (ratio * 0.65);
-
-            cards[i].style.transform = 'scale(' + scale.toFixed(4) + ')';
-            cards[i].style.opacity = opacity.toFixed(4);
+            var r = cards[i].getBoundingClientRect();
+            var center = r.top + r.height / 2;
+            var dist = Math.abs(center - mid);
+            var ratio = Math.min(dist / (vh * 0.5), 1);
+            var s = 1.05 - ratio * 0.17;
+            var o = 1.0 - ratio * 0.65;
+            cards[i].style.transform = 'scale(' + s.toFixed(4) + ')';
+            cards[i].style.opacity = o.toFixed(3);
         }
 
         requestAnimationFrame(tick);
     }
 
     // ========================================================
-    // 3. INITIALIZE
+    // 4. INIT
     // ========================================================
     if (!reducedMotion) {
-        window.addEventListener('scroll', onScroll, { passive: true });
-        onScroll();
+        scrollY = window.pageYOffset;
         requestAnimationFrame(tick);
     } else {
         for (var i = 0; i < cards.length; i++) {
             cards[i].style.opacity = '1';
             cards[i].style.transform = 'scale(1)';
         }
-        if (moonSvg) moonSvg.style.opacity = '1';
     }
 })();

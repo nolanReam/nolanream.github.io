@@ -11,13 +11,9 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
-    <!-- ===== Cloud SVGs (position:fixed, no layout impact) ===== -->
-    <svg class="cloud cloud--a" aria-hidden="true"></svg>
-    <svg class="cloud cloud--b" aria-hidden="true"></svg>
-    <svg class="cloud cloud--c" aria-hidden="true"></svg>
-
-    <!-- ===== Moon (position:fixed) ===== -->
+    <svg class="cloud cloud--a" viewBox="0 0 240 100" aria-hidden="true"></svg>
+    <svg class="cloud cloud--b" viewBox="0 0 160 75" aria-hidden="true"></svg>
+    <svg class="cloud cloud--c" viewBox="0 0 300 120" aria-hidden="true"></svg>
     <svg class="moon" viewBox="0 0 200 200" aria-hidden="true"></svg>
 
     <header class="navbar">
@@ -31,34 +27,58 @@
 
     <section class="hero">
         <div class="hero__content">
-            <span class="label">— 01 / Design & Direction</span>
-            <h1 class="hero__headline">Crafting digital archetypes through <em>restraint</em> and precision.</h1>
-        </div>
-    </section>
-
-    <section class="intro" id="about">
-        <div class="section__inner">
-            <span class="label">— 02 / Philosophy</span>
-            <p class="intro__text">
-                The internet has grown loud. I design alternative paths—building fast, intentional, minimal digital interfaces that respect space, value quiet interactions, and withstand shifting trends.
+            <span class="label">Portfolio &mdash; MMXXVI</span>
+            <h1 class="hero__name">
+                <span class="hero__line">Nolan</span>
+                <span class="hero__line hero__line--second"><span class="hero__stroke">Ream</span><span class="hero__dot">.</span></span>
+            </h1>
+            <p class="hero__tag">
+                A practice rooted in considered design, building deliberate
+                digital experiences at the intersection of craft and clarity.
             </p>
         </div>
     </section>
 
-    <section class="projects" id="work">
-        <div class="projects__track">
-            <span class="label">— 03 / Selected Artifacts</span>
+    <section class="section" id="about">
+        <div class="section__inner">
+            <span class="label">— 02 / About</span>
+            <h2 class="section__title">A quiet pursuit of <em>form</em> &amp; meaning.</h2>
+            <div class="about__body">
+                <p>I am an aspiring software engineer and high school student dedicated to creating impactful digital experiences through code.</p>
+                <p>Over the course of my academic journey I've built a strong technical foundation in Java, alongside front-end web development with HTML and CSS. My curiosity for interactive problem-solving also led me into game development, where I design and build logic-driven virtual environments.</p>
+                <p>Looking ahead, I plan to pursue a bachelor's degree in Computer Science to further elevate my skills and prepare for a meaningful career in technology.</p>
+            </div>
+        </div>
+    </section>
 
+    <section class="section" id="skills">
+        <div class="section__inner">
+            <span class="label">— 03 / Practice</span>
+            <h2 class="section__title">The disciplines of the <em>studio</em>.</h2>
+            <ul class="skills__list">
+                <li class="skills__item"><span class="skills__num">01</span><span class="skills__name">Brand &amp; Art Direction</span><span class="skills__meta">Identity / Editorial</span></li>
+                <li class="skills__item"><span class="skills__num">02</span><span class="skills__name">Interface Design</span><span class="skills__meta">Figma / Systems</span></li>
+                <li class="skills__item"><span class="skills__num">03</span><span class="skills__name">Front-end Engineering</span><span class="skills__meta">HTML / CSS / TS</span></li>
+                <li class="skills__item"><span class="skills__num">04</span><span class="skills__name">Motion &amp; Interaction</span><span class="skills__meta">GSAP / WebGL</span></li>
+                <li class="skills__item"><span class="skills__num">05</span><span class="skills__name">Typography</span><span class="skills__meta">Editorial / Custom</span></li>
+            </ul>
+        </div>
+    </section>
+
+    <section class="section" id="work">
+        <div class="section__inner">
+            <span class="label">— 04 / Archive</span>
+            <h2 class="section__title">Selected <em>work</em>.</h2>
+        </div>
+        <div class="projects__track">
             <article class="card">
                 <div class="card__visual"></div>
-                <span class="card__category">Identity &mdash; 2025</span>
-                <h3 class="card__title">Mono <em>Element</em></h3>
-                <p class="card__desc">A comprehensive design system built entirely around a micro-modular framework.</p>
-                <a href="#" class=\"card__cta\">View case study &rarr;</a>
+                <span class="card__category">Identity &mdash; 2026</span>
+                <h3 class="card__title">Maison <em>Lumière</em></h3>
+                <p class="card__desc">A heritage rebrand for a boutique atelier. Restrained typography, custom wordmark, and a digital system designed for permanence.</p>
+                <a href="#" class="card__cta">View case study &rarr;</a>
             </article>
-
             <span class="projects__more" aria-hidden="true">&darr; more work below</span>
-
             <article class="card">
                 <div class="card__visual"></div>
                 <span class="card__category">Editorial &mdash; 2025</span>
@@ -66,9 +86,7 @@
                 <p class="card__desc">A serial publication exploring restraint in contemporary design.</p>
                 <a href="#" class="card__cta">View case study &rarr;</a>
             </article>
-
             <span class="projects__more" aria-hidden="true">&darr; more work below</span>
-
             <article class="card">
                 <div class="card__visual"></div>
                 <span class="card__category">Digital &mdash; 2025</span>
@@ -76,35 +94,6 @@
                 <p class="card__desc">A bespoke portfolio platform for an architectural studio, built around an editorial grid and a slow, deliberate sense of pacing.</p>
                 <a href="#" class="card__cta">View case study &rarr;</a>
             </article>
-        </div>
-    </section>
-
-    <section class="skills">
-        <div class="section__inner">
-            <span class="label">— 04 / Core Competencies</span>
-            <div class="skills__grid">
-                <div class="skills__item">
-                    <span class="skills__num">01</span>
-                    <div>
-                        <h4 class="skills__title">Interface Systems</h4>
-                        <p class="skills__desc">Rigorous grid alignment, component-driven design layouts, and scalable interactive design tokens.</p>
-                    </div>
-                </div>
-                <div class="skills__item">
-                    <span class="skills__num">02</span>
-                    <div>
-                        <h4 class="skills__title">Front-End Engineering</h4>
-                        <p class="skills__desc">Semantic HTML structures, highly performant layout setups, and lightweight creative micro-interactions.</p>
-                    </div>
-                </div>
-                <div class="skills__item">
-                    <span class="skills__num">03</span>
-                    <div>
-                        <h4 class="skills__title">Creative Direction</h4>
-                        <p class="skills__desc">Curation of typography, establishing minimalist brand voices, and maintaining narrative clarity throughout code.</p>
-                    </div>
-                </div>
-            </div>
         </div>
     </section>
 
