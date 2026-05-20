@@ -71,7 +71,7 @@ a { color: inherit; text-decoration: none; }
     left: 5vw;
     width: 320px;
     height: 160px;
-    opacity: 0.12;
+    opacity: 0.55;
     background:
         radial-gradient(circle 70px at 50% 40%, var(--text) 0%, transparent 100%),
         radial-gradient(circle 55px at 30% 55%, var(--text) 0%, transparent 100%),
@@ -91,7 +91,7 @@ a { color: inherit; text-decoration: none; }
     left: auto;
     width: 280px;
     height: 140px;
-    opacity: 0.1;
+    opacity: 0.45;
     background:
         radial-gradient(circle 60px at 50% 35%, var(--accent) 0%, transparent 100%),
         radial-gradient(circle 50px at 30% 50%, var(--accent) 0%, transparent 100%),
@@ -109,7 +109,7 @@ a { color: inherit; text-decoration: none; }
     left: 15vw;
     width: 380px;
     height: 180px;
-    opacity: 0.1;
+    opacity: 0.5;
     background:
         radial-gradient(circle 80px at 45% 35%, var(--text) 0%, transparent 100%),
         radial-gradient(circle 65px at 25% 50%, var(--text) 0%, transparent 100%),

@@ -96,13 +96,13 @@
         // --------------------------------------------------
         if (clouds.length >= 3) {
             clouds[0].style.transform = 'translateX(' + (-40 * heroRatio) + 'vw)';
-            clouds[0].style.opacity = (0.2 * (1 - heroRatio)).toFixed(4);
+            clouds[0].style.opacity = (0.55 * (1 - heroRatio)).toFixed(4);
 
             clouds[1].style.transform = 'translateX(' + (35 * heroRatio) + 'vw)';
-            clouds[1].style.opacity = (0.15 * (1 - heroRatio)).toFixed(4);
+            clouds[1].style.opacity = (0.45 * (1 - heroRatio)).toFixed(4);
 
             clouds[2].style.transform = 'translateX(' + (-30 * heroRatio) + 'vw)';
-            clouds[2].style.opacity = (0.25 * (1 - heroRatio)).toFixed(4);
+            clouds[2].style.opacity = (0.5 * (1 - heroRatio)).toFixed(4);
         }
 
         // --------------------------------------------------
