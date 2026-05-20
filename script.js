@@ -141,11 +141,10 @@
 
         // Clear any existing content from the SVG
         cloudEls[ci].innerHTML = '';
+        // Use a standard internal coordinate system
+        // CSS handles actual display size (100vw x 100vh)
         cloudEls[ci].setAttribute('viewBox', '0 0 ' + cfg.w + ' ' + cfg.h);
-        cloudEls[ci].style.top = cfg.baseTop + 'vh';
-        cloudEls[ci].style.left = '0px';
-        cloudEls[ci].style.width = cfg.w + 'px';
-        cloudEls[ci].style.height = cfg.h + 'px';
+        // Do NOT set inline width/height/top/left — CSS handles positioning
 
         // Draw vertical scanlines using circle-union shape calculus
         var lineSpacing = 3;
@@ -199,7 +198,7 @@
     var cachedScrollY = 0;
     var cachedVH = window.innerHeight;
     var cachedVW = window.innerWidth;
-    var QUANTIZE = 8; // px snap grid for ASCII-GIF feel
+    var QUANTIZE = 8;
 
     window.addEventListener('resize', function () {
         cachedVH = window.innerHeight;
@@ -207,58 +206,45 @@
     }, { passive: true });
 
     function onScroll() {
-        scrollY = window.pageYOffset;
+        cachedScrollY = window.scrollY;
     }
 
-    // ========================================================\
-    // 3. ANIME FRAME EXECUTION LOOP (Quantized 8px Grid)
-    // ========================================================\
-    var cards = document.querySelectorAll('.projects__track .card');
-
     function tick(timestamp) {
-        var heroRatio = Math.min(scrollY / cachedVH, 1);
+        var heroRatio = Math.min(cachedScrollY / cachedVH, 1);
 
-        // --- Handle Background Moon Tracking ---
+        // --- Moon fade + parallax ---
         if (moonSvg) {
-            var moonY = scrollY * 0.35;
-            var moonOpacity = (1.0 - (heroRatio * 1.3));
-            
-            // Quantize moon tracking position coordinates
-            var qMoonY = Math.round(moonY / QUANTIZE) * QUANTIZE;
-            
-            moonSvg.style.transform = 'translateY(' + qMoonY + 'px)';
-            moonSvg.style.opacity = Math.max(0, moonOpacity).toFixed(4);
+            var moonOpacity = Math.max(0, 1 - heroRatio * 1.2);
+            moonSvg.style.opacity = moonOpacity.toFixed(4);
         }
 
-        // --- Handle Cloud Processing ---
-        for (var c = 0; c < clouds.length; c++) {
-            if (!clouds[c]) continue;
-
+        // --- Cloud drift + bob + scroll fade ---
+        for (var c = 0; c < clouds.length && c < cloudConfigs.length; c++) {
             var cfg = cloudConfigs[c];
 
-            // Append standard drift speed calculations
-            cfg.posX += cfg.speed;
+            // Advance drift
+            cfg.x += cfg.speed;
 
-            // Clean looping safety bounds checking
-            if (cfg.dir === 1 && cfg.posX > cachedVW + 40) {
-                cfg.posX = -cfg.width - 40;
-            } else if (cfg.dir === -1 && cfg.posX < -cfg.width - 40) {
-                cfg.posX = cachedVW + 40;
+            // Seamless wrap after fully exiting viewport
+            if (cfg.speed > 0 && cfg.x > cachedVW + cfg.w) {
+                cfg.x = -cfg.w - 40;
+            } else if (cfg.speed < 0 && cfg.x < -cfg.w - 40) {
+                cfg.x = cachedVW + 40;
             }
 
-            // Append a quantized sinusoidal bobbing behavior
-            var bob = Math.sin((timestamp / 1000) + (c * 2)) * 12;
-            
-            // Parallax offset logic
-            var parallax = scrollY * (0.15 + (c * 0.1));
+            // Sinusoidal vertical bob
+            var bob = Math.sin((timestamp * cfg.bobFreq) + cfg.phase) * cfg.bobAmp;
 
-            // CRITICAL: Quantize ALL spatial positions to create an exact structural retro-stutter look
-            var qX = Math.round(cfg.posX / QUANTIZE) * QUANTIZE;
-            var qY = Math.round((bob - parallax) / QUANTIZE) * QUANTIZE;
+            // Scroll parallax
+            var parallax = cachedScrollY * (0.1 + c * 0.05);
 
-            clouds[c].style.transform = 'translate3d(' + qX + 'px, ' + qY + 'px, 0)';
+            // Quantize all positions to 8px grid (ASCII-GIF stutter)
+            var qX = Math.round(cfg.x / QUANTIZE) * QUANTIZE;
+            var qY = Math.round((cfg.baseTop * cachedVH / 100 + bob - parallax) / QUANTIZE) * QUANTIZE;
 
-            // Clean handling for smooth exit fades out of viewport context
+            clouds[c].style.transform = 'translate(' + qX + 'px,' + qY + 'px)';
+
+            // Scroll-linked opacity fade
             if (heroRatio >= 0.95) {
                 clouds[c].style.opacity = '0';
             } else {
@@ -266,7 +252,7 @@
             }
         }
 
-        // --- Handle Interactive Cards Focus Viewport Timelines ---
+        // --- Card viewport-center focus ---
         var viewCenter = cachedVH / 2;
         for (var i = 0; i < cards.length; i++) {
             var rect = cards[i].getBoundingClientRect();
@@ -285,15 +271,14 @@
         requestAnimationFrame(tick);
     }
 
-    // ========================================================\
-    // 4. UNIFIED ENGINE INITIALIZATION
-    // ========================================================\
+    // ========================================================
+    // 3. INITIALIZE
+    // ========================================================
     if (!reducedMotion) {
         window.addEventListener('scroll', onScroll, { passive: true });
         onScroll();
         requestAnimationFrame(tick);
     } else {
-        // Accessibility alternative mode: present cards clearly without animations
         for (var i = 0; i < cards.length; i++) {
             cards[i].style.opacity = '1';
             cards[i].style.transform = 'scale(1)';
