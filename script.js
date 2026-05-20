@@ -1,7 +1,7 @@
 /* ============================================================
    Nolan Ream — Portfolio
-   Moon SVG · Dynamic Scroll Interlocking · Staggered Cards
-   · Editorial Reveal Masks
+   Moon SVG · Scroll-Linked Moon/Cloud Exit
+   · Scroll-Driven Project Focus Timeline
    ============================================================ */
 
 (function () {
@@ -68,117 +68,90 @@
     }
 
     // ========================================================
-    // 2. DYNAMIC SCROLL INTERLOCKING
+    // 2. SCROLL-LINKED: Moon fade + Cloud exit
     //
-    //    heroRatio = window.scrollY / window.innerHeight [0..1]
-    //
-    //    MOON: opacity drops from 1 → 0 as heroRatio goes 0 → 1
-    //    Completely invisible once user exits the hero frame.
-    //
-    //    CLOUDS: translate diagonally off-screen.
-    //    Cloud A: translate(-50vw, 50vh)
-    //    Cloud B: translate(40vw, 60vh)
-    //    Cloud C: translate(-30vw, 70vh)
-    //    All fade to opacity 0. Completely cleared before About.
+    //    heroRatio = scrollY / windowHeight, clamped [0, 1]
+    //    Moon: opacity 1 → 0 by end of hero
+    //    Clouds: translate off-screen diagonally + fade to 0
     // ========================================================
     var clouds = document.querySelectorAll('.cloud');
     var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    function updateScroll() {
+    function updateHeroScroll() {
         var y = window.scrollY;
         var vh = window.innerHeight;
         var heroRatio = Math.min(y / vh, 1);
 
-        // Moon: linear fade to invisible
+        // Moon fade
         if (moonSvg) {
             moonSvg.style.opacity = (1 - heroRatio).toFixed(4);
         }
 
-        // Clouds: translate diagonally off-screen + fade
+        // Clouds exit: translate off-screen and fade
         if (clouds.length >= 3) {
-            // Cloud A: exits bottom-left
-            clouds[0].style.transform = 'translate(' + (-50 * heroRatio) + 'vw, ' + (50 * heroRatio) + 'vh)';
-            clouds[0].style.opacity = (0.35 * (1 - heroRatio)).toFixed(4);
+            clouds[0].style.transform = 'translateX(' + (-40 * heroRatio) + 'vw) translateY(' + (-30 * heroRatio) + 'vh)';
+            clouds[0].style.opacity = (0.2 * (1 - heroRatio)).toFixed(4);
 
-            // Cloud B: exits bottom-right
-            clouds[1].style.transform = 'translate(' + (40 * heroRatio) + 'vw, ' + (60 * heroRatio) + 'vh)';
-            clouds[1].style.opacity = (0.4 * (1 - heroRatio)).toFixed(4);
+            clouds[1].style.transform = 'translateX(' + (35 * heroRatio) + 'vw) translateY(' + (-20 * heroRatio) + 'vh)';
+            clouds[1].style.opacity = (0.28 * (1 - heroRatio)).toFixed(4);
 
-            // Cloud C: exits bottom-left (deeper)
-            clouds[2].style.transform = 'translate(' + (-30 * heroRatio) + 'vw, ' + (70 * heroRatio) + 'vh)';
-            clouds[2].style.opacity = (0.3 * (1 - heroRatio)).toFixed(4);
+            clouds[2].style.transform = 'translateX(' + (-25 * heroRatio) + 'vw) translateY(' + (40 * heroRatio) + 'vh)';
+            clouds[2].style.opacity = (0.22 * (1 - heroRatio)).toFixed(4);
         }
+    }
+
+    // ========================================================
+    // 3. SCROLL-DRIVEN PROJECT FOCUS TIMELINE
+    //
+    //    For each .card in .projects__track:
+    //    Calculate how close the card's vertical center is to
+    //    the viewport's vertical center.
+    //
+    //    When a card is at viewport center:
+    //      scale(1.05), opacity: 1
+    //
+    //    As it moves away from center:
+    //      scale(0.92), opacity: 0.4
+    //
+    //    This creates a cinematic "take turns" focus effect.
+    // ========================================================
+    var cards = document.querySelectorAll('.projects__track .card');
+
+    function updateCardFocus() {
+        var vh = window.innerHeight;
+        var viewportCenter = vh / 2;
+
+        for (var i = 0; i < cards.length; i++) {
+            var rect = cards[i].getBoundingClientRect();
+            var cardCenter = rect.top + rect.height / 2;
+            var distanceFromCenter = Math.abs(cardCenter - viewportCenter);
+            var maxDistance = vh * 0.6;
+            var ratio = Math.min(distanceFromCenter / maxDistance, 1);
+
+            var scale = 1.05 - (ratio * 0.13);
+            var opacity = 1 - (ratio * 0.6);
+
+            cards[i].style.transform = 'scale(' + scale.toFixed(4) + ')';
+            cards[i].style.opacity = opacity.toFixed(4);
+        }
+    }
+
+    // ========================================================
+    // 4. UNIFIED SCROLL LISTENER
+    // ========================================================
+    function onScroll() {
+        updateHeroScroll();
+        updateCardFocus();
     }
 
     if (!reducedMotion) {
-        window.addEventListener('scroll', updateScroll, { passive: true });
-        updateScroll();
-    }
-
-    // ========================================================
-    // 3. EDITORIAL REVEAL MASKS
-    //    Elements with .reveal-mask slide up from inside
-    //    their .reveal-wrap overflow:hidden container.
-    //    Creates luxury curtain-reveal editorial pacing.
-    // ========================================================
-    var revealMaskEls = document.querySelectorAll('.reveal-mask');
-
-    if ('IntersectionObserver' in window && revealMaskEls.length) {
-        var maskObserver = new IntersectionObserver(function (entries) {
-            for (var i = 0; i < entries.length; i++) {
-                if (entries[i].isIntersecting) {
-                    entries[i].target.classList.add('is-visible');
-                    maskObserver.unobserve(entries[i].target);
-                }
-            }
-        }, {
-            threshold: 0.2,
-            rootMargin: '0px 0px -10% 0px'
-        });
-
-        for (var i = 0; i < revealMaskEls.length; i++) {
-            maskObserver.observe(revealMaskEls[i]);
-        }
+        window.addEventListener('scroll', onScroll, { passive: true });
+        onScroll();
     } else {
-        for (var i = 0; i < revealMaskEls.length; i++) {
-            revealMaskEls[i].classList.add('is-visible');
-        }
-    }
-
-    // ========================================================
-    // 4. STAGGERED PROJECT CARD SEQUENCING
-    //    .card-seq elements get staggered transition delays
-    //    injected via JavaScript based on data-seq index.
-    //    IntersectionObserver triggers .is-visible class.
-    //    CSS handles the steps(8) frame-lock animation.
-    // ========================================================
-    var cardSeqEls = document.querySelectorAll('.card-seq');
-
-    // Inject staggered transition delays
-    for (var i = 0; i < cardSeqEls.length; i++) {
-        var seqIndex = parseInt(cardSeqEls[i].getAttribute('data-seq'), 10) || 0;
-        cardSeqEls[i].style.transitionDelay = (seqIndex * 150) + 'ms';
-    }
-
-    if ('IntersectionObserver' in window && cardSeqEls.length) {
-        var cardObserver = new IntersectionObserver(function (entries) {
-            for (var i = 0; i < entries.length; i++) {
-                if (entries[i].isIntersecting) {
-                    entries[i].target.classList.add('is-visible');
-                    cardObserver.unobserve(entries[i].target);
-                }
-            }
-        }, {
-            threshold: 0.1,
-            rootMargin: '0px 0px -5% 0px'
-        });
-
-        for (var i = 0; i < cardSeqEls.length; i++) {
-            cardObserver.observe(cardSeqEls[i]);
-        }
-    } else {
-        for (var i = 0; i < cardSeqEls.length; i++) {
-            cardSeqEls[i].classList.add('is-visible');
+        // Reduced motion: show everything static
+        for (var i = 0; i < cards.length; i++) {
+            cards[i].style.transform = 'scale(1)';
+            cards[i].style.opacity = '1';
         }
     }
 

@@ -1,7 +1,7 @@
 /* ============================================================
    Nolan Ream — Portfolio
-   Pitch Black · Royal Purple · Stormy Halftone Horizons
-   Archivo / Space Grotesk · Cinematic Editorial Motion
+   Pitch Black · Royal Purple · Separated Sky Clouds
+   Scroll-Driven Focus Timeline · Clean Legibility
    ============================================================ */
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -35,7 +35,7 @@ a { color: inherit; text-decoration: none; }
 ::selection { background: var(--accent); color: var(--text); }
 
 /* ============================================================
-   MOON — 160x160 explicit, fixed, completely isolated
+   MOON — 160x160, fixed, fully isolated from layout
    ============================================================ */
 .moon {
     position: fixed;
@@ -50,97 +50,76 @@ a { color: inherit; text-decoration: none; }
 }
 
 /* ============================================================
-   CLOUDS — composited atmospheric horizon layers
-   No clip-path ellipse. Deep layered border-radius stacks
-   with scanline textures. Rapid horizontal drift animation
-   mimicking stormy wind. Each layer has distinct visual depth.
+   CLOUDS — soft horizontal line-art layers
+   Spaced across the hero vertical height (top, middle, lower).
+   No bottom stacking. Clean, separated atmospheric bands.
+   Fast horizontal drift for continuous active sky feel.
    ============================================================ */
 .cloud {
     position: fixed;
-    left: -10vw;
-    width: 120vw;
+    left: -20vw;
+    width: 140vw;
     z-index: 0;
     pointer-events: none;
     will-change: transform, opacity;
 }
 
-/* Cloud A: low-pacing dark purple atmospheric layer */
+/* Cloud A: near the top, subtle white scanlines */
 .cloud--a {
-    height: 28vh;
-    bottom: 12vh;
-    border-radius: 40% 70% 30% 80% / 60% 30% 70% 40%;
-    background:
-        repeating-linear-gradient(
-            90deg,
-            rgba(124, 58, 237, 0.4) 0px,
-            rgba(124, 58, 237, 0.4) 1px,
-            transparent 1px,
-            transparent 5px
-        ),
-        radial-gradient(ellipse 120% 80% at 30% 80%, rgba(124, 58, 237, 0.12) 0%, transparent 70%);
-    opacity: 0.35;
-    animation: windDriftSlow 8s linear infinite;
+    height: 14vh;
+    top: 12vh;
+    border-radius: 80% 60% 70% 90% / 50% 80% 40% 60%;
+    background: repeating-linear-gradient(
+        90deg,
+        var(--text) 0px,
+        var(--text) 1px,
+        transparent 1px,
+        transparent 5px
+    );
+    opacity: 0.2;
+    animation: driftRight 12s linear infinite;
 }
 
-/* Cloud B: sharp scanline texture, higher opacity, fast drift */
+/* Cloud B: upper-middle, purple accent scanlines */
 .cloud--b {
-    height: 24vh;
-    bottom: 4vh;
-    border-radius: 70% 35% 65% 40% / 35% 70% 30% 65%;
-    background:
-        repeating-linear-gradient(
-            90deg,
-            var(--text) 0px,
-            var(--text) 1px,
-            transparent 1px,
-            transparent 3px
-        ),
-        radial-gradient(ellipse 100% 90% at 60% 70%, rgba(244, 244, 245, 0.06) 0%, transparent 60%);
-    opacity: 0.4;
-    animation: windDriftFast 5s linear infinite;
+    height: 12vh;
+    top: 36vh;
+    border-radius: 60% 90% 50% 80% / 70% 40% 80% 50%;
+    background: repeating-linear-gradient(
+        90deg,
+        var(--accent) 0px,
+        var(--accent) 1px,
+        transparent 1px,
+        transparent 4px
+    );
+    opacity: 0.28;
+    animation: driftLeft 9s linear infinite;
 }
 
-/* Cloud C: dense structural base at absolute bottom */
+/* Cloud C: lower third, denser white scanlines */
 .cloud--c {
-    height: 20vh;
-    bottom: -2vh;
-    border-radius: 55% 45% 70% 30% / 45% 65% 35% 55%;
-    background:
-        repeating-linear-gradient(
-            90deg,
-            var(--text) 0px,
-            var(--text) 2px,
-            transparent 2px,
-            transparent 6px
-        ),
-        radial-gradient(ellipse 140% 100% at 50% 90%, rgba(124, 58, 237, 0.08) 0%, transparent 50%);
-    opacity: 0.3;
-    animation: windDriftMid 6.5s linear infinite reverse;
+    height: 16vh;
+    top: 58vh;
+    border-radius: 70% 50% 90% 60% / 60% 70% 50% 80%;
+    background: repeating-linear-gradient(
+        90deg,
+        var(--text) 0px,
+        var(--text) 1px,
+        transparent 1px,
+        transparent 3px
+    );
+    opacity: 0.22;
+    animation: driftRight 10s linear infinite;
 }
 
-/* Rapid horizontal sweep animations — stormy wind feel */
-@keyframes windDriftSlow {
-    0% { transform: translateX(0) translateY(0); }
-    25% { transform: translateX(3vw) translateY(-4px); }
-    50% { transform: translateX(-2vw) translateY(2px); }
-    75% { transform: translateX(4vw) translateY(-3px); }
-    100% { transform: translateX(0) translateY(0); }
+@keyframes driftRight {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(20vw); }
 }
 
-@keyframes windDriftFast {
-    0% { transform: translateX(0) translateY(0); }
-    20% { transform: translateX(-4vw) translateY(-5px); }
-    40% { transform: translateX(5vw) translateY(3px); }
-    60% { transform: translateX(-3vw) translateY(-2px); }
-    80% { transform: translateX(6vw) translateY(4px); }
-    100% { transform: translateX(0) translateY(0); }
-}
-
-@keyframes windDriftMid {
-    0% { transform: translateX(0) translateY(0); }
-    33% { transform: translateX(5vw) translateY(-6px); }
-    66% { transform: translateX(-4vw) translateY(3px); }
-    100% { transform: translateX(0) translateY(0); }
+@keyframes driftLeft {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-20vw); }
 }
 
 /* ============================================================
@@ -203,7 +182,7 @@ a { color: inherit; text-decoration: none; }
 .navbar__links a:hover::after { width: 100%; }
 
 /* ============================================================
-   HERO — centered
+   HERO — centered, fully visible, z-index above clouds
    ============================================================ */
 .hero {
     position: relative;
@@ -282,17 +261,17 @@ a { color: inherit; text-decoration: none; }
 }
 
 /* ============================================================
-   SECTIONS — perfectly centered
+   SECTIONS — centered, all text fully visible
+   No overflow hidden, no clip-path masks on text.
    ============================================================ */
 .section {
     position: relative;
     z-index: 5;
-    padding: 15vh var(--pad);
+    padding: 12vh var(--pad);
     border-top: 1px solid var(--hairline);
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
     width: 100%;
     margin: 0 auto;
 }
@@ -326,28 +305,7 @@ a { color: inherit; text-decoration: none; }
 }
 
 /* ============================================================
-   EDITORIAL REVEAL — overflow hidden wrapper + slide up
-   .reveal-wrap clips content; .reveal-mask slides up into view
-   ============================================================ */
-.reveal-wrap {
-    overflow: hidden;
-    position: relative;
-}
-
-.reveal-mask {
-    transform: translateY(110%);
-    opacity: 0;
-    transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1),
-                opacity 0.5s ease;
-}
-
-.reveal-mask.is-visible {
-    transform: translateY(0);
-    opacity: 1;
-}
-
-/* ============================================================
-   ABOUT
+   ABOUT — fully visible paragraphs, high legibility
    ============================================================ */
 .about__body {
     max-width: 640px;
@@ -362,11 +320,11 @@ a { color: inherit; text-decoration: none; }
     font-size: 1.1rem;
     line-height: 1.85;
     margin-bottom: 1.5rem;
-    opacity: 0.88;
+    opacity: 0.9;
 }
 
 /* ============================================================
-   SKILLS
+   SKILLS — fully visible list
    ============================================================ */
 .skills__list {
     list-style: none;
@@ -420,46 +378,43 @@ a { color: inherit; text-decoration: none; }
 }
 
 /* ============================================================
-   PROJECTS — staggered card sequencing
+   PROJECTS — scroll-driven focus timeline
+   Cards stacked vertically with large breathing room.
+   JS maps scroll position to scale/opacity per card.
    ============================================================ */
-.projects__grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-    max-width: 900px;
+.section--projects {
+    padding-bottom: 8vh;
+}
+
+.projects__track {
+    max-width: 720px;
     width: 100%;
-    margin: 3rem auto 0;
+    margin: 4rem auto 0;
+    padding: 0 var(--pad);
+    display: flex;
+    flex-direction: column;
+    gap: 12vh;
     position: relative;
     z-index: 5;
-    text-align: left;
 }
 
 .card {
     background: var(--surface);
     border: 1px solid var(--hairline);
-    padding: 2rem;
+    padding: 2.5rem;
     cursor: pointer;
-    opacity: 0;
-    transform: translateY(50px) scale(0.95);
-    transition: opacity 0.6s steps(8),
-                transform 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+    transform: scale(0.92);
+    opacity: 0.4;
+    transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1),
+                opacity 0.4s ease,
                 border-color 0.4s,
                 box-shadow 0.4s;
+    will-change: transform, opacity;
 }
-
-.card.is-visible {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-}
-
-.card--01 { grid-column: 1 / 2; }
-.card--02 { grid-column: 2 / 3; margin-top: 4rem; }
-.card--03 { grid-column: 1 / -1; }
 
 .card:hover {
     border-color: var(--accent);
     box-shadow: 4px 4px 0px var(--accent);
-    transform: translateY(-8px) scale(1);
 }
 
 .card__visual {
@@ -509,7 +464,7 @@ a { color: inherit; text-decoration: none; }
 }
 
 .card__desc {
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     line-height: 1.7;
     color: var(--muted);
     margin-bottom: 1.5rem;
@@ -586,14 +541,7 @@ a { color: inherit; text-decoration: none; }
     .navbar__links { gap: 1.25rem; }
     .section { padding: 10vh var(--pad); }
 
-    .projects__grid {
-        grid-template-columns: 1fr;
-    }
-
-    .card--01, .card--02, .card--03 {
-        grid-column: 1 / -1;
-        margin-top: 2rem;
-    }
+    .projects__track { gap: 8vh; }
 
     .skills__item {
         grid-template-columns: 3rem 1fr;
@@ -614,10 +562,6 @@ a { color: inherit; text-decoration: none; }
     *, *::before, *::after {
         animation-duration: 0.01ms !important;
         transition-duration: 0.01ms !important;
-    }
-    .reveal-mask {
-        transform: none;
-        opacity: 1;
     }
     .card {
         opacity: 1;
