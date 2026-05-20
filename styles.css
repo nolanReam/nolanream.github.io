@@ -33,24 +33,27 @@ body {
 a { color: inherit; text-decoration: none; }
 ::selection { background: var(--accent); color: #ffffff; }
 
-/* ===== Cloud Layers (Procedural SVG Lines) ===== */
-.cloud {
-    position: fixed;
-    z-index: 1;
-    pointer-events: none;
-    overflow: visible;
+/* ===== Background Layers: Hard-Isolated from Document Flow ===== */
+.cloud, .moon {
+    position: fixed !important;
+    pointer-events: none !important;
+    z-index: 1 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
 }
 
-/* ===== Background Moon ===== */
 .moon {
-    position: fixed;
     top: 4rem;
     right: 4rem;
     width: 160px;
     height: 160px;
-    z-index: 1;
-    pointer-events: none;
-    overflow: visible;
+}
+
+/* ===== Content Stack: Always above background layers ===== */
+.navbar, .hero, .section, .footer {
+    position: relative;
+    z-index: 10;
 }
 
 /* ===== Shared UI Elements ===== */

@@ -143,6 +143,7 @@
         cloudEls[ci].innerHTML = '';
         cloudEls[ci].setAttribute('viewBox', '0 0 ' + cfg.w + ' ' + cfg.h);
         cloudEls[ci].style.top = cfg.baseTop + 'vh';
+        cloudEls[ci].style.left = '0px';
         cloudEls[ci].style.width = cfg.w + 'px';
         cloudEls[ci].style.height = cfg.h + 'px';
 
