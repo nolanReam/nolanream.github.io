@@ -121,19 +121,39 @@
 
         cloudEls[ci].appendChild(g);
     }
-    //    - Moon opacity fade (deep background parallax)
-    //    - Cloud exit translation (midground parallax)
-    //    - Card viewport-center focus timeline (foreground)
-    // ========================================================
     // ========================================================
     // 2. SCROLL EVENT LISTENER
     //    - Moon opacity fade (deep background parallax)
+    //    - Cloud drift via left property (no transform = no blur)
     //    - Cloud fade on scroll past hero
     //    - Card viewport-center focus timeline (foreground)
     // ========================================================
     var clouds = document.querySelectorAll('.cloud');
     var cards = document.querySelectorAll('.projects__track .card');
     var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // Cloud drift state — moves via left/right property
+    var cloudPositions = [0, 0, 0];
+    var cloudSpeeds = [0.3, -0.25, 0.2]; // px per frame
+    var lastTime = performance.now();
+
+    function driftClouds(now) {
+        var dt = (now - lastTime) / 16; // normalize to ~60fps
+        lastTime = now;
+        for (var c = 0; c < clouds.length && c < cloudSpeeds.length; c++) {
+            cloudPositions[c] += cloudSpeeds[c] * dt;
+            // Reset drift when it goes too far
+            if (Math.abs(cloudPositions[c]) > 400) {
+                cloudPositions[c] = 0;
+            }
+            if (c === 1) {
+                // cloud--b uses 'right', so we don't set left
+                clouds[c].style.right = (10 - cloudPositions[c] * 0.1) + 'vw';
+            } else {
+                clouds[c].style.left = 'calc(' + (c === 0 ? '8vw' : '20vw') + ' + ' + cloudPositions[c] + 'px)';
+            }
+        }
+    }
 
     function onScroll() {
         var scrollY = window.scrollY;
@@ -149,9 +169,7 @@
         }
 
         // --------------------------------------------------
-        // CLOUDS: hide once user scrolls past hero
-        // We toggle visibility via a class rather than
-        // setting inline transform (which kills CSS animation)
+        // CLOUDS: fade out as user scrolls past hero
         // --------------------------------------------------
         if (clouds.length) {
             for (var c = 0; c < clouds.length; c++) {
@@ -159,21 +177,14 @@
                     clouds[c].style.visibility = 'hidden';
                 } else {
                     clouds[c].style.visibility = 'visible';
-                    clouds[c].style.opacity = ((c === 0 ? 0.55 : c === 1 ? 0.45 : 0.5) * (1 - heroRatio)).toFixed(4);
+                    clouds[c].style.opacity = ((c === 0 ? 0.5 : c === 1 ? 0.4 : 0.45) * (1 - heroRatio)).toFixed(4);
                 }
             }
         }
 
         // --------------------------------------------------
         // CARDS: viewport-center focus timeline
-        //
-        // Calculate the exact center of the viewport.
-        // For each card, measure how far its center is from
-        // the viewport center. Map that distance to scale
-        // and opacity for a smooth cinematic focus effect.
-        //
-        // Centered: scale(1.05), opacity: 1
-        // Out of focus: scale(0.88), opacity: 0.25
+        // Tighter focus zone (vh * 0.4) so cards pop faster
         // --------------------------------------------------
         var viewCenter = vh / 2;
 
@@ -181,7 +192,7 @@
             var rect = cards[i].getBoundingClientRect();
             var cardCenter = rect.top + (rect.height / 2);
             var distance = Math.abs(cardCenter - viewCenter);
-            var maxDistance = vh * 0.6;
+            var maxDistance = vh * 0.4;
             var ratio = Math.min(distance / maxDistance, 1);
 
             var scale = 1.05 - (ratio * 0.17);
@@ -192,12 +203,19 @@
         }
     }
 
+    // Animation loop for cloud drift (no transform, uses left/right)
+    function animationLoop(now) {
+        driftClouds(now);
+        requestAnimationFrame(animationLoop);
+    }
+
     // ========================================================
     // 3. INITIALIZE
     // ========================================================
     if (!reducedMotion) {
         window.addEventListener('scroll', onScroll, { passive: true });
         onScroll();
+        requestAnimationFrame(animationLoop);
     } else {
         for (var i = 0; i < cards.length; i++) {
             cards[i].style.transform = 'scale(1)';

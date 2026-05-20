@@ -52,9 +52,10 @@ a { color: inherit; text-decoration: none; }
 /* ============================================================
    MIDGROUND SKY: SCANLINE CLOUDS
    Identical rendering to the moon: SVG elements with
-   overflow: visible, no border-radius, no blur, no clipping.
-   Cloud shapes defined purely by JS-generated SVG lines
-   within a clipPath. Crisp vertical scanlines.
+   overflow: visible, no blur, no animation transform.
+   Cloud shapes defined by JS-generated SVG clipPath + lines.
+   Movement handled by JS changing 'left' property to avoid
+   GPU rasterization blur that transform causes on thin lines.
    ============================================================ */
 .cloud {
     position: fixed;
@@ -70,7 +71,6 @@ a { color: inherit; text-decoration: none; }
     width: 260px;
     height: 120px;
     opacity: 0.5;
-    animation: driftA 60s linear infinite;
 }
 
 .cloud--b {
@@ -80,7 +80,6 @@ a { color: inherit; text-decoration: none; }
     width: 180px;
     height: 90px;
     opacity: 0.4;
-    animation: driftB 75s linear infinite;
 }
 
 .cloud--c {
@@ -89,22 +88,6 @@ a { color: inherit; text-decoration: none; }
     width: 340px;
     height: 140px;
     opacity: 0.45;
-    animation: driftC 90s linear infinite;
-}
-
-@keyframes driftA {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(40vw); }
-}
-
-@keyframes driftB {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-35vw); }
-}
-
-@keyframes driftC {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(30vw); }
 }
 
 /* ============================================================
@@ -365,7 +348,7 @@ a { color: inherit; text-decoration: none; }
 .card {
     width: 100%;
     max-width: 800px;
-    margin: 20vh auto;
+    margin: 12vh auto;
     background: var(--surface);
     border: 1px solid var(--hairline);
     padding: 2.5rem;
@@ -514,7 +497,7 @@ a { color: inherit; text-decoration: none; }
 @media (max-width: 768px) {
     .navbar__links { gap: 1.25rem; }
     .section { padding: 10vh var(--pad); }
-    .card { margin: 15vh auto; }
+    .card { margin: 10vh auto; }
 
     .skills__item {
         grid-template-columns: 3rem 1fr;
