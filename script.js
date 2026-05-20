@@ -1,7 +1,6 @@
 /* ============================================================
    Nolan Ream — Portfolio
-   Moon SVG generator + cinematic scroll (moon fade, cloud exit)
-   + reveal observer
+   Moon SVG · Cinematic Scroll (moon fade + cloud exit) · Reveal
    ============================================================ */
 
 (function () {
@@ -13,6 +12,9 @@
 
     // ========================================================
     // 1. SVG MOON — vertical scanline crescent
+    //    Draws inside .moon (viewBox 0 0 200 200)
+    //    Outer disc at (100,100) R=85
+    //    Bite disc at (145,95) R=75
     // ========================================================
     var SVG_NS = 'http://www.w3.org/2000/svg';
     var moonSvg = document.querySelector('.moon');
@@ -61,17 +63,24 @@
         l.setAttribute('y1', y1);
         l.setAttribute('x2', x);
         l.setAttribute('y2', y2);
-        l.setAttribute('stroke', '#FAFAFA');
+        l.setAttribute('stroke', '#f4f4f5');
         l.setAttribute('stroke-width', '2');
         l.setAttribute('stroke-linecap', 'butt');
         svg.appendChild(l);
     }
 
     // ========================================================
-    // 2. CINEMATIC SCROLL — moon fade + cloud exit
-    //    Moon fades to 0 by end of hero section.
-    //    Clouds slide completely off-screen as user scrolls
-    //    past the hero, clearing the way for body content.
+    // 2. CINEMATIC SCROLL LISTENER
+    //
+    //    heroRatio = scrollY / windowHeight, clamped 0–1
+    //
+    //    MOON: opacity goes from 1 → 0 as heroRatio goes 0 → 1.
+    //    By the time user scrolls past the hero, moon is invisible.
+    //
+    //    CLOUDS: translate dramatically off-screen as heroRatio
+    //    increases. Cloud A exits far left, Cloud B exits far right,
+    //    Cloud C exits far left. Opacity also fades to 0.
+    //    This leaves About/Skills/Projects completely clean.
     // ========================================================
     var clouds = document.querySelectorAll('.cloud');
     var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -81,25 +90,26 @@
         var vh = window.innerHeight;
         var heroRatio = Math.min(y / vh, 1);
 
-        // Moon: fade from 0.85 to 0 across the hero scroll
+        // Moon: fade completely by end of hero
         if (moonSvg) {
-            var moonOpacity = 0.85 * (1 - heroRatio);
-            moonSvg.style.opacity = moonOpacity;
+            moonSvg.style.opacity = (1 - heroRatio).toFixed(3);
         }
 
-        // Clouds: drift + slide off-screen as heroRatio increases
-        // cloud--a moves far left, cloud--b moves far right, cloud--c moves left
+        // Clouds: push off-screen and fade out
         if (clouds.length >= 3) {
-            var exitDistance = heroRatio * 120; // percentage of vw to translate
+            var exit = heroRatio * 150;
 
-            clouds[0].style.transform = 'translateX(-' + exitDistance + 'vw) translateY(' + (heroRatio * -30) + 'px)';
-            clouds[0].style.opacity = 0.2 * (1 - heroRatio);
+            // Cloud A — exits far left
+            clouds[0].style.transform = 'translateX(-' + exit + 'vw) translateY(-' + (heroRatio * 40) + 'px)';
+            clouds[0].style.opacity = (0.35 * (1 - heroRatio)).toFixed(3);
 
-            clouds[1].style.transform = 'translateX(' + exitDistance + 'vw) translateY(' + (heroRatio * -20) + 'px)';
-            clouds[1].style.opacity = 0.15 * (1 - heroRatio);
+            // Cloud B — exits far right
+            clouds[1].style.transform = 'translateX(' + exit + 'vw) translateY(-' + (heroRatio * 25) + 'px)';
+            clouds[1].style.opacity = (0.25 * (1 - heroRatio)).toFixed(3);
 
-            clouds[2].style.transform = 'translateX(-' + (exitDistance * 0.8) + 'vw) translateY(' + (heroRatio * -25) + 'px)';
-            clouds[2].style.opacity = 0.14 * (1 - heroRatio);
+            // Cloud C — exits far left (slightly slower)
+            clouds[2].style.transform = 'translateX(-' + (exit * 0.9) + 'vw) translateY(-' + (heroRatio * 35) + 'px)';
+            clouds[2].style.opacity = (0.28 * (1 - heroRatio)).toFixed(3);
         }
     }
 

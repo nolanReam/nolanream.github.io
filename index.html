@@ -11,12 +11,12 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- ===== Background clouds (organic, atmospheric) ===== -->
+    <!-- ===== Background clouds (billowing organic blobs, z-index: 0) ===== -->
     <div class="cloud cloud--a" aria-hidden="true"></div>
     <div class="cloud cloud--b" aria-hidden="true"></div>
     <div class="cloud cloud--c" aria-hidden="true"></div>
 
-    <!-- ===== Crescent moon (fixed, isolated from layout) ===== -->
+    <!-- ===== Crescent moon (fixed, isolated, z-index: 1) ===== -->
     <svg class="moon" viewBox="0 0 200 200" aria-hidden="true"></svg>
 
     <!-- ===== Navbar ===== -->
@@ -32,7 +32,7 @@
         </nav>
     </header>
 
-    <!-- ===== Hero ===== -->
+    <!-- ===== Hero (z-index: 5, above clouds and moon) ===== -->
     <section class="hero">
         <span class="label">Portfolio &mdash; MMXXVI</span>
         <h1 class="hero__name">
