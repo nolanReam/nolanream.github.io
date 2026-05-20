@@ -11,116 +11,72 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- ===== Midground Sky: Cloud Layers (fixed, z-index: 1) ===== -->
-    <svg class="cloud cloud--a" viewBox="0 0 260 120" aria-hidden="true"></svg>
-    <svg class="cloud cloud--b" viewBox="0 0 180 90" aria-hidden="true"></svg>
-    <svg class="cloud cloud--c" viewBox="0 0 340 140" aria-hidden="true"></svg>
 
-    <!-- ===== Deep Background: Moon (fixed, z-index: 1) ===== -->
+    <svg style="position: absolute; width: 0; height: 0; overflow: hidden;" aria-hidden="true">
+        <defs>
+            <clipPath id="mask-cloud-a">
+                <path d="M 20,90 C 10,75 30,50 60,55 C 75,35 115,30 135,50 C 155,30 205,35 215,60 C 245,55 255,80 240,95 C 245,110 225,120 200,115 C 180,120 70,120 40,115 C 20,115 10,105 20,90 Z" />
+            </clipPath>
+            <clipPath id="mask-cloud-b">
+                <path d="M 15,65 C 10,50 25,35 45,40 C 55,25 85,20 100,35 C 115,20 150,25 155,45 C 175,42 180,60 170,70 C 175,80 160,88 140,85 C 125,88 50,88 30,85 C 15,85 10,78 15,65 Z" />
+            </clipPath>
+            <clipPath id="mask-cloud-c">
+                <path d="M 30,100 C 15,85 40,55 80,60 C 100,35 150,30 180,55 C 210,35 270,40 280,70 C 320,65 330,95 310,110 C 320,130 290,140 260,135 C 230,140 90,140 50,135 C 25,135 15,120 30,100 Z" />
+            </clipPath>
+        </defs>
+    </svg>
+
+    <svg class="cloud cloud--a" viewBox="0 0 260 140" aria-hidden="true">
+        <g clip-path="url(#mask-cloud-a)" class="lines-group"></g>
+    </svg>
+    <svg class="cloud cloud--b" viewBox="0 0 180 100" aria-hidden="true">
+        <g clip-path="url(#mask-cloud-b)" class="lines-group"></g>
+    </svg>
+    <svg class="cloud cloud--c" viewBox="0 0 340 160" aria-hidden="true">
+        <g clip-path="url(#mask-cloud-c)" class="lines-group"></g>
+    </svg>
+
     <svg class="moon" viewBox="0 0 200 200" aria-hidden="true"></svg>
 
-    <!-- ===== Navbar (z-index: 50) ===== -->
     <header class="navbar">
-        <a href="#" class="navbar__brand">Nolan Ream</a>
-        <nav>
-            <ul class="navbar__links">
-                <li><a href="#about">About</a></li>
-                <li><a href="#skills">Practice</a></li>
-                <li><a href="#projects">Work</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
+        <a href="#" class="navbar__logo">Nolan Ream</a>
+        <nav class="navbar__links">
+            <a href="#work">Work</a>
+            <a href="#about">About</a>
+            <a href="#contact">Contact</a>
         </nav>
     </header>
 
-    <!-- ===== Hero ===== -->
     <section class="hero">
         <div class="hero__content">
-            <span class="label">Portfolio &mdash; MMXXVI</span>
-            <h1 class="hero__name">
-                <span class="hero__line">Nolan</span>
-                <span class="hero__line hero__line--second"><span class="hero__stroke">Ream</span><span class="hero__dot">.</span></span>
-            </h1>
-            <p class="hero__tag">
-                A practice rooted in considered design, building deliberate
-                digital experiences at the intersection of craft and clarity.
+            <span class="label">— 01 / Design & Direction</span>
+            <h1 class="hero__headline">Crafting digital archetypes through <em>restraint</em> and precision.</h1>
+        </div>
+    </section>
+
+    <section class="intro" id="about">
+        <div class="section__inner">
+            <span class="label">— 02 / Philosophy</span>
+            <p class="intro__text">
+                The internet has grown loud. I design alternative paths—building fast, intentional, minimal digital interfaces that respect space, value quiet interactions, and withstand shifting trends.
             </p>
         </div>
     </section>
 
-    <!-- ===== About ===== -->
-    <section class="section" id="about">
-        <div class="section__inner">
-            <span class="label">— 02 / About</span>
-            <h2 class="section__title">A quiet pursuit of <em>form</em> &amp; meaning.</h2>
-            <div class="about__body">
-                <p>
-                    I am an aspiring software engineer and high school student dedicated to
-                    creating impactful digital experiences through code.
-                </p>
-                <p>
-                    Over the course of my academic journey I've built a strong technical
-                    foundation in Java, alongside front-end web development with HTML and CSS.
-                    My curiosity for interactive problem-solving also led me into game
-                    development, where I design and build logic-driven virtual environments.
-                </p>
-                <p>
-                    Looking ahead, I plan to pursue a bachelor's degree in Computer Science to
-                    further elevate my skills and prepare for a meaningful career in technology.
-                </p>
-            </div>
-        </div>
-    </section>
-
-    <!-- ===== Skills ===== -->
-    <section class="section" id="skills">
-        <div class="section__inner">
-            <span class="label">— 03 / Practice</span>
-            <h2 class="section__title">The disciplines of the <em>studio</em>.</h2>
-            <ul class="skills__list">
-                <li class="skills__item">
-                    <span class="skills__num">01</span>
-                    <span class="skills__name">Brand &amp; Art Direction</span>
-                    <span class="skills__meta">Identity / Editorial</span>
-                </li>
-                <li class="skills__item">
-                    <span class="skills__num">02</span>
-                    <span class="skills__name">Interface Design</span>
-                    <span class="skills__meta">Figma / Systems</span>
-                </li>
-                <li class="skills__item">
-                    <span class="skills__num">03</span>
-                    <span class="skills__name">Front-end Engineering</span>
-                    <span class="skills__meta">HTML / CSS / TS</span>
-                </li>
-                <li class="skills__item">
-                    <span class="skills__num">04</span>
-                    <span class="skills__name">Motion &amp; Interaction</span>
-                    <span class="skills__meta">GSAP / WebGL</span>
-                </li>
-                <li class="skills__item">
-                    <span class="skills__num">05</span>
-                    <span class="skills__name">Typography</span>
-                    <span class="skills__meta">Editorial / Custom</span>
-                </li>
-            </ul>
-        </div>
-    </section>
-
-    <!-- ===== Projects ===== -->
-    <section class="section" id="projects">
-        <div class="section__inner">
-            <span class="label">— 04 / Archive</span>
-            <h2 class="section__title">Selected <em>work</em>.</h2>
-        </div>
+    <section class="projects" id="work">
         <div class="projects__track">
+            <span class="label">— 03 / Selected Artifacts</span>
+
             <article class="card">
                 <div class="card__visual"></div>
-                <span class="card__category">Identity &mdash; 2026</span>
-                <h3 class="card__title">Maison <em>Lumière</em></h3>
-                <p class="card__desc">A heritage rebrand for a boutique atelier. Restrained typography, custom wordmark, and a digital system designed for permanence.</p>
-                <a href="#" class="card__cta">View case study &rarr;</a>
+                <span class="card__category">Identity &mdash; 2025</span>
+                <h3 class="card__title">Mono <em>Element</em></h3>
+                <p class="card__desc">A comprehensive design system built entirely around a micro-modular framework.</p>
+                <a href="#" class=\"card__cta\">View case study &rarr;</a>
             </article>
+
             <span class="projects__more" aria-hidden="true">&darr; more work below</span>
+
             <article class="card">
                 <div class="card__visual"></div>
                 <span class="card__category">Editorial &mdash; 2025</span>
@@ -128,7 +84,9 @@
                 <p class="card__desc">A serial publication exploring restraint in contemporary design.</p>
                 <a href="#" class="card__cta">View case study &rarr;</a>
             </article>
+
             <span class="projects__more" aria-hidden="true">&darr; more work below</span>
+
             <article class="card">
                 <div class="card__visual"></div>
                 <span class="card__category">Digital &mdash; 2025</span>
@@ -139,7 +97,35 @@
         </div>
     </section>
 
-    <!-- ===== Footer ===== -->
+    <section class="skills">
+        <div class="section__inner">
+            <span class="label">— 04 / Core Competencies</span>
+            <div class="skills__grid">
+                <div class="skills__item">
+                    <span class="skills__num">01</span>
+                    <div>
+                        <h4 class="skills__title">Interface Systems</h4>
+                        <p class="skills__desc">Rigorous grid alignment, component-driven design layouts, and scalable interactive design tokens.</p>
+                    </div>
+                </div>
+                <div class="skills__item">
+                    <span class="skills__num">02</span>
+                    <div>
+                        <h4 class="skills__title">Front-End Engineering</h4>
+                        <p class="skills__desc">Semantic HTML structures, highly performant layout setups, and lightweight creative micro-interactions.</p>
+                    </div>
+                </div>
+                <div class="skills__item">
+                    <span class="skills__num">03</span>
+                    <div>
+                        <h4 class="skills__title">Creative Direction</h4>
+                        <p class="skills__desc">Curation of typography, establishing minimalist brand voices, and maintaining narrative clarity throughout code.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <footer class="footer" id="contact">
         <div class="section__inner">
             <span class="label">— 05 / In conversation</span>
