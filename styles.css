@@ -50,62 +50,92 @@ a { color: inherit; text-decoration: none; }
 }
 
 /* ============================================================
-   MIDGROUND SKY: ORGANIC BLURRED CLOUD PHANTOMS
-   SVG-based billowing smoke profiles with heavy CSS blur.
-   Expansive scale, deeply layered for parallax atmosphere.
+   MIDGROUND SKY: CUMULUS CLOUD SHAPES
+   Built from stacked radial-gradient circles to form
+   realistic puffy cumulus cloud silhouettes like the
+   reference image — tall center peak, wide flat base,
+   irregular bumpy edges. Heavy blur softens into atmosphere.
    ============================================================ */
 .cloud {
     position: fixed;
-    left: -10vw;
-    width: 120vw;
-    height: 40vh;
     z-index: 1;
     pointer-events: none;
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center;
+    background-color: transparent;
+    filter: blur(6px);
+    -webkit-filter: blur(6px);
 }
 
+/* Cloud A — large cumulus, upper area */
 .cloud--a {
-    top: 5vh;
-    opacity: 0.4;
-    filter: blur(30px);
-    -webkit-filter: blur(30px);
-    background-image: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 300'%3E%3Cpath d='M0,260 C40,200 100,180 160,210 C220,160 280,140 340,180 C400,130 460,150 520,170 C580,120 640,140 700,180 C740,160 780,190 800,260 Z' fill='rgba(244,244,245,0.08)'/%3E%3Cpath d='M0,280 C60,230 140,210 200,240 C260,200 320,180 380,220 C440,170 520,190 580,210 C640,180 720,200 800,280 Z' fill='rgba(244,244,245,0.05)'/%3E%3C/svg%3E");
-    animation: driftA 75s linear infinite;
+    top: 8vh;
+    left: 5vw;
+    width: 320px;
+    height: 160px;
+    opacity: 0.12;
+    background:
+        radial-gradient(circle 70px at 50% 40%, var(--text) 0%, transparent 100%),
+        radial-gradient(circle 55px at 30% 55%, var(--text) 0%, transparent 100%),
+        radial-gradient(circle 60px at 70% 50%, var(--text) 0%, transparent 100%),
+        radial-gradient(circle 50px at 20% 65%, var(--text) 0%, transparent 100%),
+        radial-gradient(circle 55px at 80% 60%, var(--text) 0%, transparent 100%),
+        radial-gradient(circle 45px at 40% 60%, var(--text) 0%, transparent 100%),
+        radial-gradient(circle 48px at 60% 58%, var(--text) 0%, transparent 100%),
+        radial-gradient(ellipse 160px 50px at 50% 75%, var(--text) 0%, transparent 100%);
+    animation: driftA 80s linear infinite;
 }
 
+/* Cloud B — purple-tinted cumulus, middle area */
 .cloud--b {
-    top: 25vh;
-    opacity: 0.25;
-    filter: blur(50px);
-    -webkit-filter: blur(50px);
-    background-image: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 300'%3E%3Cpath d='M0,250 C50,190 130,170 200,210 C270,150 350,160 420,200 C490,140 570,160 640,190 C700,150 760,180 800,250 Z' fill='rgba(124,58,237,0.07)'/%3E%3Cpath d='M0,270 C80,220 160,200 240,230 C320,190 400,170 480,210 C560,180 640,190 720,230 C760,210 790,240 800,270 Z' fill='rgba(124,58,237,0.04)'/%3E%3C/svg%3E");
-    animation: driftB 110s linear infinite;
+    top: 30vh;
+    right: 8vw;
+    left: auto;
+    width: 280px;
+    height: 140px;
+    opacity: 0.1;
+    background:
+        radial-gradient(circle 60px at 50% 35%, var(--accent) 0%, transparent 100%),
+        radial-gradient(circle 50px at 30% 50%, var(--accent) 0%, transparent 100%),
+        radial-gradient(circle 55px at 70% 45%, var(--accent) 0%, transparent 100%),
+        radial-gradient(circle 42px at 20% 60%, var(--accent) 0%, transparent 100%),
+        radial-gradient(circle 48px at 80% 55%, var(--accent) 0%, transparent 100%),
+        radial-gradient(circle 40px at 45% 55%, var(--accent) 0%, transparent 100%),
+        radial-gradient(ellipse 140px 45px at 50% 72%, var(--accent) 0%, transparent 100%);
+    animation: driftB 100s linear infinite;
 }
 
+/* Cloud C — wide cumulus, lower area */
 .cloud--c {
-    top: 50vh;
-    opacity: 0.35;
-    filter: blur(40px);
-    -webkit-filter: blur(40px);
-    background-image: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 300'%3E%3Cpath d='M0,240 C70,180 150,160 230,200 C310,140 390,150 470,190 C550,130 630,160 710,200 C750,170 780,200 800,240 Z' fill='rgba(244,244,245,0.07)'/%3E%3Cpath d='M0,270 C90,210 180,200 270,240 C360,190 450,180 540,220 C630,180 720,200 800,270 Z' fill='rgba(244,244,245,0.04)'/%3E%3C/svg%3E");
-    animation: driftC 140s linear infinite;
+    top: 55vh;
+    left: 15vw;
+    width: 380px;
+    height: 180px;
+    opacity: 0.1;
+    background:
+        radial-gradient(circle 80px at 45% 35%, var(--text) 0%, transparent 100%),
+        radial-gradient(circle 65px at 25% 50%, var(--text) 0%, transparent 100%),
+        radial-gradient(circle 70px at 65% 45%, var(--text) 0%, transparent 100%),
+        radial-gradient(circle 55px at 15% 60%, var(--text) 0%, transparent 100%),
+        radial-gradient(circle 60px at 85% 55%, var(--text) 0%, transparent 100%),
+        radial-gradient(circle 50px at 38% 55%, var(--text) 0%, transparent 100%),
+        radial-gradient(circle 52px at 58% 52%, var(--text) 0%, transparent 100%),
+        radial-gradient(circle 45px at 75% 60%, var(--text) 0%, transparent 100%),
+        radial-gradient(ellipse 190px 55px at 50% 75%, var(--text) 0%, transparent 100%);
+    animation: driftC 120s linear infinite;
 }
 
 @keyframes driftA {
     0% { transform: translateX(0); }
-    100% { transform: translateX(30vw); }
+    100% { transform: translateX(40vw); }
 }
 
 @keyframes driftB {
     0% { transform: translateX(0); }
-    100% { transform: translateX(-25vw); }
+    100% { transform: translateX(-35vw); }
 }
 
 @keyframes driftC {
     0% { transform: translateX(0); }
-    100% { transform: translateX(20vw); }
+    100% { transform: translateX(30vw); }
 }
 
 /* ============================================================
