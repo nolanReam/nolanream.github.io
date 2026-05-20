@@ -91,18 +91,19 @@
         }
 
         // --------------------------------------------------
-        // CLOUDS: translate off-screen as user scrolls past hero
-        // Each cloud exits in a different direction for depth
+        // CLOUDS: hide once user scrolls past hero
+        // We toggle visibility via a class rather than
+        // setting inline transform (which kills CSS animation)
         // --------------------------------------------------
-        if (clouds.length >= 3) {
-            clouds[0].style.transform = 'translateX(' + (-40 * heroRatio) + 'vw)';
-            clouds[0].style.opacity = (0.55 * (1 - heroRatio)).toFixed(4);
-
-            clouds[1].style.transform = 'translateX(' + (35 * heroRatio) + 'vw)';
-            clouds[1].style.opacity = (0.45 * (1 - heroRatio)).toFixed(4);
-
-            clouds[2].style.transform = 'translateX(' + (-30 * heroRatio) + 'vw)';
-            clouds[2].style.opacity = (0.5 * (1 - heroRatio)).toFixed(4);
+        if (clouds.length) {
+            for (var c = 0; c < clouds.length; c++) {
+                if (heroRatio >= 0.95) {
+                    clouds[c].style.visibility = 'hidden';
+                } else {
+                    clouds[c].style.visibility = 'visible';
+                    clouds[c].style.opacity = ((c === 0 ? 0.55 : c === 1 ? 0.45 : 0.5) * (1 - heroRatio)).toFixed(4);
+                }
+            }
         }
 
         // --------------------------------------------------
