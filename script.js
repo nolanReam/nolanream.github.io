@@ -1,7 +1,7 @@
 /* ============================================================
    Nolan Ream — Portfolio
-   Moon SVG · Scroll-Linked Moon/Cloud Exit
-   · Scroll-Driven Project Focus Timeline
+   Moon SVG · Moon/Cloud Scroll Exit
+   · Viewport-Center Card Scale Animation
    ============================================================ */
 
 (function () {
@@ -68,68 +68,69 @@
     }
 
     // ========================================================
-    // 2. SCROLL-LINKED: Moon fade + Cloud exit
-    //
-    //    heroRatio = scrollY / windowHeight, clamped [0, 1]
-    //    Moon: opacity 1 → 0 by end of hero
-    //    Clouds: translate off-screen diagonally + fade to 0
+    // 2. SCROLL EVENT LISTENER
+    //    Handles: moon fade, cloud exit, card focus scaling
     // ========================================================
     var clouds = document.querySelectorAll('.cloud');
+    var cards = document.querySelectorAll('.projects__track .card');
     var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    function updateHeroScroll() {
+    function onScroll() {
         var y = window.scrollY;
         var vh = window.innerHeight;
+
+        // --------------------------------------------------
+        // MOON: fade from 1 to 0 as user scrolls through hero
+        // heroRatio goes from 0 (top) to 1 (scrolled 1 viewport)
+        // --------------------------------------------------
         var heroRatio = Math.min(y / vh, 1);
 
-        // Moon fade
         if (moonSvg) {
             moonSvg.style.opacity = (1 - heroRatio).toFixed(4);
         }
 
-        // Clouds exit: translate off-screen and fade
+        // --------------------------------------------------
+        // CLOUDS: translate off-screen as user exits hero
+        // Cloud A exits upper-left
+        // Cloud B exits upper-right
+        // Cloud C exits lower-left
+        // --------------------------------------------------
         if (clouds.length >= 3) {
-            clouds[0].style.transform = 'translateX(' + (-40 * heroRatio) + 'vw) translateY(' + (-30 * heroRatio) + 'vh)';
-            clouds[0].style.opacity = (0.2 * (1 - heroRatio)).toFixed(4);
+            clouds[0].style.transform = 'translateX(' + (-50 * heroRatio) + 'vw) translateY(' + (-30 * heroRatio) + 'vh)';
+            clouds[0].style.opacity = (0.18 * (1 - heroRatio)).toFixed(4);
 
-            clouds[1].style.transform = 'translateX(' + (35 * heroRatio) + 'vw) translateY(' + (-20 * heroRatio) + 'vh)';
-            clouds[1].style.opacity = (0.28 * (1 - heroRatio)).toFixed(4);
+            clouds[1].style.transform = 'translateX(' + (45 * heroRatio) + 'vw) translateY(' + (-20 * heroRatio) + 'vh)';
+            clouds[1].style.opacity = (0.24 * (1 - heroRatio)).toFixed(4);
 
-            clouds[2].style.transform = 'translateX(' + (-25 * heroRatio) + 'vw) translateY(' + (40 * heroRatio) + 'vh)';
-            clouds[2].style.opacity = (0.22 * (1 - heroRatio)).toFixed(4);
+            clouds[2].style.transform = 'translateX(' + (-35 * heroRatio) + 'vw) translateY(' + (40 * heroRatio) + 'vh)';
+            clouds[2].style.opacity = (0.2 * (1 - heroRatio)).toFixed(4);
         }
-    }
 
-    // ========================================================
-    // 3. SCROLL-DRIVEN PROJECT FOCUS TIMELINE
-    //
-    //    For each .card in .projects__track:
-    //    Calculate how close the card's vertical center is to
-    //    the viewport's vertical center.
-    //
-    //    When a card is at viewport center:
-    //      scale(1.05), opacity: 1
-    //
-    //    As it moves away from center:
-    //      scale(0.92), opacity: 0.4
-    //
-    //    This creates a cinematic "take turns" focus effect.
-    // ========================================================
-    var cards = document.querySelectorAll('.projects__track .card');
-
-    function updateCardFocus() {
-        var vh = window.innerHeight;
+        // --------------------------------------------------
+        // CARDS: scroll-driven viewport-center focus scaling
+        //
+        // For each card, calculate how close its vertical
+        // center is to the viewport's vertical center.
+        //
+        // At center: scale(1.05), opacity: 1
+        // Far from center: scale(0.85), opacity: 0.2
+        //
+        // ratio = 0 means perfectly centered
+        // ratio = 1 means maximally far from center
+        // --------------------------------------------------
         var viewportCenter = vh / 2;
 
         for (var i = 0; i < cards.length; i++) {
             var rect = cards[i].getBoundingClientRect();
-            var cardCenter = rect.top + rect.height / 2;
-            var distanceFromCenter = Math.abs(cardCenter - viewportCenter);
-            var maxDistance = vh * 0.6;
-            var ratio = Math.min(distanceFromCenter / maxDistance, 1);
+            var cardCenter = rect.top + (rect.height / 2);
+            var distance = Math.abs(cardCenter - viewportCenter);
+            var maxDistance = vh * 0.55;
+            var ratio = Math.min(distance / maxDistance, 1);
 
-            var scale = 1.05 - (ratio * 0.13);
-            var opacity = 1 - (ratio * 0.6);
+            // scale: 1.05 at center, 0.85 at edges (range of 0.2)
+            var scale = 1.05 - (ratio * 0.2);
+            // opacity: 1 at center, 0.2 at edges (range of 0.8)
+            var opacity = 1 - (ratio * 0.8);
 
             cards[i].style.transform = 'scale(' + scale.toFixed(4) + ')';
             cards[i].style.opacity = opacity.toFixed(4);
@@ -137,18 +138,12 @@
     }
 
     // ========================================================
-    // 4. UNIFIED SCROLL LISTENER
+    // 3. BIND AND INITIALIZE
     // ========================================================
-    function onScroll() {
-        updateHeroScroll();
-        updateCardFocus();
-    }
-
     if (!reducedMotion) {
         window.addEventListener('scroll', onScroll, { passive: true });
         onScroll();
     } else {
-        // Reduced motion: show everything static
         for (var i = 0; i < cards.length; i++) {
             cards[i].style.transform = 'scale(1)';
             cards[i].style.opacity = '1';

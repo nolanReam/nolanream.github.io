@@ -1,7 +1,7 @@
 /* ============================================================
    Nolan Ream — Portfolio
-   Pitch Black · Royal Purple · Separated Sky Clouds
-   Scroll-Driven Focus Timeline · Clean Legibility
+   Pitch Black · Purple Accent · Separated Drifting Clouds
+   Scroll-Driven Viewport-Center Card Scaling
    ============================================================ */
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -35,7 +35,7 @@ a { color: inherit; text-decoration: none; }
 ::selection { background: var(--accent); color: var(--text); }
 
 /* ============================================================
-   MOON — 160x160, fixed, fully isolated from layout
+   MOON — 160x160, fixed, isolated
    ============================================================ */
 .moon {
     position: fixed;
@@ -50,24 +50,24 @@ a { color: inherit; text-decoration: none; }
 }
 
 /* ============================================================
-   CLOUDS — soft horizontal line-art layers
-   Spaced across the hero vertical height (top, middle, lower).
-   No bottom stacking. Clean, separated atmospheric bands.
-   Fast horizontal drift for continuous active sky feel.
+   CLOUDS — separated drifting sky layers
+   Three bands at different vertical positions.
+   Fast infinite horizontal drift at different speeds.
+   Soft line-art scanline textures. No bottom stacking.
    ============================================================ */
 .cloud {
     position: fixed;
-    left: -20vw;
-    width: 140vw;
+    width: 200vw;
+    left: -50vw;
     z-index: 0;
     pointer-events: none;
     will-change: transform, opacity;
 }
 
-/* Cloud A: near the top, subtle white scanlines */
+/* Cloud A: top band, white scanlines, slow tempo */
 .cloud--a {
-    height: 14vh;
-    top: 12vh;
+    top: 10%;
+    height: 12vh;
     border-radius: 80% 60% 70% 90% / 50% 80% 40% 60%;
     background: repeating-linear-gradient(
         90deg,
@@ -76,14 +76,14 @@ a { color: inherit; text-decoration: none; }
         transparent 1px,
         transparent 5px
     );
-    opacity: 0.2;
-    animation: driftRight 12s linear infinite;
+    opacity: 0.18;
+    animation: sweepRight 18s linear infinite;
 }
 
-/* Cloud B: upper-middle, purple accent scanlines */
+/* Cloud B: middle band, purple scanlines, medium tempo */
 .cloud--b {
-    height: 12vh;
-    top: 36vh;
+    top: 35%;
+    height: 10vh;
     border-radius: 60% 90% 50% 80% / 70% 40% 80% 50%;
     background: repeating-linear-gradient(
         90deg,
@@ -92,14 +92,14 @@ a { color: inherit; text-decoration: none; }
         transparent 1px,
         transparent 4px
     );
-    opacity: 0.28;
-    animation: driftLeft 9s linear infinite;
+    opacity: 0.24;
+    animation: sweepLeft 13s linear infinite;
 }
 
-/* Cloud C: lower third, denser white scanlines */
+/* Cloud C: lower band, denser white scanlines, fastest */
 .cloud--c {
-    height: 16vh;
-    top: 58vh;
+    top: 60%;
+    height: 14vh;
     border-radius: 70% 50% 90% 60% / 60% 70% 50% 80%;
     background: repeating-linear-gradient(
         90deg,
@@ -108,18 +108,18 @@ a { color: inherit; text-decoration: none; }
         transparent 1px,
         transparent 3px
     );
-    opacity: 0.22;
-    animation: driftRight 10s linear infinite;
+    opacity: 0.2;
+    animation: sweepRight 10s linear infinite;
 }
 
-@keyframes driftRight {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(20vw); }
+@keyframes sweepRight {
+    0% { transform: translateX(-25vw); }
+    100% { transform: translateX(25vw); }
 }
 
-@keyframes driftLeft {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-20vw); }
+@keyframes sweepLeft {
+    0% { transform: translateX(25vw); }
+    100% { transform: translateX(-25vw); }
 }
 
 /* ============================================================
@@ -182,7 +182,7 @@ a { color: inherit; text-decoration: none; }
 .navbar__links a:hover::after { width: 100%; }
 
 /* ============================================================
-   HERO — centered, fully visible, z-index above clouds
+   HERO
    ============================================================ */
 .hero {
     position: relative;
@@ -256,13 +256,10 @@ a { color: inherit; text-decoration: none; }
     letter-spacing: 0.3em;
     color: var(--muted);
     margin-bottom: 1rem;
-    position: relative;
-    z-index: 5;
 }
 
 /* ============================================================
    SECTIONS — centered, all text fully visible
-   No overflow hidden, no clip-path masks on text.
    ============================================================ */
 .section {
     position: relative;
@@ -280,8 +277,6 @@ a { color: inherit; text-decoration: none; }
     max-width: 900px;
     width: 100%;
     margin: 0 auto;
-    position: relative;
-    z-index: 5;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -305,14 +300,12 @@ a { color: inherit; text-decoration: none; }
 }
 
 /* ============================================================
-   ABOUT — fully visible paragraphs, high legibility
+   ABOUT
    ============================================================ */
 .about__body {
     max-width: 640px;
     width: 100%;
     margin: 1rem auto 0;
-    position: relative;
-    z-index: 5;
     text-align: left;
 }
 
@@ -324,14 +317,12 @@ a { color: inherit; text-decoration: none; }
 }
 
 /* ============================================================
-   SKILLS — fully visible list
+   SKILLS
    ============================================================ */
 .skills__list {
     list-style: none;
     border-top: 1px solid var(--hairline);
     margin-top: 1.5rem;
-    position: relative;
-    z-index: 5;
     width: 100%;
     text-align: left;
 }
@@ -378,38 +369,36 @@ a { color: inherit; text-decoration: none; }
 }
 
 /* ============================================================
-   PROJECTS — scroll-driven focus timeline
-   Cards stacked vertically with large breathing room.
-   JS maps scroll position to scale/opacity per card.
+   PROJECTS — vertical single-column scroll track
+   Massive spacing between cards so only one is centered
+   at any given scroll position.
    ============================================================ */
-.section--projects {
-    padding-bottom: 8vh;
-}
-
 .projects__track {
-    max-width: 720px;
+    max-width: 700px;
     width: 100%;
-    margin: 4rem auto 0;
+    margin: 0 auto;
     padding: 0 var(--pad);
     display: flex;
     flex-direction: column;
-    gap: 12vh;
-    position: relative;
-    z-index: 5;
+    align-items: center;
 }
 
 .card {
+    width: 100%;
     background: var(--surface);
     border: 1px solid var(--hairline);
     padding: 2.5rem;
+    margin-bottom: 35vh;
     cursor: pointer;
-    transform: scale(0.92);
-    opacity: 0.4;
-    transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1),
-                opacity 0.4s ease,
-                border-color 0.4s,
-                box-shadow 0.4s;
+    transform: scale(0.85);
+    opacity: 0.2;
+    transition: transform 0.2s ease-out, opacity 0.2s ease-out,
+                border-color 0.3s, box-shadow 0.3s;
     will-change: transform, opacity;
+}
+
+.card:last-child {
+    margin-bottom: 10vh;
 }
 
 .card:hover {
@@ -540,8 +529,7 @@ a { color: inherit; text-decoration: none; }
 @media (max-width: 768px) {
     .navbar__links { gap: 1.25rem; }
     .section { padding: 10vh var(--pad); }
-
-    .projects__track { gap: 8vh; }
+    .card { margin-bottom: 25vh; }
 
     .skills__item {
         grid-template-columns: 3rem 1fr;
