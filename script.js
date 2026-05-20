@@ -77,15 +77,15 @@
     var cloudEls = document.querySelectorAll('.cloud');
     var cloudDefs = [
         {
-            w: 260, h: 120, spacing: 3, color: '#f4f4f5', sw: 2,
+            w: 260, h: 120, spacing: 3, color: 'rgba(244,244,245,0.7)', sw: 2,
             path: 'M20,100 C30,85 50,60 80,55 C100,40 120,30 140,35 C160,25 180,40 195,50 C210,35 230,50 245,65 C255,75 260,90 250,100 Z'
         },
         {
-            w: 180, h: 90, spacing: 3, color: '#7c3aed', sw: 2,
+            w: 180, h: 90, spacing: 3, color: 'rgba(124,58,237,0.7)', sw: 2,
             path: 'M15,75 C25,60 40,45 60,42 C75,30 95,25 110,35 C125,25 140,35 155,48 C165,40 175,55 172,70 C178,80 170,85 160,75 Z'
         },
         {
-            w: 340, h: 140, spacing: 3, color: '#f4f4f5', sw: 2,
+            w: 340, h: 140, spacing: 3, color: 'rgba(244,244,245,0.7)', sw: 2,
             path: 'M25,120 C35,100 60,75 90,70 C110,55 140,40 170,45 C200,30 225,40 250,55 C270,40 295,50 310,65 C325,55 335,70 330,90 C338,105 330,120 320,120 Z'
         }
     ];
@@ -192,11 +192,11 @@
             var rect = cards[i].getBoundingClientRect();
             var cardCenter = rect.top + (rect.height / 2);
             var distance = Math.abs(cardCenter - viewCenter);
-            var maxDistance = vh * 0.4;
+            var maxDistance = vh * 0.55;
             var ratio = Math.min(distance / maxDistance, 1);
 
             var scale = 1.05 - (ratio * 0.17);
-            var opacity = 1.0 - (ratio * 0.75);
+            var opacity = 1.0 - (ratio * 0.65);
 
             cards[i].style.transform = 'scale(' + scale.toFixed(4) + ')';
             cards[i].style.opacity = opacity.toFixed(4);
