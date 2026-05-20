@@ -50,77 +50,76 @@ a { color: inherit; text-decoration: none; }
 }
 
 /* ============================================================
-   MIDGROUND SKY: CUMULUS CLOUD SHAPES
-   Built from stacked radial-gradient circles to form
-   realistic puffy cumulus cloud silhouettes like the
-   reference image — tall center peak, wide flat base,
-   irregular bumpy edges. Heavy blur softens into atmosphere.
+   MIDGROUND SKY: SCANLINE CLOUDS
+   Same vertical-line aesthetic as the moon.
+   Generated via JS (SVG lines clipped by morphing shapes).
+   Each cloud is a different size. CSS animates both drift
+   and border-radius morph so shapes constantly change.
    ============================================================ */
 .cloud {
     position: fixed;
     z-index: 1;
     pointer-events: none;
-    background-color: transparent;
-    filter: blur(6px);
-    -webkit-filter: blur(6px);
+    overflow: hidden;
+    border-radius: 60% 40% 70% 30% / 50% 60% 40% 50%;
 }
 
-/* Cloud A — large cumulus, upper area */
 .cloud--a {
     top: 8vh;
-    left: 5vw;
-    width: 320px;
-    height: 160px;
-    opacity: 0.55;
-    background:
-        radial-gradient(circle 70px at 50% 40%, rgba(244,244,245,0.9) 0%, rgba(244,244,245,0) 70%),
-        radial-gradient(circle 55px at 30% 55%, rgba(244,244,245,0.8) 0%, rgba(244,244,245,0) 70%),
-        radial-gradient(circle 60px at 70% 50%, rgba(244,244,245,0.8) 0%, rgba(244,244,245,0) 70%),
-        radial-gradient(circle 50px at 20% 65%, rgba(244,244,245,0.7) 0%, rgba(244,244,245,0) 70%),
-        radial-gradient(circle 55px at 80% 60%, rgba(244,244,245,0.7) 0%, rgba(244,244,245,0) 70%),
-        radial-gradient(circle 45px at 40% 60%, rgba(244,244,245,0.75) 0%, rgba(244,244,245,0) 70%),
-        radial-gradient(circle 48px at 60% 58%, rgba(244,244,245,0.75) 0%, rgba(244,244,245,0) 70%),
-        radial-gradient(ellipse 160px 50px at 50% 78%, rgba(244,244,245,0.6) 0%, rgba(244,244,245,0) 70%);
-    animation: driftA 80s linear infinite;
+    left: 8vw;
+    width: 260px;
+    height: 120px;
+    opacity: 0.4;
+    animation: driftA 60s linear infinite, morphA 12s ease-in-out infinite alternate;
 }
 
-/* Cloud B — purple-tinted cumulus, middle area */
 .cloud--b {
-    top: 30vh;
-    right: 8vw;
+    top: 28vh;
+    right: 10vw;
     left: auto;
-    width: 280px;
-    height: 140px;
-    opacity: 0.45;
-    background:
-        radial-gradient(circle 60px at 50% 35%, rgba(124,58,237,0.9) 0%, rgba(124,58,237,0) 70%),
-        radial-gradient(circle 50px at 30% 50%, rgba(124,58,237,0.8) 0%, rgba(124,58,237,0) 70%),
-        radial-gradient(circle 55px at 70% 45%, rgba(124,58,237,0.8) 0%, rgba(124,58,237,0) 70%),
-        radial-gradient(circle 42px at 20% 60%, rgba(124,58,237,0.7) 0%, rgba(124,58,237,0) 70%),
-        radial-gradient(circle 48px at 80% 55%, rgba(124,58,237,0.7) 0%, rgba(124,58,237,0) 70%),
-        radial-gradient(circle 40px at 45% 55%, rgba(124,58,237,0.75) 0%, rgba(124,58,237,0) 70%),
-        radial-gradient(ellipse 140px 45px at 50% 72%, rgba(124,58,237,0.6) 0%, rgba(124,58,237,0) 70%);
-    animation: driftB 100s linear infinite;
+    width: 180px;
+    height: 90px;
+    opacity: 0.3;
+    animation: driftB 75s linear infinite, morphB 10s ease-in-out infinite alternate;
 }
 
-/* Cloud C — wide cumulus, lower area */
 .cloud--c {
-    top: 55vh;
-    left: 15vw;
-    width: 380px;
-    height: 180px;
-    opacity: 0.5;
-    background:
-        radial-gradient(circle 80px at 45% 35%, rgba(244,244,245,0.9) 0%, rgba(244,244,245,0) 70%),
-        radial-gradient(circle 65px at 25% 50%, rgba(244,244,245,0.8) 0%, rgba(244,244,245,0) 70%),
-        radial-gradient(circle 70px at 65% 45%, rgba(244,244,245,0.8) 0%, rgba(244,244,245,0) 70%),
-        radial-gradient(circle 55px at 15% 60%, rgba(244,244,245,0.7) 0%, rgba(244,244,245,0) 70%),
-        radial-gradient(circle 60px at 85% 55%, rgba(244,244,245,0.7) 0%, rgba(244,244,245,0) 70%),
-        radial-gradient(circle 50px at 38% 55%, rgba(244,244,245,0.75) 0%, rgba(244,244,245,0) 70%),
-        radial-gradient(circle 52px at 58% 52%, rgba(244,244,245,0.75) 0%, rgba(244,244,245,0) 70%),
-        radial-gradient(circle 45px at 75% 60%, rgba(244,244,245,0.7) 0%, rgba(244,244,245,0) 70%),
-        radial-gradient(ellipse 190px 55px at 50% 78%, rgba(244,244,245,0.6) 0%, rgba(244,244,245,0) 70%);
-    animation: driftC 120s linear infinite;
+    top: 52vh;
+    left: 20vw;
+    width: 340px;
+    height: 140px;
+    opacity: 0.35;
+    animation: driftC 90s linear infinite, morphC 14s ease-in-out infinite alternate;
+}
+
+@keyframes driftA {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(50vw); }
+}
+
+@keyframes driftB {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-45vw); }
+}
+
+@keyframes driftC {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(35vw); }
+}
+
+@keyframes morphA {
+    0% { border-radius: 60% 40% 70% 30% / 50% 60% 40% 50%; }
+    100% { border-radius: 40% 60% 50% 70% / 60% 40% 55% 45%; }
+}
+
+@keyframes morphB {
+    0% { border-radius: 50% 50% 60% 40% / 45% 55% 50% 50%; }
+    100% { border-radius: 65% 35% 45% 55% / 55% 45% 60% 40%; }
+}
+
+@keyframes morphC {
+    0% { border-radius: 55% 45% 65% 35% / 50% 55% 45% 55%; }
+    100% { border-radius: 45% 55% 40% 60% / 60% 40% 50% 50%; }
 }
 
 @keyframes driftA {

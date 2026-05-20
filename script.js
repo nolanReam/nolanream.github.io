@@ -68,9 +68,42 @@
     }
 
     // ========================================================
-    // 2. SCROLL EVENT LISTENER
+    // 1b. SVG CLOUDS — same vertical scanline style as moon
+    //     Fill each cloud SVG with vertical lines spanning
+    //     its full viewBox height. The CSS border-radius +
+    //     overflow:hidden clips them into cloud shapes that
+    //     morph over time via animation.
+    // ========================================================
+    var cloudEls = document.querySelectorAll('.cloud');
+    var cloudConfigs = [
+        { w: 260, h: 120, spacing: 4, color: '#f4f4f5', strokeWidth: 1.5 },
+        { w: 180, h: 90, spacing: 5, color: '#7c3aed', strokeWidth: 1.5 },
+        { w: 340, h: 140, spacing: 4, color: '#f4f4f5', strokeWidth: 1.5 }
+    ];
+
+    for (var ci = 0; ci < cloudEls.length; ci++) {
+        var cfg = cloudConfigs[ci];
+        if (!cfg) continue;
+        for (var lx = 0; lx < cfg.w; lx += cfg.spacing) {
+            var cl = document.createElementNS(SVG_NS, 'line');
+            cl.setAttribute('x1', lx);
+            cl.setAttribute('y1', 0);
+            cl.setAttribute('x2', lx);
+            cl.setAttribute('y2', cfg.h);
+            cl.setAttribute('stroke', cfg.color);
+            cl.setAttribute('stroke-width', cfg.strokeWidth);
+            cl.setAttribute('stroke-linecap', 'butt');
+            cloudEls[ci].appendChild(cl);
+        }
+    }
     //    - Moon opacity fade (deep background parallax)
     //    - Cloud exit translation (midground parallax)
+    //    - Card viewport-center focus timeline (foreground)
+    // ========================================================
+    // ========================================================
+    // 2. SCROLL EVENT LISTENER
+    //    - Moon opacity fade (deep background parallax)
+    //    - Cloud fade on scroll past hero
     //    - Card viewport-center focus timeline (foreground)
     // ========================================================
     var clouds = document.querySelectorAll('.cloud');
