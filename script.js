@@ -68,33 +68,52 @@
     }
 
     // ========================================================
-    // 1b. SCANLINE CLOUDS — same line-art style as the moon
-    //     Each cloud is an SVG filled with vertical lines
-    //     clipped to a cloud-shaped path. Movement is
-    //     quantized (snaps to 8px grid) for ASCII-GIF stutter.
-    //     Clouds start on DIFFERENT sides of the screen.
+    // 1b. SCANLINE CLOUDS — procedural shape calculus
+    //     Like the moon, clouds are drawn from vertical lines.
+    //     Shape is defined by overlapping circle formulas
+    //     modulated by sine humps to create organic profiles.
+    //     No clipPath needed — geometry defines the silhouette.
     // ========================================================
     var cloudEls = document.querySelectorAll('.cloud');
 
-    // Cloud definitions: varying sizes, different start sides
     var cloudConfigs = [
-        { w: 240, h: 100, spacing: 3, sw: 2, color: '#f4f4f5',
-          speed: 0.5, startX: -240, baseTop: 10,
-          path: 'M10,85 C25,65 45,45 75,40 C95,28 120,22 145,30 C165,18 185,30 205,42 C220,30 235,45 238,65 C242,78 235,90 220,85 Z' },
-        { w: 160, h: 75, spacing: 3, sw: 2, color: '#7c3aed',
-          speed: -0.4, startX: 900, baseTop: 32,
-          path: 'M8,62 C18,48 35,32 55,30 C72,20 92,18 112,28 C128,18 142,28 152,42 C158,52 155,62 145,60 Z' },
-        { w: 300, h: 120, spacing: 3, sw: 2, color: '#f4f4f5',
-          speed: 0.35, startX: 200, baseTop: 55,
-          path: 'M15,100 C30,80 55,55 85,50 C110,35 140,28 170,35 C195,22 220,32 245,48 C265,35 280,48 290,65 C298,80 292,98 275,100 Z' }
+        { w: 240, h: 100, speed: 0.5, startX: 0, baseTop: 10, color: '#f4f4f5',
+          // 3 overlapping "puff" circles define the cloud shape
+          puffs: [
+              { cx: 70, cy: 60, r: 38 },
+              { cx: 120, cy: 45, r: 45 },
+              { cx: 175, cy: 55, r: 40 },
+              { cx: 50, cy: 70, r: 30 },
+              { cx: 200, cy: 65, r: 32 }
+          ]
+        },
+        { w: 160, h: 75, speed: -0.4, startX: 0, baseTop: 32, color: '#7c3aed',
+          puffs: [
+              { cx: 45, cy: 42, r: 30 },
+              { cx: 80, cy: 35, r: 35 },
+              { cx: 120, cy: 40, r: 32 },
+              { cx: 140, cy: 50, r: 25 }
+          ]
+        },
+        { w: 300, h: 120, speed: 0.35, startX: 0, baseTop: 55, color: '#f4f4f5',
+          puffs: [
+              { cx: 60, cy: 70, r: 42 },
+              { cx: 110, cy: 55, r: 50 },
+              { cx: 165, cy: 48, r: 48 },
+              { cx: 220, cy: 58, r: 44 },
+              { cx: 270, cy: 68, r: 36 },
+              { cx: 40, cy: 80, r: 30 }
+          ]
+        }
     ];
 
-    // Initialize starting X from viewport width
+    // Set starting positions from different sides
     var initVW = window.innerWidth;
-    cloudConfigs[0].startX = -cloudConfigs[0].w; // starts off-screen LEFT
-    cloudConfigs[1].startX = initVW + 50;        // starts off-screen RIGHT
-    cloudConfigs[2].startX = Math.round(initVW * 0.3); // starts CENTER-LEFT
+    cloudConfigs[0].startX = -cloudConfigs[0].w;        // off-screen LEFT
+    cloudConfigs[1].startX = initVW + 50;               // off-screen RIGHT
+    cloudConfigs[2].startX = Math.round(initVW * 0.3);  // center-LEFT
 
+    // Draw scanlines for each cloud using shape calculus
     for (var ci = 0; ci < cloudEls.length; ci++) {
         var cfg = cloudConfigs[ci];
         if (!cfg) continue;
@@ -110,33 +129,43 @@
         cloudEls[ci].style.width = cfg.w + 'px';
         cloudEls[ci].style.height = cfg.h + 'px';
 
-        // clipPath defines the cloud silhouette
-        var defs = document.createElementNS(SVG_NS, 'defs');
-        var clipEl = document.createElementNS(SVG_NS, 'clipPath');
-        clipEl.setAttribute('id', 'cclip-' + ci);
-        var pathEl = document.createElementNS(SVG_NS, 'path');
-        pathEl.setAttribute('d', cfg.path);
-        clipEl.appendChild(pathEl);
-        defs.appendChild(clipEl);
-        cloudEls[ci].appendChild(defs);
+        // For each x position, calculate yTop and yBot from overlapping circles
+        var lineSpacing = 3;
+        for (var lx = 0; lx < cfg.w; lx += lineSpacing) {
+            var yTop = cfg.h;
+            var yBot = 0;
+            var hit = false;
 
-        // Fill with vertical scanlines (same as moon)
-        var g = document.createElementNS(SVG_NS, 'g');
-        g.setAttribute('clip-path', 'url(#cclip-' + ci + ')');
+            // Union of all puff circles at this x coordinate
+            for (var p = 0; p < cfg.puffs.length; p++) {
+                var puff = cfg.puffs[p];
+                var dx = lx - puff.cx;
+                var disc = puff.r * puff.r - dx * dx;
+                if (disc <= 0) continue;
+                var half = Math.sqrt(disc);
+                var top = puff.cy - half;
+                var bot = puff.cy + half;
+                if (top < yTop) yTop = top;
+                if (bot > yBot) yBot = bot;
+                hit = true;
+            }
 
-        for (var lx = 0; lx < cfg.w; lx += cfg.spacing) {
+            if (!hit || yBot - yTop < 1) continue;
+
+            // Clamp to viewBox bounds
+            if (yTop < 0) yTop = 0;
+            if (yBot > cfg.h) yBot = cfg.h;
+
             var line = document.createElementNS(SVG_NS, 'line');
             line.setAttribute('x1', lx);
-            line.setAttribute('y1', 0);
+            line.setAttribute('y1', yTop.toFixed(1));
             line.setAttribute('x2', lx);
-            line.setAttribute('y2', cfg.h);
+            line.setAttribute('y2', yBot.toFixed(1));
             line.setAttribute('stroke', cfg.color);
-            line.setAttribute('stroke-width', cfg.sw);
+            line.setAttribute('stroke-width', '2');
             line.setAttribute('stroke-linecap', 'butt');
-            g.appendChild(line);
+            cloudEls[ci].appendChild(line);
         }
-
-        cloudEls[ci].appendChild(g);
     }
 
     // ========================================================
