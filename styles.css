@@ -1,7 +1,7 @@
 /* ============================================================
    Nolan Ream — Portfolio
-   Pitch Black · Halftone Cloud Horizons · Cinematic Scroll
-   Archivo / Space Grotesk · Monochrome + Blue Accent
+   Pitch Black · Royal Purple · Halftone Horizons · Cinematic
+   Archivo / Space Grotesk
    ============================================================ */
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -12,7 +12,7 @@ html { scroll-behavior: smooth; }
     --surface: #0a0a0b;
     --text: #f4f4f5;
     --muted: #8a8a92;
-    --accent: #2563EB;
+    --accent: #7c3aed;
     --hairline: rgba(244, 244, 245, 0.08);
     --heading: 'Archivo', system-ui, -apple-system, sans-serif;
     --body: 'Space Grotesk', system-ui, -apple-system, sans-serif;
@@ -35,8 +35,7 @@ a { color: inherit; text-decoration: none; }
 ::selection { background: var(--accent); color: var(--text); }
 
 /* ============================================================
-   MOON — explicit 160x160 box, position fixed, fully isolated.
-   Cannot push or offset any other element in the document.
+   MOON — 160x160 explicit box, fixed, fully isolated
    ============================================================ */
 .moon {
     position: fixed;
@@ -51,11 +50,11 @@ a { color: inherit; text-decoration: none; }
 }
 
 /* ============================================================
-   CLOUDS — realistic horizontal cloud-bank horizons
-   Full viewport width, stacked near the bottom of the hero.
-   Clipped with ellipse to form rolling landscape ridges.
-   Repeating vertical line texture = retro halftone look.
-   z-index: 0 keeps them behind all text (z-index: 5).
+   CLOUDS — dramatic halftone horizon ridges
+   No clip-path ellipse. Instead: sharp multi-crested polygon
+   paths that look like jagged digital landscape horizons.
+   Full viewport width, stacked near hero bottom.
+   Fast, intense drift animation for alive feeling.
    ============================================================ */
 .cloud {
     position: fixed;
@@ -64,6 +63,12 @@ a { color: inherit; text-decoration: none; }
     z-index: 0;
     pointer-events: none;
     will-change: transform, opacity;
+    opacity: 0.35;
+}
+
+.cloud--a {
+    height: 30vh;
+    bottom: 8vh;
     background: repeating-linear-gradient(
         90deg,
         var(--text) 0px,
@@ -71,19 +76,38 @@ a { color: inherit; text-decoration: none; }
         transparent 1px,
         transparent 4px
     );
-    opacity: 0.35;
-}
-
-.cloud--a {
-    height: 35vh;
-    bottom: 5vh;
-    clip-path: ellipse(85% 55% at 50% 100%);
+    clip-path: polygon(
+        0% 100%,
+        0% 65%,
+        3% 58%,
+        7% 62%,
+        12% 50%,
+        18% 55%,
+        22% 42%,
+        28% 48%,
+        33% 38%,
+        38% 44%,
+        42% 35%,
+        47% 40%,
+        52% 30%,
+        57% 38%,
+        62% 32%,
+        67% 42%,
+        72% 36%,
+        77% 45%,
+        82% 38%,
+        87% 50%,
+        92% 44%,
+        96% 55%,
+        100% 48%,
+        100% 100%
+    );
+    animation: cloudShift 3s ease-in-out infinite alternate;
 }
 
 .cloud--b {
-    height: 30vh;
-    bottom: 0vh;
-    clip-path: ellipse(75% 50% at 55% 100%);
+    height: 28vh;
+    bottom: 2vh;
     background: repeating-linear-gradient(
         90deg,
         var(--accent) 0px,
@@ -91,18 +115,81 @@ a { color: inherit; text-decoration: none; }
         transparent 1px,
         transparent 5px
     );
-    opacity: 0.2;
+    clip-path: polygon(
+        0% 100%,
+        0% 70%,
+        4% 60%,
+        9% 65%,
+        14% 52%,
+        19% 58%,
+        25% 45%,
+        30% 52%,
+        35% 40%,
+        40% 48%,
+        45% 38%,
+        50% 45%,
+        55% 35%,
+        60% 42%,
+        65% 48%,
+        70% 40%,
+        75% 50%,
+        80% 42%,
+        85% 55%,
+        90% 48%,
+        95% 58%,
+        100% 52%,
+        100% 100%
+    );
+    opacity: 0.25;
+    animation: cloudShift 2.5s ease-in-out infinite alternate-reverse;
 }
 
 .cloud--c {
-    height: 25vh;
-    bottom: -5vh;
-    clip-path: ellipse(90% 60% at 45% 100%);
-    opacity: 0.28;
+    height: 22vh;
+    bottom: -2vh;
+    background: repeating-linear-gradient(
+        90deg,
+        var(--text) 0px,
+        var(--text) 1px,
+        transparent 1px,
+        transparent 3px
+    );
+    clip-path: polygon(
+        0% 100%,
+        0% 55%,
+        5% 48%,
+        10% 55%,
+        15% 42%,
+        20% 50%,
+        25% 38%,
+        30% 45%,
+        35% 35%,
+        40% 42%,
+        45% 50%,
+        50% 40%,
+        55% 48%,
+        60% 38%,
+        65% 45%,
+        70% 35%,
+        75% 42%,
+        80% 50%,
+        85% 42%,
+        90% 52%,
+        95% 45%,
+        100% 55%,
+        100% 100%
+    );
+    opacity: 0.3;
+    animation: cloudShift 3.5s ease-in-out infinite alternate;
+}
+
+@keyframes cloudShift {
+    0% { transform: translateX(0) translateY(0); }
+    100% { transform: translateX(-2vw) translateY(-6px); }
 }
 
 /* ============================================================
-   NAVBAR — centered, no asymmetric offsets
+   NAVBAR
    ============================================================ */
 .navbar {
     position: fixed;
@@ -161,7 +248,7 @@ a { color: inherit; text-decoration: none; }
 .navbar__links a:hover::after { width: 100%; }
 
 /* ============================================================
-   HERO — perfectly centered, text above all background
+   HERO — centered, z-index: 5 above all background
    ============================================================ */
 .hero {
     position: relative;
@@ -240,7 +327,7 @@ a { color: inherit; text-decoration: none; }
 }
 
 /* ============================================================
-   SECTIONS — all perfectly centered on horizontal axis
+   SECTIONS — perfectly centered
    ============================================================ */
 .section {
     position: relative;
@@ -357,7 +444,7 @@ a { color: inherit; text-decoration: none; }
 }
 
 /* ============================================================
-   PROJECTS — centered grid
+   PROJECTS — centered grid with staggered card sequencing
    ============================================================ */
 .projects__grid {
     display: grid;
@@ -373,12 +460,33 @@ a { color: inherit; text-decoration: none; }
 
 .card {
     background: var(--surface);
-    border: 1px solid rgba(244, 244, 245, 0.08);
+    border: 1px solid var(--hairline);
     padding: 2rem;
-    transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1),
-                box-shadow 0.4s cubic-bezier(0.2, 0.8, 0.2, 1),
-                border-color 0.4s;
     cursor: pointer;
+    opacity: 0;
+    transform: translateY(60px);
+    transition: border-color 0.4s, box-shadow 0.4s;
+}
+
+.card.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+    animation: cardSnap 0.6s steps(8) forwards;
+}
+
+@keyframes cardSnap {
+    0% {
+        opacity: 0;
+        transform: translateY(60px) scale(0.96);
+    }
+    50% {
+        opacity: 0.7;
+        transform: translateY(12px) scale(0.99);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }
 
 .card--01 { grid-column: 1 / 2; }
@@ -406,8 +514,8 @@ a { color: inherit; text-decoration: none; }
     inset: 0;
     background-image: repeating-linear-gradient(
         90deg,
-        rgba(37, 99, 235, 0.2) 0px,
-        rgba(37, 99, 235, 0.2) 1px,
+        rgba(124, 58, 237, 0.25) 0px,
+        rgba(124, 58, 237, 0.25) 1px,
         transparent 1px,
         transparent 5px
     );
@@ -459,7 +567,27 @@ a { color: inherit; text-decoration: none; }
 }
 
 /* ============================================================
-   FOOTER — centered
+   REVEAL MASK — editorial clip-path text entrance
+   Text rises from behind a clip mask, creating a premium
+   curtain-reveal effect used by high-end agency sites.
+   ============================================================ */
+.reveal-mask {
+    clip-path: inset(0 0 100% 0);
+    transform: translateY(24px);
+    opacity: 0;
+    transition: clip-path 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+                opacity 0.6s ease;
+}
+
+.reveal-mask.is-visible {
+    clip-path: inset(0 0 0% 0);
+    transform: translateY(0);
+    opacity: 1;
+}
+
+/* ============================================================
+   FOOTER
    ============================================================ */
 .footer {
     position: relative;
@@ -509,21 +637,6 @@ a { color: inherit; text-decoration: none; }
 }
 
 /* ============================================================
-   SCROLL REVEAL
-   ============================================================ */
-.reveal {
-    opacity: 0;
-    transform: translateY(32px);
-    transition: opacity 0.9s cubic-bezier(0.2, 0.8, 0.2, 1),
-                transform 0.9s cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-
-.reveal.is-visible {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-/* ============================================================
    RESPONSIVE
    ============================================================ */
 @media (max-width: 768px) {
@@ -559,5 +672,14 @@ a { color: inherit; text-decoration: none; }
         animation-duration: 0.01ms !important;
         transition-duration: 0.01ms !important;
     }
-    .reveal { opacity: 1; transform: none; }
+    .reveal-mask {
+        clip-path: inset(0);
+        transform: none;
+        opacity: 1;
+    }
+    .card {
+        opacity: 1;
+        transform: none;
+    }
+    .cloud { animation: none; }
 }

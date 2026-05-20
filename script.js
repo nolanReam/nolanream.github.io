@@ -1,6 +1,7 @@
 /* ============================================================
    Nolan Ream — Portfolio
-   Moon SVG · Scroll-linked moon fade + cloud exit · Reveal
+   Moon SVG · Cinematic Scroll · Staggered Card Sequencing
+   · Editorial Reveal Masks
    ============================================================ */
 
 (function () {
@@ -12,9 +13,6 @@
 
     // ========================================================
     // 1. SVG MOON — vertical scanline crescent
-    //    Draws inside .moon (viewBox 0 0 200 200)
-    //    Outer disc at (100,100) R=85
-    //    Bite disc at (145,95) R=75
     // ========================================================
     var SVG_NS = 'http://www.w3.org/2000/svg';
     var moonSvg = document.querySelector('.moon');
@@ -70,18 +68,11 @@
     }
 
     // ========================================================
-    // 2. SCROLL-LINKED ANIMATIONS
+    // 2. SCROLL-LINKED: Moon fade + Cloud exit
     //
-    //    heroRatio = scrollY / windowHeight, clamped to [0, 1]
-    //
-    //    MOON: opacity drops from 1 to 0 as user scrolls through
-    //    the hero section. At scrollY >= windowHeight, moon is
-    //    completely invisible.
-    //
-    //    CLOUDS: translate downward (translateY +100vh) as user
-    //    scrolls past hero, pushing them completely below the
-    //    viewport. Opacity also fades to 0. By the time the
-    //    About section is visible, clouds are entirely gone.
+    //    heroRatio = scrollY / windowHeight, clamped [0, 1]
+    //    Moon: opacity 1 → 0 as user exits hero
+    //    Clouds: translateY pushes them below viewport + fade
     // ========================================================
     var clouds = document.querySelectorAll('.cloud');
     var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -91,16 +82,17 @@
         var vh = window.innerHeight;
         var heroRatio = Math.min(y / vh, 1);
 
-        // Moon: fade from 1 to 0 across hero scroll distance
+        // Moon fade: 1 → 0 across hero scroll
         if (moonSvg) {
             moonSvg.style.opacity = (1 - heroRatio).toFixed(4);
         }
 
-        // Clouds: push down and out of viewport, fade to invisible
+        // Clouds: push down out of viewport and fade
         for (var i = 0; i < clouds.length; i++) {
             var pushDown = heroRatio * 100;
+            var baseOpacity = i === 0 ? 0.35 : i === 1 ? 0.25 : 0.3;
             clouds[i].style.transform = 'translateY(' + pushDown + 'vh)';
-            clouds[i].style.opacity = ((i === 1 ? 0.2 : i === 2 ? 0.28 : 0.35) * (1 - heroRatio)).toFixed(4);
+            clouds[i].style.opacity = (baseOpacity * (1 - heroRatio)).toFixed(4);
         }
     }
 
@@ -110,16 +102,58 @@
     }
 
     // ========================================================
-    // 3. INTERSECTION OBSERVER — reveal below-fold content
+    // 3. EDITORIAL REVEAL MASK — clip-path text entrance
+    //    Elements with .reveal-mask rise from behind a mask
+    //    as they enter the viewport.
     // ========================================================
-    var revealEls = document.querySelectorAll('.reveal');
+    var revealMaskEls = document.querySelectorAll('.reveal-mask');
 
-    if ('IntersectionObserver' in window && revealEls.length) {
-        var observer = new IntersectionObserver(function (entries) {
+    if ('IntersectionObserver' in window && revealMaskEls.length) {
+        var maskObserver = new IntersectionObserver(function (entries) {
             for (var i = 0; i < entries.length; i++) {
                 if (entries[i].isIntersecting) {
                     entries[i].target.classList.add('is-visible');
-                    observer.unobserve(entries[i].target);
+                    maskObserver.unobserve(entries[i].target);
+                }
+            }
+        }, {
+            threshold: 0.15,
+            rootMargin: '0px 0px -8% 0px'
+        });
+
+        for (var i = 0; i < revealMaskEls.length; i++) {
+            maskObserver.observe(revealMaskEls[i]);
+        }
+    } else {
+        for (var i = 0; i < revealMaskEls.length; i++) {
+            revealMaskEls[i].classList.add('is-visible');
+        }
+    }
+
+    // ========================================================
+    // 4. STAGGERED PROJECT CARD SEQUENCING
+    //    Cards snap into view one-by-one with rhythmic delay.
+    //    Uses IntersectionObserver on .card-seq elements.
+    //    Each card gets a staggered timeout based on data-seq
+    //    attribute (0, 1, 2) creating a cinematic frame-lock
+    //    entrance with steps(8) timing in CSS.
+    // ========================================================
+    var cardSeqEls = document.querySelectorAll('.card-seq');
+    var STAGGER_DELAY = 200; // ms between each card reveal
+
+    if ('IntersectionObserver' in window && cardSeqEls.length) {
+        var cardObserver = new IntersectionObserver(function (entries) {
+            for (var i = 0; i < entries.length; i++) {
+                if (entries[i].isIntersecting) {
+                    var card = entries[i].target;
+                    var seq = parseInt(card.getAttribute('data-seq'), 10) || 0;
+                    cardObserver.unobserve(card);
+
+                    (function (el, delay) {
+                        setTimeout(function () {
+                            el.classList.add('is-visible');
+                        }, delay);
+                    })(card, seq * STAGGER_DELAY);
                 }
             }
         }, {
@@ -127,12 +161,12 @@
             rootMargin: '0px 0px -5% 0px'
         });
 
-        for (var i = 0; i < revealEls.length; i++) {
-            observer.observe(revealEls[i]);
+        for (var i = 0; i < cardSeqEls.length; i++) {
+            cardObserver.observe(cardSeqEls[i]);
         }
     } else {
-        for (var i = 0; i < revealEls.length; i++) {
-            revealEls[i].classList.add('is-visible');
+        for (var i = 0; i < cardSeqEls.length; i++) {
+            cardSeqEls[i].classList.add('is-visible');
         }
     }
 
