@@ -1,9 +1,8 @@
 /* ============================================================
    Nolan Ream — Portfolio
-   Halftone / ASCII-GIF aesthetic — zero gradients, zero blurs
+   Pitch-black + halftone line-art — zero gradients/glows/blurs
    ============================================================ */
 
-/* ---------- Reset ---------- */
 *,
 *::before,
 *::after {
@@ -12,17 +11,15 @@
     padding: 0;
 }
 
-html {
-    scroll-behavior: smooth;
-}
+html { scroll-behavior: smooth; }
 
 :root {
-    --bg: #0a0a0a;
+    --bg: #000000;
     --surface: #141416;
     --text: #f5f5f7;
     --muted: #8a8a92;
     --accent: #7c3aed;
-    --line-color: #f4f4f5;
+    --line-light: #f4f4f5;
     --hairline: rgba(245, 245, 247, 0.08);
     --serif: 'Cormorant Garamond', 'Times New Roman', serif;
     --sans: 'Inter', system-ui, -apple-system, sans-serif;
@@ -38,94 +35,28 @@ body {
     font-weight: 300;
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
-    position: relative;
 }
 
-a {
-    color: inherit;
-    text-decoration: none;
-}
-
-::selection {
-    background: var(--accent);
-    color: var(--text);
-}
+a { color: inherit; text-decoration: none; }
+::selection { background: var(--accent); color: var(--text); }
 
 /* ============================================================
-   1. Architectural blueprint scaffold (80px vertical lines)
+   Grid utility
    ============================================================ */
-.grid-bg {
-    position: fixed;
-    inset: 0;
-    width: 100vw;
-    height: 100vh;
-    pointer-events: none;
-    z-index: 1;
-    background-image:
-        repeating-linear-gradient(
-            to right,
-            rgba(124, 58, 237, 0.07) 0,
-            rgba(124, 58, 237, 0.07) 1px,
-            transparent 1px,
-            transparent 80px
-        );
-    background-size: 80px 100%;
-}
-
-/* ============================================================
-   2. Full-page 12-column alignment lines
-   ============================================================ */
-.column-lines {
-    position: fixed;
-    inset: 0;
-    width: 100%;
-    max-width: var(--max-w);
-    height: 100vh;
-    pointer-events: none;
-    z-index: 2;
+.grid-12 {
     display: grid;
     grid-template-columns: repeat(12, 1fr);
     gap: var(--col-gap);
-    padding: 0 var(--gutter);
+    padding-left: var(--gutter);
+    padding-right: var(--gutter);
+    width: 100%;
+    max-width: var(--max-w);
     margin: 0 auto;
-    left: 0;
-    right: 0;
-}
-
-.column-lines span {
-    position: relative;
-    height: 100%;
-}
-
-.column-lines span::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 1px;
-    height: 100%;
-    background: rgba(245, 245, 247, 0.045);
-}
-
-.column-lines span:nth-child(6)::after {
-    background: rgba(124, 58, 237, 0.12);
 }
 
 /* ============================================================
-   3. Content sits above background layers
-   ============================================================ */
-.navbar,
-.hero,
-.section,
-.footer {
-    position: relative;
-    z-index: 4;
-}
-
-/* ============================================================
-   4. Typography helpers
+   Typography
    ============================================================ */
 .label {
     font-family: var(--sans);
@@ -150,31 +81,17 @@ a {
 }
 
 /* ============================================================
-   5. 12-column grid utility
-   ============================================================ */
-.grid-12 {
-    display: grid;
-    grid-template-columns: repeat(12, 1fr);
-    gap: var(--col-gap);
-    padding-left: var(--gutter);
-    padding-right: var(--gutter);
-    width: 100%;
-    max-width: var(--max-w);
-    margin: 0 auto;
-}
-
-/* ============================================================
-   6. Section base
+   Section base
    ============================================================ */
 .section {
     padding: 14rem 0;
     border-top: 1px solid var(--hairline);
     overflow: hidden;
+    position: relative;
+    z-index: 4;
 }
 
-.section__inner {
-    row-gap: 4rem;
-}
+.section__inner { row-gap: 4rem; }
 
 .section__label {
     grid-column: 2 / span 3;
@@ -191,14 +108,13 @@ a {
     font-size: clamp(8rem, 18vw, 18rem);
     line-height: 1;
     color: transparent;
-    -webkit-text-stroke: 1px rgba(245, 245, 247, 0.05);
+    -webkit-text-stroke: 1px rgba(245, 245, 247, 0.04);
     pointer-events: none;
     user-select: none;
-    letter-spacing: -0.04em;
 }
 
 /* ============================================================
-   7. Scroll-reveal (IntersectionObserver driven)
+   Scroll reveals
    ============================================================ */
 .reveal {
     opacity: 0;
@@ -206,11 +122,7 @@ a {
     transition: opacity 1.2s cubic-bezier(0.2, 0.8, 0.2, 1),
                 transform 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
-
-.reveal.is-visible {
-    opacity: 1;
-    transform: translateY(0);
-}
+.reveal.is-visible { opacity: 1; transform: translateY(0); }
 
 .reveal-text {
     opacity: 0;
@@ -218,11 +130,7 @@ a {
     transition: opacity 0.9s cubic-bezier(0.2, 0.8, 0.2, 1),
                 transform 0.9s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
-
-.reveal-text.is-visible {
-    opacity: 1;
-    transform: translateY(0);
-}
+.reveal-text.is-visible { opacity: 1; transform: translateY(0); }
 
 .reveal-card {
     opacity: 0;
@@ -230,26 +138,20 @@ a {
     transition: opacity 1.1s cubic-bezier(0.2, 0.8, 0.2, 1) var(--card-delay, 0ms),
                 transform 1.1s cubic-bezier(0.2, 0.8, 0.2, 1) var(--card-delay, 0ms);
 }
-
-.reveal-card.is-visible {
-    opacity: 1;
-    transform: translateY(0);
-}
+.reveal-card.is-visible { opacity: 1; transform: translateY(0); }
 
 /* ============================================================
-   8. Navbar
+   Navbar
    ============================================================ */
 .navbar {
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
+    top: 0; left: 0; right: 0;
     z-index: 50;
     padding: 1.5rem var(--gutter);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: rgba(10, 10, 10, 0.88);
+    background: rgba(0, 0, 0, 0.92);
     border-bottom: 1px solid var(--hairline);
 }
 
@@ -258,7 +160,6 @@ a {
     font-style: italic;
     font-weight: 400;
     font-size: 1.35rem;
-    letter-spacing: 0.01em;
 }
 
 .navbar__links {
@@ -269,7 +170,6 @@ a {
 
 .navbar__links a {
     position: relative;
-    font-family: var(--sans);
     font-size: 0.75rem;
     font-weight: 500;
     text-transform: uppercase;
@@ -282,10 +182,8 @@ a {
 .navbar__links a::after {
     content: '';
     position: absolute;
-    left: 50%;
-    bottom: 0;
-    width: 0;
-    height: 1px;
+    left: 50%; bottom: 0;
+    width: 0; height: 1px;
     background: var(--accent);
     transform: translateX(-50%);
     transition: width 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -295,7 +193,7 @@ a {
 .navbar__links a:hover::after { width: 100%; }
 
 /* ============================================================
-   9. Hero section
+   Hero
    ============================================================ */
 .hero {
     min-height: 100vh;
@@ -303,9 +201,11 @@ a {
     align-content: center;
     row-gap: 3rem;
     overflow: hidden;
+    position: relative;
+    z-index: 4;
 }
 
-/* Sky container for SVG shapes */
+/* Sky (SVG art layer) */
 .hero__sky {
     position: absolute;
     inset: 0;
@@ -316,81 +216,67 @@ a {
 
 .hero__moon {
     position: absolute;
-    top: 12%;
-    right: 8%;
-    width: clamp(8rem, 14vw, 14rem);
-    height: clamp(8rem, 14vw, 14rem);
-    opacity: 0.9;
+    top: 10%;
+    right: 4%;
+    width: clamp(7rem, 13vw, 13rem);
+    height: clamp(7rem, 13vw, 13rem);
+    opacity: 0.92;
 }
 
-/* ---------- Cloud SVGs — stuttered drift -------------------- */
 .hero__cloud {
     position: absolute;
-    opacity: 0.6;
+    opacity: 0.55;
+    /* scroll-driven offset applied via JS inline style */
+    transition: transform 0s steps(15);
 }
 
 .hero__cloud--a {
-    top: 18%;
-    left: -40%;
-    width: 50%;
-    height: 160px;
-    animation: cloudDriftA 18s steps(14) infinite;
+    bottom: 5%;
+    left: -10%;
+    width: 70%;
+    height: 220px;
 }
 
 .hero__cloud--b {
-    top: 55%;
-    left: -50%;
-    width: 60%;
-    height: 140px;
-    animation: cloudDriftB 26s steps(12) infinite;
-    opacity: 0.45;
+    bottom: 18%;
+    left: -5%;
+    width: 85%;
+    height: 260px;
+    opacity: 0.38;
 }
 
 .hero__cloud--c {
-    top: 75%;
-    left: -35%;
-    width: 55%;
-    height: 180px;
-    animation: cloudDriftC 32s steps(10) infinite;
-    opacity: 0.35;
+    bottom: -2%;
+    left: 10%;
+    width: 75%;
+    height: 280px;
+    opacity: 0.3;
 }
 
-@keyframes cloudDriftA {
-    from { transform: translateX(0); }
-    to   { transform: translateX(280%); }
+/* Text content layer — ensure legibility over line art */
+.hero__meta,
+.hero__name-wrap,
+.hero__footer {
+    position: relative;
+    z-index: 5;
 }
 
-@keyframes cloudDriftB {
-    from { transform: translateX(0); }
-    to   { transform: translateX(260%); }
-}
-
-@keyframes cloudDriftC {
-    from { transform: translateX(0); }
-    to   { transform: translateX(250%); }
-}
-
-/* Hero content layout */
 .hero__meta {
     grid-column: 2 / span 10;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
     opacity: 0;
     animation: fadeUp 1s ease 0.2s forwards;
 }
 
-.hero__meta--right { text-align: right; }
+.hero__name-wrap {
+    grid-column: 1 / -1;
+}
 
 .hero__name {
-    grid-column: 1 / -1;
     font-family: var(--serif);
     font-weight: 300;
     font-size: clamp(4.5rem, 16vw, 16rem);
     line-height: 0.88;
     letter-spacing: -0.03em;
-    position: relative;
-    z-index: 5;
 }
 
 .hero__name-line {
@@ -431,7 +317,7 @@ a {
     align-items: flex-end;
     margin-top: 4rem;
     opacity: 0;
-    animation: fadeUp 1s ease 1.1s forwards;
+    animation: fadeUp 1s ease 1s forwards;
 }
 
 .hero__tag {
@@ -454,12 +340,9 @@ a {
 }
 
 /* ============================================================
-   10. About
+   About
    ============================================================ */
-.about__heading {
-    grid-column: 2 / span 9;
-    margin-top: 1rem;
-}
+.about__heading { grid-column: 2 / span 9; margin-top: 1rem; }
 
 .about__body {
     grid-column: 6 / span 6;
@@ -474,11 +357,10 @@ a {
     margin-bottom: 1.5rem;
     max-width: 38rem;
 }
-
 .about__body p:last-child { margin-bottom: 0; }
 
 /* ============================================================
-   11. Skills
+   Skills
    ============================================================ */
 .skills__title { grid-column: 2 / span 9; }
 
@@ -499,9 +381,7 @@ a {
     transition: padding 0.4s ease;
 }
 
-.skills__item:hover {
-    padding-left: 2rem;
-}
+.skills__item:hover { padding-left: 2rem; }
 
 .skills__num {
     font-size: 0.75rem;
@@ -515,13 +395,10 @@ a {
     font-family: var(--serif);
     font-size: clamp(2rem, 4vw, 3.25rem);
     font-weight: 300;
-    letter-spacing: -0.01em;
     transition: color 0.3s ease;
 }
 
-.skills__item:hover .skills__name {
-    color: var(--accent);
-}
+.skills__item:hover .skills__name { color: var(--accent); }
 
 .skills__meta {
     font-size: 0.75rem;
@@ -531,7 +408,7 @@ a {
 }
 
 /* ============================================================
-   12. Projects — flat slate cards, sharp purple offset shadow
+   Projects — flat slate cards, sharp purple offset
    ============================================================ */
 .projects__title { grid-column: 2 / span 9; }
 
@@ -546,7 +423,6 @@ a {
     transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1),
                 box-shadow 0.4s cubic-bezier(0.2, 0.8, 0.2, 1),
                 border-color 0.4s ease;
-    overflow: hidden;
 }
 
 .card--01 { grid-column: 2 / 8; margin-top: 5rem; }
@@ -561,37 +437,33 @@ a {
 
 .card__visual {
     aspect-ratio: 4 / 3;
-    background: var(--bg);
+    background: #0a0a0a;
     border: 1px solid rgba(245, 245, 247, 0.06);
     margin-bottom: 2.5rem;
     position: relative;
     overflow: hidden;
 }
 
-/* Halftone vertical line texture inside card visual */
 .card__visual::before {
     content: '';
     position: absolute;
     inset: 0;
     background-image: repeating-linear-gradient(
         to right,
-        rgba(124, 58, 237, 0.35) 0,
-        rgba(124, 58, 237, 0.35) 1px,
+        rgba(124, 58, 237, 0.3) 0,
+        rgba(124, 58, 237, 0.3) 1px,
         transparent 1px,
         transparent 6px
     );
-    pointer-events: none;
 }
 
 .card__index {
     position: absolute;
-    top: 1.25rem;
-    right: 1.5rem;
+    top: 1.25rem; right: 1.5rem;
     font-family: var(--serif);
     font-style: italic;
     font-size: 1.05rem;
     color: var(--muted);
-    z-index: 3;
 }
 
 .card__category {
@@ -610,9 +482,7 @@ a {
     font-size: clamp(1.85rem, 3vw, 2.6rem);
     line-height: 1.05;
     margin-bottom: 1rem;
-    letter-spacing: -0.005em;
 }
-
 .card__title em { font-style: italic; }
 
 .card__description {
@@ -634,22 +504,15 @@ a {
     gap: 0.75rem;
     transition: gap 0.3s ease, color 0.3s ease;
 }
-
-.card__cta::after {
-    content: '\2192';
-    transition: transform 0.3s ease;
-}
-
-.card:hover .card__cta {
-    color: var(--accent);
-    gap: 1.25rem;
-}
+.card__cta::after { content: '\2192'; }
+.card:hover .card__cta { color: var(--accent); gap: 1.25rem; }
 
 /* ============================================================
-   13. Footer / Contact
+   Footer
    ============================================================ */
 .footer {
     position: relative;
+    z-index: 4;
     border-top: 1px solid var(--hairline);
     padding: 12rem 0 4rem;
     overflow: hidden;
@@ -671,7 +534,6 @@ a {
     font-size: clamp(2.5rem, 8vw, 7rem);
     letter-spacing: -0.02em;
     line-height: 1;
-    position: relative;
     color: transparent;
     -webkit-text-stroke: 1px var(--text);
     transition: color 0.4s ease, -webkit-text-stroke-color 0.4s ease;
@@ -699,13 +561,10 @@ a {
 .footer__watermark { top: 4rem; }
 
 /* ============================================================
-   14. Responsive
+   Responsive
    ============================================================ */
 @media (max-width: 900px) {
-    :root {
-        --gutter: 1.25rem;
-        --col-gap: 0.75rem;
-    }
+    :root { --gutter: 1.25rem; --col-gap: 0.75rem; }
 
     .navbar { padding: 1.25rem var(--gutter); }
     .navbar__links { gap: 1.25rem; }
@@ -721,17 +580,10 @@ a {
         gap: 1rem;
     }
 
-    .hero__meta--right { text-align: left; }
     .hero__name-line--first { padding-left: 0; }
     .hero__name-line--second { padding-left: 6vw; }
 
-    .hero__moon {
-        top: 8%;
-        right: 5%;
-        width: 5rem;
-        height: 5rem;
-    }
-
+    .hero__moon { top: 6%; right: 3%; width: 5rem; height: 5rem; }
     .hero__cloud--b { display: none; }
 
     .section__label,
@@ -740,9 +592,7 @@ a {
     .about__body,
     .skills__title,
     .skills__list,
-    .projects__title {
-        grid-column: 1 / -1;
-    }
+    .projects__title { grid-column: 1 / -1; }
 
     .skills__item {
         grid-template-columns: 3rem 1fr;
@@ -750,52 +600,25 @@ a {
         row-gap: 0.5rem;
         padding: 2rem 0;
     }
-
     .skills__meta { grid-column: 2; }
 
-    .card--01,
-    .card--02,
-    .card--03 {
-        grid-column: 1 / -1;
-        margin-top: 3rem;
-    }
+    .card--01, .card--02, .card--03 { grid-column: 1 / -1; margin-top: 3rem; }
 
     .footer { padding: 8rem 0 3rem; }
-    .footer__email,
-    .footer__bottom { grid-column: 1 / -1; }
-
+    .footer__email, .footer__bottom { grid-column: 1 / -1; }
     .footer__bottom {
         flex-direction: column;
         gap: 0.75rem;
         align-items: center;
-        text-align: center;
     }
 
-    .section__watermark {
-        font-size: clamp(6rem, 28vw, 12rem);
-        top: 3rem;
-    }
-
-    .column-lines { display: none; }
+    .section__watermark { font-size: clamp(6rem, 28vw, 12rem); top: 3rem; }
 }
 
-/* ============================================================
-   15. Reduced motion
-   ============================================================ */
 @media (prefers-reduced-motion: reduce) {
-    *,
-    *::before,
-    *::after {
+    *, *::before, *::after {
         animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
-        scroll-behavior: auto !important;
     }
-
-    .reveal,
-    .reveal-text,
-    .reveal-card {
-        opacity: 1;
-        transform: none;
-    }
+    .reveal, .reveal-text, .reveal-card { opacity: 1; transform: none; }
 }

@@ -1,162 +1,218 @@
 /* ============================================================
    Nolan Ream — Portfolio
-   Procedural SVG line-art + scroll reveals
+   Procedural SVG line-art (layered noise) + scroll-driven
+   stuttered parallax + IntersectionObserver reveals
    ============================================================ */
 
 (function () {
     'use strict';
 
-    // ---- Footer year ----
+    // --- Footer year ---
     var yearEl = document.getElementById('year');
     if (yearEl) yearEl.textContent = new Date().getFullYear();
 
     // ========================================================
-    // 1. Procedurally generate SVG vertical-line shapes
-    //    (Crescent moon + 3 abstract clouds)
+    // NOISE UTILITY — layered pseudo-random noise for organic
+    // mountain/cloud shapes. Combines multiple frequency octaves
+    // with sharp discontinuities for that rugged, irregular feel.
+    // ========================================================
+
+    // Seeded pseudo-random (deterministic so it's consistent)
+    function seededRand(seed) {
+        var x = Math.sin(seed * 127.1 + 311.7) * 43758.5453;
+        return x - Math.floor(x);
+    }
+
+    // Smooth interpolation between two random samples
+    function smoothNoise(x, freq, seed) {
+        var scaled = x * freq;
+        var i = Math.floor(scaled);
+        var f = scaled - i;
+        // Smoothstep
+        f = f * f * (3 - 2 * f);
+        var a = seededRand(i + seed);
+        var b = seededRand(i + 1 + seed);
+        return a + (b - a) * f;
+    }
+
+    // Layered fractal noise — 5 octaves for complexity
+    function fractalNoise(x, seed) {
+        var val = 0;
+        val += smoothNoise(x, 0.004, seed) * 1.0;     // Broad terrain
+        val += smoothNoise(x, 0.012, seed + 100) * 0.5;  // Medium detail
+        val += smoothNoise(x, 0.035, seed + 200) * 0.25; // Fine ridges
+        val += smoothNoise(x, 0.08, seed + 300) * 0.12;  // Micro texture
+        val += smoothNoise(x, 0.2, seed + 400) * 0.06;   // Grain
+        return val / 1.93; // Normalize to ~0-1
+    }
+
+    // Jagged variant — adds sharp discontinuities
+    function jaggedNoise(x, seed) {
+        var base = fractalNoise(x, seed);
+        // Add sharp ridges via abs of a higher frequency
+        var ridge = Math.abs(smoothNoise(x, 0.06, seed + 500) - 0.5) * 2;
+        return base * 0.7 + ridge * 0.3;
+    }
+
+    // ========================================================
+    // SVG DRAWING
     // ========================================================
 
     var SVG_NS = 'http://www.w3.org/2000/svg';
     var ACCENT = '#7c3aed';
     var OFF_WHITE = '#f4f4f5';
 
-    // --- Moon: crescent built from vertical lines -----------
-    // Outer circle radius R=90, inner circle offset to the right
-    // creates a crescent. For each x column, the line starts/ends
-    // where it intersects the outer circle minus the inner circle.
-    (function buildMoon() {
-        var svg = document.querySelector('.hero__moon');
-        if (!svg) return;
-
-        var cx = 100, cy = 100, R = 85;
-        // Inner circle (the "bite") shifted right
-        var cx2 = 130, cy2 = 90, R2 = 75;
-        var spacing = 3.5;
-
-        for (var x = cx - R; x <= cx + R; x += spacing) {
-            // Outer circle intersection
-            var dxOuter = x - cx;
-            var halfH = Math.sqrt(Math.max(0, R * R - dxOuter * dxOuter));
-            var yTop = cy - halfH;
-            var yBot = cy + halfH;
-
-            if (halfH < 1) continue;
-
-            // Inner circle intersection (the "bite")
-            var dxInner = x - cx2;
-            var disc = R2 * R2 - dxInner * dxInner;
-
-            if (disc > 0) {
-                var halfHInner = Math.sqrt(disc);
-                var iTop = cy2 - halfHInner;
-                var iBot = cy2 + halfHInner;
-
-                // If the inner circle fully covers this column, skip it
-                if (iTop <= yTop && iBot >= yBot) continue;
-
-                // If partial overlap, clip the outer range
-                if (iTop > yTop && iBot < yBot) {
-                    // Draw two segments (above and below the bite)
-                    drawLine(svg, x, yTop, iTop, OFF_WHITE, spacing * 0.6);
-                    drawLine(svg, x, iBot, yBot, OFF_WHITE, spacing * 0.6);
-                    continue;
-                } else if (iTop <= yTop) {
-                    yTop = iBot;
-                } else if (iBot >= yBot) {
-                    yBot = iTop;
-                }
-            }
-
-            if (yBot - yTop < 1) continue;
-            drawLine(svg, x, yTop, yBot, OFF_WHITE, spacing * 0.6);
-        }
-    })();
-
-    // --- Clouds: organic bumpy envelope from vertical lines ---
-    function buildCloud(selector, config) {
-        var svg = document.querySelector(selector);
-        if (!svg) return;
-
-        var vb = svg.viewBox.baseVal;
-        var W = vb.width;
-        var H = vb.height;
-        var spacing = config.spacing || 4;
-        var color = config.color || ACCENT;
-        var bumps = config.bumps || [
-            { cx: W * 0.25, r: W * 0.2, h: H * 0.7 },
-            { cx: W * 0.5,  r: W * 0.25, h: H * 0.9 },
-            { cx: W * 0.75, r: W * 0.2, h: H * 0.65 }
-        ];
-
-        for (var x = 0; x < W; x += spacing) {
-            // Find the max height at this x from all bumps
-            var maxH = 0;
-            for (var b = 0; b < bumps.length; b++) {
-                var bump = bumps[b];
-                var dx = x - bump.cx;
-                var dist = Math.abs(dx) / bump.r;
-                if (dist < 1) {
-                    // Smooth cosine falloff
-                    var h = bump.h * (0.5 + 0.5 * Math.cos(dist * Math.PI));
-                    if (h > maxH) maxH = h;
-                }
-            }
-
-            if (maxH < 2) continue;
-
-            // Vary the line width slightly for texture
-            var sw = spacing * 0.55 + Math.random() * spacing * 0.2;
-            var yStart = H - maxH;
-            drawLine(svg, x, yStart, H, color, sw);
-        }
-    }
-
-    buildCloud('.hero__cloud--a', {
-        spacing: 4,
-        color: OFF_WHITE,
-        bumps: [
-            { cx: 150, r: 130, h: 100 },
-            { cx: 320, r: 160, h: 140 },
-            { cx: 480, r: 120, h: 90 }
-        ]
-    });
-
-    buildCloud('.hero__cloud--b', {
-        spacing: 5,
-        color: ACCENT,
-        bumps: [
-            { cx: 200, r: 180, h: 100 },
-            { cx: 450, r: 200, h: 120 },
-            { cx: 650, r: 150, h: 85 }
-        ]
-    });
-
-    buildCloud('.hero__cloud--c', {
-        spacing: 4.5,
-        color: OFF_WHITE,
-        bumps: [
-            { cx: 100, r: 120, h: 110 },
-            { cx: 300, r: 180, h: 150 },
-            { cx: 520, r: 140, h: 120 },
-            { cx: 650, r: 100, h: 80 }
-        ]
-    });
-
-    function drawLine(svg, x, y1, y2, color, strokeWidth) {
+    function drawLine(svg, x, y1, y2, color, sw) {
+        if (y2 - y1 < 0.5) return;
         var line = document.createElementNS(SVG_NS, 'line');
         line.setAttribute('x1', x);
         line.setAttribute('y1', y1);
         line.setAttribute('x2', x);
         line.setAttribute('y2', y2);
         line.setAttribute('stroke', color);
-        line.setAttribute('stroke-width', strokeWidth);
+        line.setAttribute('stroke-width', sw);
         line.setAttribute('stroke-linecap', 'butt');
         svg.appendChild(line);
     }
 
     // ========================================================
-    // 2. Cinematic scroll reveals (IntersectionObserver)
+    // CRESCENT MOON — vertical lines forming a sharp crescent
     // ========================================================
+    (function buildMoon() {
+        var svg = document.querySelector('.hero__moon');
+        if (!svg) return;
 
+        var cx = 100, cy = 100, R = 88;
+        var cx2 = 138, cy2 = 92, R2 = 78; // Bite offset
+        var spacing = 3;
+
+        for (var x = cx - R; x <= cx + R; x += spacing) {
+            var dxO = x - cx;
+            var hO = Math.sqrt(Math.max(0, R * R - dxO * dxO));
+            if (hO < 1) continue;
+            var yT = cy - hO, yB = cy + hO;
+
+            // Inner circle bite
+            var dxI = x - cx2;
+            var disc = R2 * R2 - dxI * dxI;
+            if (disc > 0) {
+                var hI = Math.sqrt(disc);
+                var iT = cy2 - hI, iB = cy2 + hI;
+
+                if (iT <= yT && iB >= yB) continue; // Fully bitten
+
+                if (iT > yT && iB < yB) {
+                    // Two segments
+                    drawLine(svg, x, yT, iT, OFF_WHITE, spacing * 0.65);
+                    drawLine(svg, x, iB, yB, OFF_WHITE, spacing * 0.65);
+                    continue;
+                } else if (iT <= yT) {
+                    yT = iB;
+                } else if (iB >= yB) {
+                    yB = iT;
+                }
+            }
+
+            drawLine(svg, x, yT, yB, OFF_WHITE, spacing * 0.65);
+        }
+    })();
+
+    // ========================================================
+    // CLOUDS — rugged organic silhouettes via layered noise
+    // ========================================================
+    function buildCloud(selector, config) {
+        var svg = document.querySelector(selector);
+        if (!svg) return;
+
+        var vb = svg.viewBox.baseVal;
+        var W = vb.width, H = vb.height;
+        var spacing = config.spacing || 3;
+        var color = config.color || OFF_WHITE;
+        var seed = config.seed || 0;
+        var heightScale = config.heightScale || 0.85;
+        var baselineOffset = config.baselineOffset || 0;
+
+        for (var x = 0; x < W; x += spacing) {
+            // Layered jagged noise produces the mountain/cloud envelope
+            var n = jaggedNoise(x, seed);
+
+            // Add occasional deep valleys for organic feel
+            var valley = smoothNoise(x, 0.015, seed + 700);
+            if (valley < 0.3) {
+                n *= 0.3 + valley;
+            }
+
+            var lineH = n * H * heightScale;
+            if (lineH < 1.5) continue;
+
+            var yStart = H - lineH - baselineOffset;
+            var yEnd = H - baselineOffset;
+
+            // Slight random width variation for texture
+            var sw = spacing * 0.55 + seededRand(x * 7 + seed) * spacing * 0.35;
+
+            drawLine(svg, x, yStart, yEnd, color, sw);
+        }
+    }
+
+    buildCloud('.hero__cloud--a', {
+        spacing: 2.5,
+        color: OFF_WHITE,
+        seed: 42,
+        heightScale: 0.82,
+        baselineOffset: 0
+    });
+
+    buildCloud('.hero__cloud--b', {
+        spacing: 3,
+        color: ACCENT,
+        seed: 137,
+        heightScale: 0.75,
+        baselineOffset: 10
+    });
+
+    buildCloud('.hero__cloud--c', {
+        spacing: 2.8,
+        color: OFF_WHITE,
+        seed: 263,
+        heightScale: 0.7,
+        baselineOffset: 0
+    });
+
+    // ========================================================
+    // SCROLL-DRIVEN CLOUD PARALLAX — stuttered steps
+    // Clouds translate horizontally as user scrolls.
+    // Steps quantization makes it stutter like an ASCII GIF.
+    // ========================================================
+    var clouds = document.querySelectorAll('.hero__cloud');
+    var speeds = [0.15, -0.1, 0.08]; // px per scrollY pixel
+    var stepSize = 12; // Quantize to 12px increments
+
+    function quantize(val, step) {
+        return Math.round(val / step) * step;
+    }
+
+    if (clouds.length && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        var ticking = false;
+        window.addEventListener('scroll', function () {
+            if (!ticking) {
+                window.requestAnimationFrame(function () {
+                    var y = window.scrollY;
+                    for (var i = 0; i < clouds.length; i++) {
+                        var rawOffset = y * (speeds[i] || 0.1);
+                        var stepped = quantize(rawOffset, stepSize);
+                        clouds[i].style.transform = 'translateX(' + stepped + 'px)';
+                    }
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        }, { passive: true });
+    }
+
+    // ========================================================
+    // INTERSECTION OBSERVER — cinematic reveals
+    // ========================================================
     var revealEls = document.querySelectorAll('.reveal, .reveal-text, .reveal-card');
 
     if ('IntersectionObserver' in window && revealEls.length > 0) {
@@ -171,30 +227,9 @@
             },
             { threshold: 0.1, rootMargin: '0px 0px -6% 0px' }
         );
-
         revealEls.forEach(function (el) { observer.observe(el); });
     } else {
         revealEls.forEach(function (el) { el.classList.add('is-visible'); });
-    }
-
-    // ========================================================
-    // 3. Navbar border intensifies on scroll
-    // ========================================================
-    var navbar = document.querySelector('.navbar');
-    if (navbar) {
-        var ticking = false;
-        window.addEventListener('scroll', function () {
-            if (!ticking) {
-                window.requestAnimationFrame(function () {
-                    navbar.style.borderBottomColor =
-                        window.scrollY > 10
-                            ? 'rgba(245, 245, 247, 0.14)'
-                            : 'rgba(245, 245, 247, 0.08)';
-                    ticking = false;
-                });
-                ticking = true;
-            }
-        }, { passive: true });
     }
 
 })();
