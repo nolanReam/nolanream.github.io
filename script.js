@@ -68,83 +68,115 @@
     }
 
     // ========================================================
-    // 1b. SVG CLOUDS — identical technique to moon
-    //     Each cloud SVG gets a <clipPath> with a cloud-shaped
-    //     path, then vertical scanlines are drawn and clipped.
-    //     No CSS blur, no border-radius, no overflow:hidden.
-    //     Pure SVG geometry, same as the crescent moon.
+    // 1b. PROCEDURAL ORGANIC CLOUDS
+    //     Each cloud uses SVG <feTurbulence> + <feDisplacementMap>
+    //     to generate organic, evolving shapes. No flat bottoms.
+    //     Multiple overlapping soft circles create puffy forms.
+    //     A morph seed parameter is animated per-frame for
+    //     continuous shape evolution.
     // ========================================================
     var cloudEls = document.querySelectorAll('.cloud');
-    var cloudDefs = [
-        {
-            w: 260, h: 120, spacing: 3, color: 'rgba(244,244,245,0.7)', sw: 2,
-            path: 'M20,100 C30,85 50,60 80,55 C100,40 120,30 140,35 C160,25 180,40 195,50 C210,35 230,50 245,65 C255,75 260,90 250,100 Z'
-        },
-        {
-            w: 180, h: 90, spacing: 3, color: 'rgba(124,58,237,0.7)', sw: 2,
-            path: 'M15,75 C25,60 40,45 60,42 C75,30 95,25 110,35 C125,25 140,35 155,48 C165,40 175,55 172,70 C178,80 170,85 160,75 Z'
-        },
-        {
-            w: 340, h: 140, spacing: 3, color: 'rgba(244,244,245,0.7)', sw: 2,
-            path: 'M25,120 C35,100 60,75 90,70 C110,55 140,40 170,45 C200,30 225,40 250,55 C270,40 295,50 310,65 C325,55 335,70 330,90 C338,105 330,120 320,120 Z'
-        }
-    ];
 
+    // Randomized cloud configurations
+    var cloudConfigs = [];
     for (var ci = 0; ci < cloudEls.length; ci++) {
-        var def = cloudDefs[ci];
-        if (!def) continue;
+        var baseScale = 0.8 + Math.random() * 0.6; // 0.8 - 1.4
+        var w = Math.round((180 + ci * 80) * baseScale);
+        var h = Math.round((80 + ci * 30) * baseScale);
+        var speed = (0.2 + Math.random() * 0.4) * (ci % 2 === 0 ? 1 : -1);
+        var baseTop = 6 + ci * 20 + Math.random() * 8; // vh
+        var phase = Math.random() * Math.PI * 2;
+        var bobAmp = 3 + Math.random() * 6; // px
+        var bobFreq = 0.0004 + Math.random() * 0.0003;
+        var color = ci === 1 ? '#7c3aed' : '#f4f4f5';
+        var baseOpacity = 0.35 + Math.random() * 0.2;
 
+        cloudConfigs.push({
+            w: w, h: h, speed: speed, baseTop: baseTop,
+            phase: phase, bobAmp: bobAmp, bobFreq: bobFreq,
+            color: color, baseOpacity: baseOpacity, x: Math.random() * 200 - 100,
+            morphSeed: Math.random() * 100
+        });
+
+        // Set viewBox and build SVG content
+        cloudEls[ci].setAttribute('viewBox', '0 0 ' + w + ' ' + h);
+        cloudEls[ci].style.top = baseTop + 'vh';
+        cloudEls[ci].style.width = w + 'px';
+        cloudEls[ci].style.height = h + 'px';
+
+        // Create filter for organic turbulence displacement
         var defs = document.createElementNS(SVG_NS, 'defs');
-        var clipPath = document.createElementNS(SVG_NS, 'clipPath');
-        clipPath.setAttribute('id', 'cloud-clip-' + ci);
-        var pathEl = document.createElementNS(SVG_NS, 'path');
-        pathEl.setAttribute('d', def.path);
-        clipPath.appendChild(pathEl);
-        defs.appendChild(clipPath);
+        var filter = document.createElementNS(SVG_NS, 'filter');
+        filter.setAttribute('id', 'cloud-warp-' + ci);
+        filter.setAttribute('x', '-20%');
+        filter.setAttribute('y', '-20%');
+        filter.setAttribute('width', '140%');
+        filter.setAttribute('height', '140%');
+
+        var turb = document.createElementNS(SVG_NS, 'feTurbulence');
+        turb.setAttribute('type', 'fractalNoise');
+        turb.setAttribute('baseFrequency', '0.015');
+        turb.setAttribute('numOctaves', '3');
+        turb.setAttribute('seed', Math.floor(Math.random() * 999));
+        turb.setAttribute('result', 'noise');
+        filter.appendChild(turb);
+
+        var disp = document.createElementNS(SVG_NS, 'feDisplacementMap');
+        disp.setAttribute('in', 'SourceGraphic');
+        disp.setAttribute('in2', 'noise');
+        disp.setAttribute('scale', '12');
+        disp.setAttribute('xChannelSelector', 'R');
+        disp.setAttribute('yChannelSelector', 'G');
+        filter.appendChild(disp);
+
+        defs.appendChild(filter);
         cloudEls[ci].appendChild(defs);
 
+        // Draw overlapping circles to form puffy organic cloud body
         var g = document.createElementNS(SVG_NS, 'g');
-        g.setAttribute('clip-path', 'url(#cloud-clip-' + ci + ')');
+        g.setAttribute('filter', 'url(#cloud-warp-' + ci + ')');
 
-        for (var lx = 0; lx < def.w; lx += def.spacing) {
-            var cl = document.createElementNS(SVG_NS, 'line');
-            cl.setAttribute('x1', lx);
-            cl.setAttribute('y1', 0);
-            cl.setAttribute('x2', lx);
-            cl.setAttribute('y2', def.h);
-            cl.setAttribute('stroke', def.color);
-            cl.setAttribute('stroke-width', def.sw);
-            cl.setAttribute('stroke-linecap', 'butt');
-            cl.setAttribute('shape-rendering', 'crispEdges');
-            g.appendChild(cl);
+        var numPuffs = 5 + Math.floor(Math.random() * 4);
+        for (var p = 0; p < numPuffs; p++) {
+            var puffCx = w * (0.15 + (p / numPuffs) * 0.7) + (Math.random() - 0.5) * w * 0.1;
+            var puffCy = h * (0.35 + Math.random() * 0.3);
+            var puffR = h * (0.25 + Math.random() * 0.2);
+            var circle = document.createElementNS(SVG_NS, 'ellipse');
+            circle.setAttribute('cx', puffCx.toFixed(1));
+            circle.setAttribute('cy', puffCy.toFixed(1));
+            circle.setAttribute('rx', puffR.toFixed(1));
+            circle.setAttribute('ry', (puffR * (0.7 + Math.random() * 0.4)).toFixed(1));
+            circle.setAttribute('fill', color);
+            circle.setAttribute('opacity', (0.15 + Math.random() * 0.15).toFixed(3));
+            g.appendChild(circle);
         }
+
+        // Add a larger base ellipse for volume
+        var baseEllipse = document.createElementNS(SVG_NS, 'ellipse');
+        baseEllipse.setAttribute('cx', (w * 0.5).toFixed(1));
+        baseEllipse.setAttribute('cy', (h * 0.55).toFixed(1));
+        baseEllipse.setAttribute('rx', (w * 0.4).toFixed(1));
+        baseEllipse.setAttribute('ry', (h * 0.3).toFixed(1));
+        baseEllipse.setAttribute('fill', color);
+        baseEllipse.setAttribute('opacity', '0.1');
+        g.appendChild(baseEllipse);
 
         cloudEls[ci].appendChild(g);
     }
+
     // ========================================================
-    // 2. UNIFIED CLOUD SYSTEM
-    //    Drift + scroll parallax combined in one rAF loop.
-    //    Uses transform: translateX() per-frame (not CSS
-    //    animation) so the browser repaints each frame fresh
-    //    without pre-rasterizing the SVG into a blurry bitmap.
-    //
-    //    Seamless wrapping: when a cloud exits one side of the
-    //    viewport, it wraps to the opposite side smoothly.
-    //
-    //    No layout reads inside the animation loop.
+    // 2. UNIFIED ANIMATION LOOP
+    //    - Cloud drift with seamless viewport wrapping
+    //    - Vertical sinusoidal bobbing (randomized phase)
+    //    - Scroll-linked fade + parallax push
+    //    - Moon fade
+    //    - Card viewport-center focus
+    //    No layout reads for clouds. Cached viewport dims.
     // ========================================================
     var clouds = document.querySelectorAll('.cloud');
     var cards = document.querySelectorAll('.projects__track .card');
     var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    // Cached cloud state — no DOM reads in the loop
-    var cloudState = [
-        { x: 0, speed: 0.4, baseOpacity: 0.5 },
-        { x: 0, speed: -0.3, baseOpacity: 0.4 },
-        { x: 0, speed: 0.25, baseOpacity: 0.45 }
-    ];
-
-    // Cache scroll position (updated on scroll event, read in rAF)
     var cachedScrollY = 0;
     var cachedVH = window.innerHeight;
     var cachedVW = window.innerWidth;
@@ -158,16 +190,10 @@
         cachedScrollY = window.scrollY;
     }
 
-    // ========================================================
-    // 3. ANIMATION LOOP — combines drift + scroll effects
-    //    No DOM reads (getBoundingClientRect) for clouds.
-    //    Cards still use getBoundingClientRect (acceptable
-    //    since it's only 3 elements and doesn't cause thrash).
-    // ========================================================
     var prevTime = performance.now();
 
     function tick(now) {
-        var dt = Math.min((now - prevTime) / 16, 3); // cap at 3x to avoid jumps
+        var dt = Math.min((now - prevTime) / 16, 3);
         prevTime = now;
 
         var heroRatio = Math.min(cachedScrollY / cachedVH, 1);
@@ -177,32 +203,35 @@
             moonSvg.style.opacity = (1 - heroRatio).toFixed(4);
         }
 
-        // --- Cloud drift + scroll fade ---
-        for (var c = 0; c < clouds.length && c < cloudState.length; c++) {
-            var state = cloudState[c];
+        // --- Clouds: drift, bob, wrap, scroll-fade ---
+        for (var c = 0; c < clouds.length && c < cloudConfigs.length; c++) {
+            var cfg = cloudConfigs[c];
 
-            // Advance horizontal drift
-            state.x += state.speed * dt;
+            // Horizontal drift
+            cfg.x += cfg.speed * dt;
 
-            // Seamless boundary wrapping
-            // Cloud width approximation for wrap calculation
-            var cloudWidth = c === 0 ? 260 : c === 1 ? 180 : 340;
-            var wrapBound = cachedVW + cloudWidth;
-
-            if (state.speed > 0 && state.x > wrapBound * 0.5) {
-                state.x = -(wrapBound * 0.5);
-            } else if (state.speed < 0 && state.x < -(wrapBound * 0.5)) {
-                state.x = wrapBound * 0.5;
+            // Seamless wrapping: cloud must fully exit before wrapping
+            var totalWidth = cfg.w + cachedVW;
+            if (cfg.speed > 0 && cfg.x > cachedVW) {
+                cfg.x = -cfg.w;
+            } else if (cfg.speed < 0 && cfg.x < -cfg.w) {
+                cfg.x = cachedVW;
             }
 
-            // Apply transform (drift only — no CSS animation involved)
-            clouds[c].style.transform = 'translateX(' + state.x.toFixed(1) + 'px)';
+            // Vertical sinusoidal bob
+            var bobY = Math.sin(now * cfg.bobFreq + cfg.phase) * cfg.bobAmp;
 
-            // Scroll-linked opacity fade
+            // Scroll parallax push (clouds drift down as user scrolls)
+            var parallaxY = heroRatio * 40;
+
+            // Combine into transform
+            clouds[c].style.transform = 'translate(' + cfg.x.toFixed(1) + 'px, ' + (bobY + parallaxY).toFixed(1) + 'px)';
+
+            // Scroll-linked opacity
             if (heroRatio >= 0.95) {
                 clouds[c].style.opacity = '0';
             } else {
-                clouds[c].style.opacity = (state.baseOpacity * (1 - heroRatio)).toFixed(4);
+                clouds[c].style.opacity = (cfg.baseOpacity * (1 - heroRatio)).toFixed(4);
             }
         }
 
@@ -226,7 +255,7 @@
     }
 
     // ========================================================
-    // 4. INITIALIZE
+    // 3. INITIALIZE
     // ========================================================
     if (!reducedMotion) {
         window.addEventListener('scroll', onScroll, { passive: true });

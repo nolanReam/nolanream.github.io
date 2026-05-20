@@ -50,42 +50,28 @@ a { color: inherit; text-decoration: none; }
 }
 
 /* ============================================================
-   MIDGROUND SKY: SCANLINE CLOUDS
-   Identical rendering to the moon. SVG elements with
-   overflow: visible, no blur. Movement via JS transform
-   (per-frame update, not CSS animation — avoids rasterization).
+   MIDGROUND SKY: PROCEDURAL ORGANIC CLOUDS
+   SVG elements with turbulence displacement filters.
+   Positioned/sized dynamically by JS. No CSS animation.
+   Movement via JS transform (per-frame, no rasterization).
    ============================================================ */
 .cloud {
     position: fixed;
     z-index: 1;
     pointer-events: none;
     overflow: visible;
-    shape-rendering: crispEdges;
 }
 
 .cloud--a {
-    top: 8vh;
-    left: 8vw;
-    width: min(260px, 60vw);
-    height: 120px;
-    opacity: 0.5;
+    left: 0;
 }
 
 .cloud--b {
-    top: 28vh;
-    left: auto;
-    right: 10vw;
-    width: min(180px, 45vw);
-    height: 90px;
-    opacity: 0.4;
+    left: 0;
 }
 
 .cloud--c {
-    top: 52vh;
-    left: 20vw;
-    width: min(340px, 70vw);
-    height: 140px;
-    opacity: 0.45;
+    left: 0;
 }
 
 /* ============================================================
