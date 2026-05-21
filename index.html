@@ -7,10 +7,19 @@
     <title>Nolan Ream — Portfolio</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <!-- CRT scanline overlay -->
+    <div class="crt-overlay" aria-hidden="true"></div>
+
+    <!-- Boot sequence screen -->
+    <div class="boot-screen" id="boot-screen">
+        <pre class="boot-text" id="boot-text"></pre>
+    </div>
+
+    <!-- Scanline cloud layers -->
     <svg class="cloud cloud--a" viewBox="0 0 260 120" aria-hidden="true"></svg>
     <svg class="cloud cloud--b" viewBox="0 0 180 90" aria-hidden="true"></svg>
     <svg class="cloud cloud--c" viewBox="0 0 340 140" aria-hidden="true"></svg>
@@ -18,45 +27,46 @@
     <svg class="cloud cloud--e" viewBox="0 0 280 130" aria-hidden="true"></svg>
     <svg class="moon" viewBox="0 0 200 200" aria-hidden="true"></svg>
 
+    <!-- Navbar -->
     <header class="navbar">
-        <a href="#" class="navbar__logo">Nolan Ream</a>
+        <a href="#" class="navbar__logo">guest@nolanream:~$</a>
         <nav class="navbar__links">
-            <a href="#work">Work</a>
-            <a href="#about">About</a>
-            <a href="#contact">Contact</a>
+            <a href="#work">./work</a>
+            <a href="#about">./about</a>
+            <a href="#contact">./contact</a>
         </nav>
     </header>
 
+    <!-- Hero -->
     <section class="hero">
         <div class="hero__content">
-            <span class="label">Portfolio &mdash; MMXXVI</span>
+            <span class="label">> system.portfolio --year=2026</span>
             <h1 class="hero__name">
                 <span class="hero__line">Nolan</span>
-                <span class="hero__line hero__line--second"><span class="hero__stroke">Ream</span><span class="hero__dot">.</span></span>
+                <span class="hero__line hero__line--second">Ream<span class="cursor">&#9608;</span></span>
             </h1>
-            <p class="hero__tag">
-                A practice rooted in considered design, building deliberate
-                digital experiences at the intersection of craft and clarity.
-            </p>
+            <p class="hero__tag typewrite" data-text="A practice rooted in considered design, building deliberate digital experiences at the intersection of craft and clarity."></p>
         </div>
     </section>
 
+    <!-- About -->
     <section class="section" id="about">
         <div class="section__inner">
-            <span class="label">— 02 / About</span>
-            <h2 class="section__title">A quiet pursuit of <em>form</em> &amp; meaning.</h2>
+            <span class="label">> cat ./about.txt</span>
+            <h2 class="section__title typewrite" data-text="A quiet pursuit of form & meaning."></h2>
             <div class="about__body">
-                <p>I am an aspiring software engineer and high school student dedicated to creating impactful digital experiences through code.</p>
-                <p>Over the course of my academic journey I've built a strong technical foundation in Java, alongside front-end web development with HTML and CSS. My curiosity for interactive problem-solving also led me into game development, where I design and build logic-driven virtual environments.</p>
-                <p>Looking ahead, I plan to pursue a bachelor's degree in Computer Science to further elevate my skills and prepare for a meaningful career in technology.</p>
+                <p class="typewrite" data-text="> I am an aspiring software engineer and high school student dedicated to creating impactful digital experiences through code."></p>
+                <p class="typewrite" data-text="> Over the course of my academic journey I've built a strong technical foundation in Java, alongside front-end web development with HTML and CSS. My curiosity for interactive problem-solving also led me into game development, where I design and build logic-driven virtual environments."></p>
+                <p class="typewrite" data-text="> Looking ahead, I plan to pursue a bachelor's degree in Computer Science to further elevate my skills and prepare for a meaningful career in technology."></p>
             </div>
         </div>
     </section>
 
+    <!-- Skills -->
     <section class="section" id="skills">
         <div class="section__inner">
-            <span class="label">— 03 / Practice</span>
-            <h2 class="section__title">The disciplines of the <em>studio</em>.</h2>
+            <span class="label">> ls ./skills/</span>
+            <h2 class="section__title typewrite" data-text="The disciplines of the studio."></h2>
             <ul class="skills__list">
                 <li class="skills__item"><span class="skills__num">01</span><span class="skills__name">Brand &amp; Art Direction</span><span class="skills__meta">Identity / Editorial</span></li>
                 <li class="skills__item"><span class="skills__num">02</span><span class="skills__name">Interface Design</span><span class="skills__meta">Figma / Systems</span></li>
@@ -67,45 +77,47 @@
         </div>
     </section>
 
+    <!-- Projects -->
     <section class="section" id="work">
         <div class="section__inner">
-            <span class="label">— 04 / Archive</span>
-            <h2 class="section__title">Selected <em>work</em>.</h2>
+            <span class="label">> ls ./projects/ --verbose</span>
+            <h2 class="section__title typewrite" data-text="Selected work."></h2>
         </div>
         <div class="projects__track">
             <article class="card">
                 <div class="card__visual"></div>
                 <span class="card__category">Identity &mdash; 2026</span>
-                <h3 class="card__title">Maison <em>Lumière</em></h3>
-                <p class="card__desc">A heritage rebrand for a boutique atelier. Restrained typography, custom wordmark, and a digital system designed for permanence.</p>
-                <a href="#" class="card__cta">View case study &rarr;</a>
+                <h3 class="card__title">Maison Lumière</h3>
+                <p class="card__desc typewrite" data-text="A heritage rebrand for a boutique atelier. Restrained typography, custom wordmark, and a digital system designed for permanence."></p>
+                <a href="#" class="card__cta">> view case_study.md</a>
             </article>
-            <span class="projects__more" aria-hidden="true">&darr; more work below</span>
+            <span class="projects__more" aria-hidden="true">&#8595; more output below</span>
             <article class="card">
                 <div class="card__visual"></div>
                 <span class="card__category">Editorial &mdash; 2025</span>
-                <h3 class="card__title">Quiet <em>Volumes</em></h3>
-                <p class="card__desc">A serial publication exploring restraint in contemporary design.</p>
-                <a href="#" class="card__cta">View case study &rarr;</a>
+                <h3 class="card__title">Quiet Volumes</h3>
+                <p class="card__desc typewrite" data-text="A serial publication exploring restraint in contemporary design."></p>
+                <a href="#" class="card__cta">> view case_study.md</a>
             </article>
-            <span class="projects__more" aria-hidden="true">&darr; more work below</span>
+            <span class="projects__more" aria-hidden="true">&#8595; more output below</span>
             <article class="card">
                 <div class="card__visual"></div>
                 <span class="card__category">Digital &mdash; 2025</span>
-                <h3 class="card__title">Atelier <em>Index</em></h3>
-                <p class="card__desc">A bespoke portfolio platform for an architectural studio, built around an editorial grid and a slow, deliberate sense of pacing.</p>
-                <a href="#" class="card__cta">View case study &rarr;</a>
+                <h3 class="card__title">Atelier Index</h3>
+                <p class="card__desc typewrite" data-text="A bespoke portfolio platform for an architectural studio, built around an editorial grid and a slow, deliberate sense of pacing."></p>
+                <a href="#" class="card__cta">> view case_study.md</a>
             </article>
         </div>
     </section>
 
+    <!-- Footer -->
     <footer class="footer" id="contact">
         <div class="section__inner">
-            <span class="label">— 05 / In conversation</span>
+            <span class="label">> echo $CONTACT</span>
             <a href="mailto:hello@nolanream.com" class="footer__email">hello@nolanream.com</a>
             <div class="footer__bottom">
-                <span>&copy; <span id="year">2026</span> &mdash; Nolan Ream</span>
-                <span>Crafted with intention</span>
+                <span>&copy; <span id="year">2026</span> // nolan_ream</span>
+                <span>[ process exited with code 0 ]</span>
             </div>
         </div>
     </footer>
