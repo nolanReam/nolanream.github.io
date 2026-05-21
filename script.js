@@ -146,19 +146,19 @@
             moonSvg.style.opacity = Math.max(0, 1 - heroRatio * 1.2).toFixed(3);
         }
 
-        // Clouds: drift + bob + scroll-parallax fade
+        // Clouds: drift + scroll-parallax fade (no vertical bob)
         for (var c = 0; c < clouds.length && c < cloudData.length; c++) {
             var cd = cloudData[c];
-            cd.x += cd.speed * vwCached * 0.01; // speed as % of viewport per frame
+            cd.x += cd.speed * vwCached * 0.01;
 
-            // Seamless wrap (only after fully off-screen)
-            if (cd.speed > 0 && cd.x > vwCached + cd.w) cd.x = -cd.w;
-            else if (cd.speed < 0 && cd.x < -cd.w) cd.x = vwCached;
+            // Seamless wrap — use cloud's own width + buffer so it fully exits before resetting
+            var exitBuffer = cd.w + 100;
+            if (cd.speed > 0 && cd.x > vwCached + exitBuffer) cd.x = -exitBuffer;
+            else if (cd.speed < 0 && cd.x < -exitBuffer) cd.x = vwCached + exitBuffer;
 
-            var bob = Math.sin(ts * cd.bobFreq + cd.phase) * cd.bobAmp;
             var scrollOffset = scrollY * cd.scrollFactor;
             var qX = Math.round(cd.x / STEP) * STEP;
-            var qY = Math.round((bob + scrollOffset) / STEP) * STEP;
+            var qY = Math.round(scrollOffset / STEP) * STEP;
 
             clouds[c].style.transform = 'translate3d(' + qX + 'px,' + qY + 'px,0)';
 
