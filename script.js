@@ -121,15 +121,15 @@
                 var bBot = by + bH;
                 if (bTop <= yTop && bBot >= yBot) continue;
                 if (bTop > yTop && bBot < yBot) {
-                    svgLine(moonSvg, x, yTop, bTop, '#4AF626', 2);
-                    svgLine(moonSvg, x, bBot, yBot, '#4AF626', 2);
+                    svgLine(moonSvg, x, yTop, bTop, '#f4f4f5', 2);
+                    svgLine(moonSvg, x, bBot, yBot, '#f4f4f5', 2);
                     continue;
                 }
                 if (bTop <= yTop) yTop = bBot;
                 else if (bBot >= yBot) yBot = bTop;
             }
             if (yBot - yTop < 1) continue;
-            svgLine(moonSvg, x, yTop, yBot, '#4AF626', 2);
+            svgLine(moonSvg, x, yTop, yBot, '#f4f4f5', 2);
         }
     }
 
@@ -150,15 +150,15 @@
     // ========================================================
     var cloudEls = document.querySelectorAll('.cloud');
     var cloudData = [
-        { w: 260, h: 120, color: '#4AF626', speed: 0.04, scrollFactor: -0.75, baseTop: 10,
+        { w: 260, h: 120, color: '#f4f4f5', speed: 0.04, scrollFactor: -0.75, baseTop: 10,
           puffs: [{cx:70,cy:60,r:38},{cx:130,cy:45,r:45},{cx:190,cy:55,r:40},{cx:50,cy:72,r:30},{cx:220,cy:65,r:32}] },
         { w: 180, h: 90, color: '#7c3aed', speed: -0.02, scrollFactor: -0.45, baseTop: 25,
           puffs: [{cx:45,cy:42,r:30},{cx:85,cy:35,r:35},{cx:125,cy:40,r:32},{cx:150,cy:52,r:25}] },
-        { w: 340, h: 140, color: '#4AF626', speed: 0.06, scrollFactor: -0.95, baseTop: 45,
+        { w: 340, h: 140, color: '#f4f4f5', speed: 0.06, scrollFactor: -0.95, baseTop: 45,
           puffs: [{cx:60,cy:70,r:42},{cx:120,cy:55,r:50},{cx:180,cy:48,r:48},{cx:240,cy:58,r:44},{cx:300,cy:70,r:36},{cx:40,cy:82,r:30}] },
         { w: 200, h: 100, color: '#7c3aed', speed: 0.03, scrollFactor: -0.60, baseTop: 18,
           puffs: [{cx:50,cy:55,r:32},{cx:100,cy:42,r:40},{cx:150,cy:50,r:35},{cx:175,cy:62,r:28}] },
-        { w: 280, h: 130, color: '#4AF626', speed: -0.04, scrollFactor: -0.80, baseTop: 38,
+        { w: 280, h: 130, color: '#f4f4f5', speed: -0.04, scrollFactor: -0.80, baseTop: 38,
           puffs: [{cx:55,cy:65,r:38},{cx:110,cy:50,r:45},{cx:170,cy:55,r:42},{cx:230,cy:62,r:38},{cx:260,cy:75,r:30}] }
     ];
 
