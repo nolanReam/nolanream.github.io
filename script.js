@@ -151,10 +151,14 @@
             var cd = cloudData[c];
             cd.x += cd.speed * vwCached * 0.01;
 
-            // Seamless wrap — use cloud's own width + buffer so it fully exits before resetting
-            var exitBuffer = cd.w + 100;
-            if (cd.speed > 0 && cd.x > vwCached + exitBuffer) cd.x = -exitBuffer;
-            else if (cd.speed < 0 && cd.x < -exitBuffer) cd.x = vwCached + exitBuffer;
+            // Dynamic viewport-based wrapping boundaries
+            if (cd.speed > 0) {
+                // Left -> Right: must fully exit the right edge
+                if (cd.x > vwCached + 400) cd.x = -400;
+            } else {
+                // Right -> Left: must travel past the entire screen width to fully clear left edge
+                if (cd.x < -vwCached - 400) cd.x = 400;
+            }
 
             var scrollOffset = scrollY * cd.scrollFactor;
             var qX = Math.round(cd.x / STEP) * STEP;
