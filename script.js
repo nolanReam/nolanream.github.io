@@ -210,6 +210,29 @@
     }
 
     // ========================================================
+    // 4b. SKILLS ACCORDION — click to expand/collapse panels
+    // ========================================================
+    var skillItems = document.querySelectorAll('.skills__item');
+    skillItems.forEach(function (item) {
+        item.addEventListener('click', function (e) {
+            // Don't collapse if clicking a link inside the panel
+            if (e.target.tagName === 'A') return;
+
+            var wasActive = item.classList.contains('is-active');
+
+            // Close all panels
+            skillItems.forEach(function (el) {
+                el.classList.remove('is-active');
+            });
+
+            // Toggle clicked panel (if it wasn't already open)
+            if (!wasActive) {
+                item.classList.add('is-active');
+            }
+        });
+    });
+
+    // ========================================================
     // 5. ANIMATION LOOP — drift, parallax, card focus
     // ========================================================
     var clouds = document.querySelectorAll('.cloud');
