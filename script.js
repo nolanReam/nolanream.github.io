@@ -48,54 +48,69 @@
     bootTick();
 
     // ========================================================
-    // 2. TYPEWRITER ENGINE — organic randomized keystroke timing
-    //    Uses IntersectionObserver to trigger when scrolled into view.
+    // 2. TYPEWRITER ENGINE — sequential, promise-based
+    //    Elements type one-by-one within their parent section.
+    //    IntersectionObserver triggers per-section, then runs
+    //    all .typewrite elements inside it in sequence.
     // ========================================================
-    var typeElements = document.querySelectorAll('.typewrite');
-    var typedSet = new Set();
-
     function typeText(el) {
-        var fullText = el.getAttribute('data-text');
-        if (!fullText) return;
-        el.textContent = '';
-        var i = 0;
+        return new Promise(function (resolve) {
+            var fullText = el.getAttribute('data-text');
+            if (!fullText) { resolve(); return; }
+            el.textContent = '';
+            var i = 0;
 
-        function nextChar() {
-            if (i < fullText.length) {
-                el.textContent += fullText.charAt(i);
-                i++;
-                var delay = 20 + Math.random() * 60;
-                // Pause longer on punctuation
-                if (fullText.charAt(i - 1) === '.' || fullText.charAt(i - 1) === ',') {
-                    delay += 80 + Math.random() * 120;
+            function nextChar() {
+                if (i < fullText.length) {
+                    el.textContent += fullText.charAt(i);
+                    i++;
+                    var delay = 20 + Math.random() * 60;
+                    if (fullText.charAt(i - 1) === '.' || fullText.charAt(i - 1) === ',') {
+                        delay += 80 + Math.random() * 120;
+                    }
+                    setTimeout(nextChar, delay);
+                } else {
+                    resolve();
                 }
-                setTimeout(nextChar, delay);
             }
-        }
 
-        nextChar();
+            nextChar();
+        });
+    }
+
+    async function typeSequence(elements) {
+        for (var i = 0; i < elements.length; i++) {
+            await typeText(elements[i]);
+        }
     }
 
     function startTypewriters() {
         if (!('IntersectionObserver' in window)) {
-            typeElements.forEach(function (el) {
+            document.querySelectorAll('.typewrite').forEach(function (el) {
                 el.textContent = el.getAttribute('data-text') || '';
             });
             return;
         }
 
+        // Observe each section/card container, not individual typewrite elements
+        var sections = document.querySelectorAll('.section, .hero, .card');
+        var triggeredSections = new Set();
+
         var observer = new IntersectionObserver(function (entries) {
             entries.forEach(function (entry) {
-                if (entry.isIntersecting && !typedSet.has(entry.target)) {
-                    typedSet.add(entry.target);
-                    typeText(entry.target);
+                if (entry.isIntersecting && !triggeredSections.has(entry.target)) {
+                    triggeredSections.add(entry.target);
                     observer.unobserve(entry.target);
+                    var els = entry.target.querySelectorAll('.typewrite');
+                    if (els.length) typeSequence(els);
                 }
             });
-        }, { threshold: 0.3 });
+        }, { threshold: 0.2 });
 
-        typeElements.forEach(function (el) {
-            observer.observe(el);
+        sections.forEach(function (section) {
+            if (section.querySelectorAll('.typewrite').length) {
+                observer.observe(section);
+            }
         });
     }
 
@@ -273,7 +288,7 @@
             cards[i].style.opacity = '1';
             cards[i].style.transform = 'scale(1)';
         }
-        typeElements.forEach(function (el) {
+        document.querySelectorAll('.typewrite').forEach(function (el) {
             el.textContent = el.getAttribute('data-text') || '';
         });
     }
